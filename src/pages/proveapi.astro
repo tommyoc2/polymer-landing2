@@ -1,0 +1,412 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/proveapi.css';
+---
+<BaseLayout
+  title="ProveAPI — Polymer"
+  description="ProveAPI — hosted cross-chain proof generation from Polymer. One HTTP call, a cryptographic proof your contract verifies in one line of Solidity."
+  currentPage="proveapi"
+>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <canvas id="chrome-bg"></canvas>
+  <div class="eyebrow">
+    <span>POLYMER PROVEAPI <span class="v">/ cross-chain proof generation</span></span>
+  </div>
+
+  <h1 class="htitle">
+    <span class="silver">Proofs across</span><br/>
+    <span class="blue">every chain.</span>
+  </h1>
+
+  <p class="lede">
+    One HTTP call. A <strong>cryptographic proof</strong> that something
+    happened on another chain. Your contract verifies it in one line of
+    Solidity. No relayer, no light client, no custom infrastructure to
+    maintain.
+  </p>
+
+  <div class="cta-row">
+    <a href="https://docs.polymerlabs.org/" target="_blank" rel="noopener" class="btn primary">
+      READ THE DOCS <span>↗</span>
+    </a>
+    <a href="#how" class="btn ghost">
+      HOW IT WORKS <span>↓</span>
+    </a>
+  </div>
+
+  <!-- PROOF-PACKET DIE-SHOT VISUAL -->
+  <div class="die">
+    <div class="die-frame">
+
+      <!-- Left side: source chain meta -->
+      <div class="die-side">
+        <div class="row">
+          <div class="lbl">Source chain</div>
+          <div class="val">Base <span class="a">·</span> chain_id 8453</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Tx hash</div>
+          <div class="val">0x9a3f<span class="a">…</span>b21c</div>
+        </div>
+        <div class="row live">
+          <div class="lbl">Event</div>
+          <div class="val">log_index <span class="a">2</span></div>
+        </div>
+        <div class="row">
+          <div class="lbl">Block</div>
+          <div class="val">23,448,219 <span class="a">·</span> finalized</div>
+        </div>
+      </div>
+
+      <!-- Center: cryptographic manifest -->
+      <div class="die-chip">
+        <div class="rule"></div>
+        <div class="notary tl"></div>
+        <div class="notary tr"></div>
+        <div class="notary bl"></div>
+        <div class="notary br"></div>
+
+        <div class="die-chip-label">
+          <span class="tag">CRYPTOGRAPHIC PROOF · CrossL2ProverV2</span>
+          <span class="id">proof_id 0x4a8f2c1b…e92c</span>
+          <span class="sealtxt">// 2,341 bytes · RLP</span>
+        </div>
+
+        <div class="die-svg-wrap">
+          <div class="proof-grid">
+
+            <!-- 1. MERKLE INCLUSION -->
+            <svg class="proof-part proof-merkle" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(16, 0)" font-family="JetBrains Mono, monospace" fill="#8A8F9A">
+                <text x="0" y="14" font-size="9" fill="#5EA0FF" letter-spacing="1.5">MERKLE INCLUSION</text>
+                <line x1="0" y1="20" x2="168" y2="20" stroke="#5EA0FF" stroke-opacity="0.4"/>
+                <g font-size="8">
+                  <rect x="0"   y="40" width="38" height="22" fill="none" stroke="#2C3038"/>
+                  <text x="19"  y="54" text-anchor="middle">0xa1..</text>
+                  <rect x="42"  y="40" width="38" height="22" fill="none" stroke="#2C3038"/>
+                  <text x="61"  y="54" text-anchor="middle">0xb7..</text>
+                  <rect x="84"  y="40" width="38" height="22" fill="none" stroke="#2C3038"/>
+                  <text x="103" y="54" text-anchor="middle">0x3e..</text>
+                  <rect x="126" y="40" width="38" height="22" fill="none" stroke="#2C3038"/>
+                  <text x="145" y="54" text-anchor="middle">0xff..</text>
+                  <text x="0" y="74" font-size="7" fill="#54585F" letter-spacing="0.5">leaves · receipt logs</text>
+                </g>
+                <g stroke="#5EA0FF" stroke-opacity="0.35" stroke-width="0.8">
+                  <path d="M 19,62 L 40,90"/>
+                  <path d="M 61,62 L 40,90"/>
+                  <path d="M 103,62 L 124,90"/>
+                  <path d="M 145,62 L 124,90"/>
+                </g>
+                <g font-size="8">
+                  <rect x="20"  y="92" width="40" height="22" fill="rgba(94,160,255,0.06)" stroke="#5EA0FF" stroke-opacity="0.45"/>
+                  <text x="40"  y="106" text-anchor="middle" fill="#C8CDD3">h(a1‖b7)</text>
+                  <rect x="104" y="92" width="40" height="22" fill="rgba(94,160,255,0.06)" stroke="#5EA0FF" stroke-opacity="0.45"/>
+                  <text x="124" y="106" text-anchor="middle" fill="#C8CDD3">h(3e‖ff)</text>
+                </g>
+                <g stroke="#5EA0FF" stroke-opacity="0.5" stroke-width="0.8">
+                  <path d="M 40,114  L 82,144"/>
+                  <path d="M 124,114 L 82,144"/>
+                </g>
+                <g font-size="8">
+                  <rect x="52" y="146" width="60" height="24" fill="rgba(94,160,255,0.12)" stroke="#5EA0FF"/>
+                  <text x="82" y="161" text-anchor="middle" fill="#FFFFFF" font-weight="600">receipts_root</text>
+                  <text x="82" y="180" text-anchor="middle" font-size="7" fill="#5EA0FF" letter-spacing="0.5">↓ committed in block header</text>
+                </g>
+                <g font-size="7" fill="#5EA0FF">
+                  <text x="0"  y="200" letter-spacing="1">PATH:</text>
+                  <text x="34" y="200" fill="#C8CDD3">[ 0xb7.., h(3e‖ff) ]</text>
+                  <text x="0"  y="212" letter-spacing="1">DEPTH:</text>
+                  <text x="34" y="212" fill="#C8CDD3">2</text>
+                </g>
+              </g>
+            </svg>
+
+            <div class="proof-arrow"></div>
+
+            <!-- 2. PROOF SEAL -->
+            <svg class="proof-part proof-seal" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="halo" cx="0.5" cy="0.5">
+                  <stop offset="0%"  stop-color="#5EA0FF" stop-opacity="0.18"/>
+                  <stop offset="60%" stop-color="#5EA0FF" stop-opacity="0.04"/>
+                  <stop offset="100%" stop-color="#5EA0FF" stop-opacity="0"/>
+                </radialGradient>
+                <path id="sealring-text" d="M 100,110 m -72,0 a 72,72 0 1,1 144,0 a 72,72 0 1,1 -144,0"/>
+              </defs>
+              <ellipse cx="100" cy="110" rx="98" ry="98" fill="url(#halo)"/>
+              <g class="seal-ring" fill="none" stroke="#5EA0FF" stroke-opacity="0.55">
+                <circle cx="100" cy="110" r="72"/>
+                <circle cx="100" cy="110" r="78" stroke-dasharray="2 5" stroke-opacity="0.35"/>
+                <text font-family="JetBrains Mono, monospace" font-size="7.5" fill="#5EA0FF" letter-spacing="3">
+                  <textPath href="#sealring-text" startOffset="0">POLYMER · CRYPTOGRAPHIC PROOF · VERIFIABLE · POLYMER · CRYPTOGRAPHIC PROOF · VERIFIABLE · </textPath>
+                </text>
+              </g>
+              <g text-anchor="middle">
+                <circle cx="100" cy="110" r="58" fill="rgba(94,160,255,0.05)" stroke="#5EA0FF" stroke-opacity="0.7"/>
+                <text x="100" y="84" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#5EA0FF" letter-spacing="2">PROOF_BYTES</text>
+                <line x1="64"  y1="90" x2="136" y2="90" stroke="#5EA0FF" stroke-opacity="0.45"/>
+                <text x="100" y="108" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">0x4a8f…e92c</text>
+                <text x="100" y="123" font-family="JetBrains Mono, monospace" font-size="8" fill="#8A8F9A">keccak256 · 32 B</text>
+                <line x1="78"  y1="132" x2="122" y2="132" stroke="#5EA0FF" stroke-opacity="0.45"/>
+                <text x="100" y="146" font-family="JetBrains Mono, monospace" font-size="8" fill="#5EA0FF" letter-spacing="1.5">VERIFIED ✓</text>
+              </g>
+            </svg>
+
+            <div class="proof-arrow"></div>
+
+            <!-- 3. SRC BLOCK HEADER -->
+            <svg class="proof-part proof-block" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+              <g font-family="JetBrains Mono, monospace">
+                <text x="0" y="14" font-size="9" fill="#5EA0FF" letter-spacing="1.5">SRC BLOCK HEADER</text>
+                <line x1="0" y1="20" x2="200" y2="20" stroke="#5EA0FF" stroke-opacity="0.4"/>
+                <g font-size="8" fill="#8A8F9A">
+                  <text x="0"  y="40">number</text>      <text x="200" y="40" text-anchor="end" fill="#C8CDD3">23,448,219</text>
+                  <line x1="0" y1="46" x2="200" y2="46" stroke="#1A1D24"/>
+                  <text x="0"  y="62">parent_hash</text> <text x="200" y="62" text-anchor="end" fill="#C8CDD3">0x9f12…aa01</text>
+                  <line x1="0" y1="68" x2="200" y2="68" stroke="#1A1D24"/>
+                  <text x="0"  y="84">state_root</text>  <text x="200" y="84" text-anchor="end" fill="#C8CDD3">0x73c8…b14d</text>
+                  <line x1="0" y1="90" x2="200" y2="90" stroke="#1A1D24"/>
+                  <text x="0"  y="106">receipts_root</text> <text x="200" y="106" text-anchor="end" fill="#5EA0FF">0xe4ab…0c2f</text>
+                  <line x1="0" y1="112" x2="200" y2="112" stroke="#1A1D24"/>
+                  <text x="0"  y="128">tx_hash</text>    <text x="200" y="128" text-anchor="end" fill="#C8CDD3">0x9a3f…b21c</text>
+                  <line x1="0" y1="134" x2="200" y2="134" stroke="#1A1D24"/>
+                  <text x="0"  y="150">log_index</text>  <text x="200" y="150" text-anchor="end" fill="#C8CDD3">2</text>
+                </g>
+                <g font-size="7" fill="#5EA0FF" letter-spacing="0.5">
+                  <text x="0"  y="174">SIGNED:</text>
+                  <text x="43" y="174" fill="#C8CDD3">consensus · finalized</text>
+                  <text x="0"  y="186">ANCHOR:</text>
+                  <text x="43" y="186" fill="#C8CDD3">receipts_root ≡ merkle root</text>
+                </g>
+              </g>
+            </svg>
+
+          </div>
+
+          <!-- bottom anchor strip (always horizontal) -->
+          <div class="proof-anchor">
+            <div class="pa-row"><span class="pa-lbl">CONTAINS</span><span class="pa-val">block_header · merkle_path · log_payload</span></div>
+            <div class="pa-row"><span class="pa-lbl">VERIFIES TO</span><span class="pa-val pa-accent">CrossL2ProverV2.validateEvent(proof) → (chainId, emitter, topics, data)</span></div>
+          </div>
+        </div>
+
+        <div class="hashstream">
+          <span class="track">0x4a8f2c1b9d7e4f3a8c61b9027ee9d4a8c2f1b73d6e4a91c8f3b27d1e9c4a8f2c · 0x9f12aa01b73d6e4a91c8f3b27d1e9c4a8f2c1b9d7e4f3a8c61b902 · 0xe4ab0c2f3a8c61b9027ee9d4a8c2f1b73d6e4a91c8f3b27d1e9c4a8f · 0x73c8b14d6e4a91c8f3b27d1e9c4a8f2c1b9d7e4f3a8c61b9027ee9d4 · 0x4a8f2c1b9d7e4f3a8c61b9027ee9d4a8c2f1b73d6e4a91c8f3b27d1e9c4a8f2c · 0x9f12aa01b73d6e4a91c8f3b27d1e9c4a8f2c1b9d7e4f3a8c61b902 · 0xe4ab0c2f3a8c61b9027ee9d4a8c2f1b73d6e4a91c8f3b27d1e9c4a8f · 0x73c8b14d6e4a91c8f3b27d1e9c4a8f2c1b9d7e4f3a8c61b9027ee9d4 · </span>
+        </div>
+      </div>
+
+      <!-- Right side: dst chain meta -->
+      <div class="die-side">
+        <div class="row">
+          <div class="lbl">Dest chain</div>
+          <div class="val">Optimism <span class="a">·</span> chain_id 10</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Verifier</div>
+          <div class="val">CrossL2ProverV2 <span class="a">·</span> Solidity</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Integration</div>
+          <div class="val">1 HTTP call <span class="a">+</span> 1 verify call</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Latency</div>
+          <div class="val"><span class="a">seconds</span> after finality</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ STAT STRIP ============ -->
+<div class="strip">
+  <div class="item">
+    <div class="lbl">// PROOF SHAPE</div>
+    <div class="v">Source-chain state <span class="accent">→</span> dest-chain bytes</div>
+    <div class="sub">Merkle inclusion · packed for the consumer's verifier contract</div>
+  </div>
+  <div class="item">
+    <div class="lbl">// INTEGRATION</div>
+    <div class="v"><span class="accent">1</span> HTTP call · <span class="accent">~50</span> lines of Solidity</div>
+    <div class="sub">No relayer to run. No light client to maintain.</div>
+  </div>
+  <div class="item">
+    <div class="lbl">// STATUS</div>
+    <div class="v">Live in production</div>
+    <div class="sub">Actively supported · existing customer integrations</div>
+  </div>
+</div>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section" id="how">
+  <div class="marker">01 // HOW IT WORKS</div>
+  <h2 class="stitle">
+    Request a proof. <span class="dim">Verify on the other side.</span>
+  </h2>
+  <p class="ssub">
+    ProveAPI sits between any two chains. Ask it to prove an
+    <strong>event</strong> or piece of <strong>state</strong> on the source
+    chain. It returns a single payload your destination contract verifies
+    in one call.
+  </p>
+
+  <div class="flow">
+    <div class="step">
+      <div class="ix">STEP / 01</div>
+      <div class="title">Application calls ProveAPI</div>
+      <p class="body">Tell ProveAPI which event you want to prove: chain, block, log index. Authenticate with your API key.</p>
+      <div class="actor">CALLER · OFFCHAIN</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="ix">STEP / 02</div>
+      <div class="title">Service composes the proof</div>
+      <p class="body">ProveAPI builds a cryptographic proof against the source chain's state and packages it into a single payload your destination contract will accept.</p>
+      <div class="actor">PROVEAPI · MANAGED</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="ix">STEP / 03</div>
+      <div class="title">Destination contract verifies</div>
+      <p class="body">Your contract calls <code>validateEvent(proof)</code> on the <code>CrossL2ProverV2</code> predeploy. Returns the verified event payload. ~50 lines of Solidity to integrate.</p>
+      <div class="actor">CONSUMER · ONCHAIN</div>
+    </div>
+  </div>
+
+  <div class="codepane">
+    <div class="code">
+      <div class="head">
+        <span class="verb">POST</span>
+        <span class="url">api.polymer.zone/v1/ · log_requestProof</span>
+        <span style="margin-left:auto">REQUEST</span>
+      </div>
+<pre><span class="p">{</span>
+  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>, <span class="k">"id"</span>: <span class="n">1</span>,
+  <span class="k">"method"</span>: <span class="s">"log_requestProof"</span>,
+  <span class="k">"params"</span>: <span class="p">[{</span>
+    <span class="k">"srcChainId"</span>:      <span class="n">8453</span>,        <span class="c">// Base</span>
+    <span class="k">"srcBlockNumber"</span>:  <span class="n">23448219</span>,
+    <span class="k">"globalLogIndex"</span>:  <span class="n">42</span>           <span class="c">// log index in block</span>
+  <span class="p">}]</span>
+<span class="p">}</span></pre>
+    </div>
+    <div class="code">
+      <div class="head">
+        <span class="verb res">200</span>
+        <span class="url">application/json · proof_query</span>
+        <span style="margin-left:auto">POLL → COMPLETE</span>
+      </div>
+<pre><span class="p">{</span>
+  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>, <span class="k">"id"</span>: <span class="n">2</span>,
+  <span class="k">"result"</span>: <span class="p">{</span>
+    <span class="k">"status"</span>: <span class="s">"complete"</span>,
+    <span class="k">"proof"</span>:  <span class="s">"0x01f9…a2d4"</span>      <span class="c">// base64 IAVL proof bytes</span>
+  <span class="p">}</span>
+<span class="p">}</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ USE CASES ============ -->
+<section class="section">
+  <div class="marker">02 // USE CASES</div>
+  <h2 class="stitle">
+    Anywhere a contract needs to know <span class="blue">something happened elsewhere.</span>
+  </h2>
+  <p class="ssub">
+    Bridges, intent solvers, omnichain governance, cross-chain oracles.
+    Anywhere you currently run your own relayer infrastructure or trust a
+    multisig to pass data between chains.
+  </p>
+
+  <div class="cases">
+    <div class="case">
+      <div class="ix">CASE / 01</div>
+      <div class="glyph">
+        <svg viewBox="0 0 36 36" fill="none">
+          <path d="M4 18 L14 18" stroke="#5EA0FF" stroke-width="1.4"/>
+          <path d="M22 18 L32 18" stroke="#5EA0FF" stroke-width="1.4"/>
+          <rect x="14" y="13" width="8" height="10" stroke="#5EA0FF" stroke-width="1.4" fill="none"/>
+          <circle cx="4" cy="18" r="2" fill="#5EA0FF"/>
+          <circle cx="32" cy="18" r="2" fill="#5EA0FF"/>
+        </svg>
+      </div>
+      <h3>Bridges &amp; messaging</h3>
+      <p>Move funds across chains. Replace your relayer pipeline with a verified proof of the source-chain event.</p>
+      <div class="examples">
+        <span class="k">e.g.</span>token bridges · order routing · vault rebalancing
+      </div>
+    </div>
+    <div class="case">
+      <div class="ix">CASE / 02</div>
+      <div class="glyph">
+        <svg viewBox="0 0 36 36" fill="none">
+          <path d="M6 10 L14 10 L18 18 L22 26 L30 26" stroke="#5EA0FF" stroke-width="1.4" fill="none"/>
+          <path d="M14 10 L22 10 L18 18" stroke="#5EA0FF" stroke-width="1.4" fill="none"/>
+          <circle cx="6" cy="10" r="2" fill="#5EA0FF"/>
+          <circle cx="30" cy="26" r="2" fill="#5EA0FF"/>
+          <circle cx="18" cy="18" r="1.5" fill="#5EA0FF"/>
+        </svg>
+      </div>
+      <h3>Intent solvers</h3>
+      <p>Settle cross-chain intents the moment they're filled. No extra trust assumption, no off-chain attesters.</p>
+      <div class="examples">
+        <span class="k">e.g.</span>cross-chain swaps · solver settlement · escrow release
+      </div>
+    </div>
+    <div class="case">
+      <div class="ix">CASE / 03</div>
+      <div class="glyph">
+        <svg viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="11" stroke="#5EA0FF" stroke-width="1.4" fill="none"/>
+          <circle cx="18" cy="18" r="3" fill="#5EA0FF"/>
+          <path d="M18 7 L18 4 M18 32 L18 29 M7 18 L4 18 M32 18 L29 18" stroke="#5EA0FF" stroke-width="1.4"/>
+          <path d="M10 10 L8 8 M28 28 L26 26 M28 8 L26 10 M8 28 L10 26" stroke="#5EA0FF" stroke-width="1.4"/>
+        </svg>
+      </div>
+      <h3>Oracles &amp; governance</h3>
+      <p>Read a value or vote on one chain, prove it on another. Powers omnichain DAOs, cross-network price feeds, and policies that span L2s.</p>
+      <div class="examples">
+        <span class="k">e.g.</span>omnichain voting · price refs · L1↔L2 readbacks
+      </div>
+    </div>
+  </div>
+
+  <!-- Specs -->
+  <div class="specs">
+    <div class="spec">
+      <div class="lbl">// CHAINS SUPPORTED</div>
+      <div class="v">Ethereum mainnet · L2 rollups</div>
+      <div class="sub">Base · Optimism · Arbitrum · Polygon zkEVM · others — see docs</div>
+    </div>
+    <div class="spec">
+      <div class="lbl">// PROOF FORMAT</div>
+      <div class="v"><span class="accent">CrossL2ProverV2</span> · Solidity predeploy</div>
+      <div class="sub">Single bytestring · onchain verifier library · stable ABI</div>
+    </div>
+    <div class="spec">
+      <div class="lbl">// LATENCY</div>
+      <div class="v">Seconds, not minutes</div>
+      <div class="sub">Available once the source-chain block is finalized to the destination's expected depth</div>
+    </div>
+    <div class="spec">
+      <div class="lbl">// AUTH</div>
+      <div class="v">API key · per-project quotas</div>
+      <div class="sub">Self-serve in dashboard · usage tiers in docs</div>
+    </div>
+  </div>
+
+  <!-- Status callout -->
+  <div class="status">
+    <div class="badge">LIVE IN PRODUCTION</div>
+    <a href="https://docs.polymerlabs.org/" target="_blank" rel="noopener" class="docs-link">
+      Read the full docs ↗
+    </a>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+</BaseLayout>

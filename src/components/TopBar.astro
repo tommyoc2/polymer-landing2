@@ -1,0 +1,46 @@
+---
+interface Props {
+  currentPage?: 'protocol' | 'proveapi';
+}
+const { currentPage = 'protocol' } = Astro.props;
+const isProveAPI = currentPage === 'proveapi';
+const moreClass = isProveAPI ? 'nav-more has-current' : 'nav-more';
+const overviewClass = isProveAPI ? 'nav-current' : '';
+---
+
+<header class="topbar">
+  <a href="/" class="wm">
+    <div class="wm-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 43" fill="none"><path d="M0.885669 31.9059V16.1258L6.21497 19.1732C6.76432 19.4875 7.10684 20.0727 7.11012 20.7013L7.13529 27.0693C7.14295 28.8314 8.10375 30.4743 9.64455 31.3554L18.0686 36.179C18.166 36.2397 18.3082 36.1628 18.3038 36.0457V26.069C18.3137 24.7609 18.0434 23.4745 17.3726 22.3486C16.7412 21.2518 15.8274 20.3274 14.7276 19.688L0.00146484 11.1147L19.4693 0L33.2686 7.88951L29.3236 10.1447C28.7863 10.4579 28.0793 10.459 27.5398 10.148C25.9345 9.37421 22.7281 6.95859 20.8492 7.12332C19.9661 7.12332 19.0994 7.35198 18.34 7.78547L8.45065 13.4284C8.34779 13.4815 8.34669 13.6419 8.45065 13.6961L15.7136 17.9389C16.8079 18.5761 18.0587 18.9197 19.3292 18.9316C20.6687 18.9728 22.0059 18.6541 23.1735 17.9963L37.9993 9.67224L37.9894 31.8441L24.1901 39.7337V33.6399C24.1901 33.0113 24.5305 32.425 25.0787 32.1086L30.6346 28.9029C32.1721 28.0164 33.1274 26.3703 33.1285 24.6081L33.1351 14.9706C33.1351 14.9131 33.1077 14.8654 33.0574 14.8362C33.007 14.8069 32.9512 14.8069 32.9009 14.8362L24.0928 19.7823C22.9656 20.4152 22.0278 21.3374 21.38 22.4483C20.7518 23.5255 20.4148 24.7523 20.4049 25.9953V42.9989L0.885669 31.9059Z"/></svg></div>
+    <div class="wm-text">POLYMER</div>
+  </a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-label="Toggle menu" onclick="this.closest('.topbar').classList.toggle('menu-open');this.setAttribute('aria-expanded',this.closest('.topbar').classList.contains('menu-open'))">
+    <span class="bars"><span></span><span></span><span></span></span>
+    Menu
+  </button>
+  <nav>
+    <a href="/#architecture">Architecture</a>
+    <a href="/#attack">Attack Surface</a>
+    <a href="/#request">Request Flow</a>
+    <a href="/#pillars">Trust Pillars</a>
+    <span class="nav-sep" aria-hidden="true"></span>
+    <div class={moreClass}>
+      <button type="button" class="nav-more-btn" aria-haspopup="true" aria-expanded="false" onclick="this.parentElement.classList.toggle('open');this.setAttribute('aria-expanded',this.parentElement.classList.contains('open'))">
+        <span class="label">ProveAPI</span><span class="nav-more-caret" aria-hidden="true">▾</span>
+      </button>
+      <div class="nav-more-panel" role="menu">
+        <a href="/proveapi.html" role="menuitem" class={overviewClass}>Overview</a>
+        <a href="https://docs.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Docs ↗</a>
+        <div class="nav-more-divider"></div>
+        <a href="https://accounts.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Accounts ↗</a>
+        <a href="https://dashboard.polymerlabs.org/analytics" target="_blank" rel="noopener" role="menuitem">Analytics ↗</a>
+        <a href="https://dashboard.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Explorer ↗</a>
+      </div>
+    </div>
+    <div class="nav-status">
+      <span class="live">~$2B volume</span>
+    </div>
+  </nav>
+  <div class="right">
+    <span class="live">~$2B volume</span>
+  </div>
+</header>

@@ -1,0 +1,162 @@
+---
+import TopBar from '../components/TopBar.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  currentPage?: 'protocol' | 'proveapi';
+  bodyAttrs?: Record<string, string>;
+}
+
+const { title, description, currentPage = 'protocol' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content={description} />
+<title>{title}</title>
+<link rel="icon" type="image/svg+xml" href="/assets/polymer-mark.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Radio+Canada+Big:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <TopBar currentPage={currentPage} />
+  <slot />
+  <Footer />
+  <!-- ============ HERO LIQUID CHROME (WebGL) ============ -->
+  <script is:inline>
+  (function() {
+    const canvas = document.getElementById('chrome-bg');
+    if (!canvas) return;
+    const gl = canvas.getContext('webgl', { antialias: true, premultipliedAlpha: false });
+    if (!gl) return;
+
+    const vertSrc = `
+      attribute vec2 a_pos;
+      attribute vec2 a_uv;
+      varying vec2 vUv;
+      void main() {
+        vUv = a_uv;
+        gl_Position = vec4(a_pos, 0.0, 1.0);
+      }
+    `;
+
+    const fragSrc = `
+      precision highp float;
+      varying vec2 vUv;
+      uniform float u_time;
+      uniform vec2 u_res;
+
+      const float ax = 5.0, ay = 7.0, az = 9.0, aw = 13.0;
+      const float scale = 0.34;
+
+      const vec3 color1 = vec3(0.86, 0.91, 1.00);
+      const vec3 color2 = vec3(0.34, 0.40, 0.52);
+      const vec3 color3 = vec3(0.03, 0.04, 0.06);
+      const vec3 color4 = vec3(0.16, 0.22, 0.34);
+
+      float cheapNoise(vec3 stp) {
+        vec3 p = vec3(stp.st, stp.p);
+        vec4 a = vec4(ax, ay, az, aw);
+        return mix(
+          sin(p.z + p.x * a.x + cos(p.x * a.x - p.z)) *
+          cos(p.z + p.y * a.y + cos(p.y * a.x + p.z)),
+          sin(1.0 + p.x * a.z + p.z + cos(p.y * a.w - p.z)) *
+          cos(1.0 + p.y * a.w + p.z + cos(p.x * a.x + p.z)),
+          0.436
+        );
+      }
+
+      void main() {
+        vec2 aR = vec2(u_res.x / u_res.y, 1.0);
+        vec2 st = vUv * aR * scale;
+        float t = u_time * 0.32;
+        float S = sin(t * 0.005), C = cos(t * 0.005);
+
+        vec2 v1 = vec2(cheapNoise(vec3(st, 2.0)), cheapNoise(vec3(st, 1.0)));
+        vec2 v2 = vec2(
+          cheapNoise(vec3(st + v1 + vec2(C * 1.7, S * 9.2), 0.15 * t)),
+          cheapNoise(vec3(st + v1 + vec2(S * 8.3, C * 2.8), 0.126 * t))
+        );
+        float n = 0.5 + 0.5 * cheapNoise(vec3(st + v2, 0.0));
+
+        vec3 color = mix(color1, color2, clamp((n * n) * 8.0, 0.0, 1.0));
+        color = mix(color, color3, clamp(length(v1), 0.0, 1.0));
+        color = mix(color, color4, clamp(length(v2.x), 0.0, 1.0));
+
+        color /= n * n + n * 5.0;
+        color = pow(color, vec3(0.9));
+
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `;
+
+    function compile(type, src) {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+        console.warn('chrome shader compile error:', gl.getShaderInfoLog(s));
+      }
+      return s;
+    }
+    const prog = gl.createProgram();
+    gl.attachShader(prog, compile(gl.VERTEX_SHADER, vertSrc));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fragSrc));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+
+    const posBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1, 1,1,-1,-1,1,-1]), gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(prog, 'a_pos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    const uvBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,0,1,1,0, 1,0,0,1,1,1]), gl.STATIC_DRAW);
+    const aUv = gl.getAttribLocation(prog, 'a_uv');
+    gl.enableVertexAttribArray(aUv);
+    gl.vertexAttribPointer(aUv, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes = gl.getUniformLocation(prog, 'u_res');
+    const uTime = gl.getUniformLocation(prog, 'u_time');
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let visible = true;
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        visible = entries[0].isIntersecting;
+      }, { threshold: 0 });
+      io.observe(canvas);
+    }
+
+    const start = performance.now();
+    function frame() {
+      if (visible) {
+        const now = (performance.now() - start) / 1000;
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+        gl.uniform1f(uTime, now);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      }
+      requestAnimationFrame(frame);
+    }
+    frame();
+  })();
+  </script>
+</body>
+</html>
