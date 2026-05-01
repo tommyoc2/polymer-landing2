@@ -1,8 +1,8 @@
 backend:
   name: github
-  repo: polymerdao/polymer-landing  # change to your <org>/<repo>
+  repo: polymerdao/polymer-landing  # CHANGE to your actual <github-org>/<repo>
   branch: main
-  base_url: https://polymerlabs.org   # OAuth proxy host (Cloudflare Pages Function below)
+  base_url: https://polymer-landing.pages.dev   # OAuth proxy host
   auth_endpoint: api/auth
 
 # Where Sveltia uploads images. Files committed to public/* are served from /*.
@@ -12,8 +12,8 @@ public_folder: /assets/blog/_uploads
 # Editorial workflow uses PRs instead of direct pushes
 publish_mode: editorial_workflow
 
-site_url: https://polymerlabs.org
-display_url: https://polymerlabs.org
+site_url: https://polymer-landing.pages.dev
+display_url: https://polymer-landing.pages.dev
 
 collections:
   - name: blog

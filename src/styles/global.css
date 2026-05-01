@@ -53,7 +53,6 @@
     letter-spacing: -0.01em;
   }
   body {
-    max-width: 1440px;
     width: 100%;
     margin: 0 auto;
     overflow-x: hidden;
@@ -61,6 +60,13 @@
       radial-gradient(ellipse 1100px 600px at 80% -10%, rgba(79, 163, 255,0.08), transparent 60%),
       radial-gradient(ellipse 800px 500px at 0% 30%, rgba(79, 163, 255,0.04), transparent 60%),
       var(--bg-0);
+  }
+  /* Constrain section content to 1440px while letting full-bleed elements
+     (.hero, footer rows) span the viewport. */
+  .section, .foot, .foot-bar {
+    max-width: 1440px;
+    margin-inline: auto;
+    box-sizing: border-box;
   }
   img, svg, video, canvas { max-width: 100%; height: auto; }
   ::selection { background: var(--accent); color: var(--bg-0); }
@@ -333,12 +339,25 @@
 
   /* ===== HERO ===== */
   .hero {
-    padding: 88px 64px 96px;
+    /* Full-bleed: break out of body's max-width so the chrome canvas fills the
+       viewport on ultrawide. Inner content is constrained by the rule below. */
+    width: 100vw;
+    margin-left: calc((100vw - 100%) / -2);
+    padding: 88px 0 96px;
     border-bottom: 1px solid var(--hairline);
     position: relative;
     overflow: hidden;
     isolation: isolate;
   }
+  .hero > *:not(#chrome-bg) {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 64px;
+    box-sizing: border-box;
+  }
+  /* Eyebrow defaults to inline-flex; force block-level flex inside the hero
+     so margin-inline: auto can center it within the 1440 content rail. */
+  .hero > .eyebrow { display: flex; }
   .hero #chrome-bg {
     position: absolute;
     inset: 0;
@@ -1913,7 +1932,8 @@
   /* ============ RESPONSIVE ============ */
   /* Tighten oversize hero/section padding for mid-width viewports */
   @media (max-width: 1280px) {
-    .hero { padding: 72px 40px 80px; }
+    .hero { padding: 72px 0 80px; }
+    .hero > *:not(#chrome-bg) { padding-inline: 40px; }
     .section { padding: 80px 40px; }
     .die-frame { grid-template-columns: 1fr; }
     .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -2104,7 +2124,8 @@
     .menu-btn { order: 2; }
 
     /* Hero scales down */
-    .hero { padding: 56px 20px 64px; }
+    .hero { padding: 56px 0 64px; }
+    .hero > *:not(#chrome-bg) { padding-inline: 20px; }
     .lede { font-size: 17px; line-height: 1.5; margin-bottom: 32px; }
     .cta { flex-wrap: wrap; gap: 10px; }
     .btn { height: 44px; padding: 0 18px; font-size: 13px; }
@@ -2166,7 +2187,8 @@
     .eyebrow { font-size: 10px; }
 
     /* Tighter padding everywhere */
-    .hero { padding: 48px 16px 56px; }
+    .hero { padding: 48px 0 56px; }
+    .hero > *:not(#chrome-bg) { padding-inline: 16px; }
     .section { padding: 48px 16px; }
     .die { padding: 14px; }
     .arch-body { padding: 14px 10px; }
