@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import BlogPagination from '../../components/BlogPagination.astro';
+import '../../styles/blog.css';
+
+const PAGE_SIZE = 9;
+
+const all = await getCollection('blog', ({ data }) => !data.draft);
+const sorted = all.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const featured = sorted.find((p) => p.data.featured) ?? sorted[0];
+const rest = sorted.filter((p) => p.id !== featured.id);
+const gridPosts = rest.slice(0, PAGE_SIZE);
+const totalPages = Math.max(1, Math.ceil(rest.length / PAGE_SIZE));
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+const featuredSlug = featured.data.slug ?? featured.id;
+---
+<BaseLayout
+  title="Blog — Polymer"
+  description="Latest updates from the Polymer ecosystem: Verifiable RPC, ProveAPI, integrations, and protocol research."
+  currentPage="blog"
+>
+  <div class="blog-shell">
+
+    <!-- ============ HERO ============ -->
+    <section class="blog-hero">
+      <div class="eyebrow">
+        <span>POLYMER <span class="v">/ Blog</span></span>
+      </div>
+      <h1>
+        Latest updates from<br/>
+        <span class="blue">the Polymer ecosystem.</span>
+      </h1>
+      <p>
+        Engineering notes, integration announcements, and protocol research from
+        the team building verifiable RPC infrastructure for the on-chain economy.
+      </p>
+    </section>
+
+    <!-- ============ FEATURED ============ -->
+    <section class="blog-featured">
+      <div class="marker">// FEATURED</div>
+      <a class="featured-card" href={`/blog/${featuredSlug}/`}>
+        <div class="media">
+          {featured.data.cover && (
+            <img src={featured.data.cover} alt={featured.data.title} loading="eager" />
+          )}
+        </div>
+        <div class="body">
+          <span class="tag">{featured.data.featured ? 'Featured' : 'Latest'}</span>
+          <h2>{featured.data.title}</h2>
+          <p class="excerpt">{featured.data.description}</p>
+          <div class="meta">
+            <span>{fmtDate(featured.data.date)}</span>
+            <span class="dot"></span>
+            <span>{featured.data.author}</span>
+            {featured.data.readTime > 0 && (
+              <>
+                <span class="dot"></span>
+                <span>{featured.data.readTime} min read</span>
+              </>
+            )}
+          </div>
+          <span class="read">Read post</span>
+        </div>
+      </a>
+    </section>
+
+    <!-- ============ GRID ============ -->
+    <section class="blog-grid-section">
+      <div class="head">
+        <div class="marker">// ALL POSTS</div>
+        <div class="count">
+          Page <strong>1</strong> of <strong>{totalPages}</strong>
+          <span class="count-sep">·</span>
+          <strong>{sorted.length}</strong> posts
+        </div>
+      </div>
+
+      <div class="blog-grid">
+        {gridPosts.map((entry) => (
+          <BlogCard entry={entry} />
+        ))}
+        {Array.from({ length: (3 - (gridPosts.length % 3)) % 3 }).map(() => (
+          <div class="post-card-empty" aria-hidden="true"></div>
+        ))}
+      </div>
+
+      <BlogPagination current={1} total={totalPages} />
+    </section>
+
+  </div>
+</BaseLayout>

@@ -15,7 +15,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </div>
 
   <h1 class="htitle">
-    <span class="silver">Securing the</span><br/>
+    <span class="silver">Verifying the</span><br/>
     <span class="blue">Onchain Economy.</span>
   </h1>
 
@@ -26,8 +26,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </p>
 
   <div class="cta">
-    <a class="btn btn-primary" href="#">Run a Polymer node</a>
-    <a class="btn btn-secondary" href="#">Read the whitepaper</a>
+    <a class="btn btn-primary" href="#">Read the whitepaper</a>
   </div>
 
   <hr class="section-divider"/>
@@ -84,17 +83,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <stop offset="100%" stop-color="#0A0D14"/>
               </linearGradient>
               <radialGradient id="core" cx="0.5" cy="0.5">
-                <stop offset="0%" stop-color="#2D5FE6" stop-opacity="0.5"/>
-                <stop offset="100%" stop-color="#2D5FE6" stop-opacity="0"/>
+                <stop offset="0%" stop-color="#4FA3FF" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="#4FA3FF" stop-opacity="0"/>
               </radialGradient>
             </defs>
 
             <!-- Outer chip body (silver bezel) -->
             <rect x="40" y="20" width="520" height="190" rx="6" fill="url(#silver)" opacity="0.15"/>
-            <rect x="42" y="22" width="516" height="186" rx="5" fill="url(#diegrad)" stroke="#2D5FE6" stroke-opacity="0.6"/>
+            <rect x="42" y="22" width="516" height="186" rx="5" fill="url(#diegrad)" stroke="#4FA3FF" stroke-opacity="0.6"/>
 
             <!-- Pin grid top -->
-            <g class="pin-row pin-top" fill="#2D5FE6">
+            <g class="pin-row pin-top" fill="#4FA3FF">
               <circle cx="80"  cy="14" r="2"/><circle cx="100" cy="14" r="2"/><circle cx="120" cy="14" r="2"/>
               <circle cx="140" cy="14" r="2"/><circle cx="160" cy="14" r="2"/><circle cx="180" cy="14" r="2"/>
               <circle cx="200" cy="14" r="2"/><circle cx="220" cy="14" r="2"/><circle cx="240" cy="14" r="2"/>
@@ -102,7 +101,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <circle cx="380" cy="14" r="2"/><circle cx="420" cy="14" r="2"/><circle cx="460" cy="14" r="2"/>
               <circle cx="480" cy="14" r="2"/><circle cx="500" cy="14" r="2"/><circle cx="520" cy="14" r="2"/>
             </g>
-            <g class="pin-row pin-bot" fill="#2D5FE6">
+            <g class="pin-row pin-bot" fill="#4FA3FF">
               <circle cx="80"  cy="216" r="2"/><circle cx="100" cy="216" r="2"/><circle cx="120" cy="216" r="2"/>
               <circle cx="140" cy="216" r="2"/><circle cx="160" cy="216" r="2"/><circle cx="180" cy="216" r="2"/>
               <circle cx="200" cy="216" r="2"/><circle cx="220" cy="216" r="2"/><circle cx="240" cy="216" r="2"/>
@@ -118,43 +117,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- left block: workload -->
             <g>
               <rect x="62" y="46" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
-              <text x="70" y="62" font-family="JetBrains Mono" font-size="9" fill="#2D5FE6" letter-spacing="1">CHAIN FULL NODE</text>
-              <line x1="70" y1="68" x2="160" y2="68" stroke="#2D5FE6"/>
+              <text x="70" y="62" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1">CHAIN FULL NODE</text>
+              <line x1="70" y1="68" x2="160" y2="68" stroke="#4FA3FF"/>
               <text x="70" y="82" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">EL + CL · RPC server</text>
               <text x="70" y="93" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">canonical answer</text>
 
               <rect x="62" y="110" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
-              <text x="70" y="126" font-family="JetBrains Mono" font-size="9" fill="#2D5FE6" letter-spacing="1">EIP-712</text>
-              <line x1="70" y1="132" x2="120" y2="132" stroke="#2D5FE6"/>
+              <text x="70" y="126" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1">EIP-712</text>
+              <line x1="70" y1="132" x2="120" y2="132" stroke="#4FA3FF"/>
               <text x="70" y="146" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">PolymerResponse</text>
               <text x="70" y="157" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">typed-data digest</text>
             </g>
 
             <!-- centre: signing core -->
             <g>
-              <rect x="240" y="62" width="120" height="106" fill="rgba(45, 95, 230,0.05)" stroke="#2D5FE6" stroke-width="1.5"/>
-              <text x="300" y="80" font-family="JetBrains Mono" font-size="9" fill="#2D5FE6" letter-spacing="1.5" text-anchor="middle">SIGNING CORE</text>
-              <line x1="270" y1="86" x2="330" y2="86" stroke="#2D5FE6" opacity="0.6"/>
+              <rect x="240" y="62" width="120" height="106" fill="rgba(79, 163, 255,0.05)" stroke="#4FA3FF" stroke-width="1.5"/>
+              <text x="300" y="80" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1.5" text-anchor="middle">SIGNING CORE</text>
+              <line x1="270" y1="86" x2="330" y2="86" stroke="#4FA3FF" opacity="0.6"/>
               <text x="300" y="106" font-family="Space Grotesk" font-size="14" fill="#FFFFFF" font-weight="600" text-anchor="middle">I_priv_n</text>
               <text x="300" y="124" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">secp256k1</text>
               <text x="300" y="138" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">libsecp256k1</text>
-              <text x="300" y="158" font-family="JetBrains Mono" font-size="8" fill="#2D5FE6" text-anchor="middle">CONST-TIME</text>
+              <text x="300" y="158" font-family="JetBrains Mono" font-size="8" fill="#4FA3FF" text-anchor="middle">CONST-TIME</text>
               <!-- decorative trace lines -->
-              <path d="M222 80 H240 M222 104 H240 M222 128 H240 M222 152 H240" stroke="#2D5FE6" stroke-opacity="0.3"/>
-              <path d="M360 80 H378 M360 104 H378 M360 128 H378 M360 152 H378" stroke="#2D5FE6" stroke-opacity="0.5"/>
+              <path d="M222 80 H240 M222 104 H240 M222 128 H240 M222 152 H240" stroke="#4FA3FF" stroke-opacity="0.3"/>
+              <path d="M360 80 H378 M360 104 H378 M360 128 H378 M360 152 H378" stroke="#4FA3FF" stroke-opacity="0.5"/>
             </g>
 
             <!-- right block: attestation -->
             <g>
               <rect x="378" y="46" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
-              <text x="386" y="62" font-family="JetBrains Mono" font-size="9" fill="#2D5FE6" letter-spacing="1">ATTESTATION</text>
-              <line x1="386" y1="68" x2="476" y2="68" stroke="#2D5FE6"/>
+              <text x="386" y="62" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1">ATTESTATION</text>
+              <line x1="386" y1="68" x2="476" y2="68" stroke="#4FA3FF"/>
               <text x="386" y="82" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">Cloud attestation</text>
               <text x="386" y="93" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">RS256 · per-response</text>
 
               <rect x="378" y="110" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
-              <text x="386" y="126" font-family="JetBrains Mono" font-size="9" fill="#2D5FE6" letter-spacing="1">KEY BINDING</text>
-              <line x1="386" y1="132" x2="476" y2="132" stroke="#2D5FE6"/>
+              <text x="386" y="126" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1">KEY BINDING</text>
+              <line x1="386" y1="132" x2="476" y2="132" stroke="#4FA3FF"/>
               <text x="386" y="146" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">hash(I_pub_n) bound</text>
               <text x="386" y="157" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">binds identity to image</text>
             </g>
@@ -218,18 +217,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <div class="swap">
           <div class="swap-node honest">
-            <div class="hd"><span>NODE · BEFORE</span><span class="dot"></span></div>
-            <div class="label">canonical worker</div>
+            <div class="hd"><span>NODE · PUBLIC</span><span class="dot"></span></div>
+            <div class="label">canonical RPC node</div>
             <div class="hash">sha256:<br/>9f2c…e4a8</div>
-            <div class="delta"><span class="k">behavior:</span> <span class="v">honest</span></div>
+            <div class="delta"><span class="k">behavior:</span> <span class="v">forwards</span></div>
           </div>
           <div class="swap-arrow">
-            <span class="glyph">⤖</span>
-            <span class="lbl">SWAPPED</span>
+            <span class="glyph">→</span>
+            <span class="lbl">FORWARDS</span>
           </div>
           <div class="swap-node swapped">
-            <div class="hd"><span>NODE · AFTER</span><span class="dot"></span></div>
-            <div class="label">tampered worker</div>
+            <div class="hd"><span>NODE · UPSTREAM</span><span class="dot"></span></div>
+            <div class="label">tampered RPC node</div>
             <div class="hash">sha256:<br/>71b3…d92c</div>
             <div class="delta"><span class="k">behavior:</span> <span class="v">selective lie</span></div>
           </div>
@@ -237,11 +236,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <div class="selective">
           <div class="row honest">
-            <div class="who">// SAME NODE → OTHER CLIENTS</div>
+            <div class="who">// SAME ENDPOINT → OTHER CLIENTS</div>
             <div class="resp">eth_getProof → valid Merkle proof</div>
           </div>
           <div class="row lied">
-            <div class="who">// SAME NODE → LZ VERIFIER</div>
+            <div class="who">// SAME ENDPOINT → LZ VERIFIER</div>
             <div class="resp">eth_getProof → forged Merkle proof</div>
           </div>
         </div>
@@ -253,7 +252,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <span class="single">Drained in a single exploit</span>
           <div class="num"><small>$</small>292<small>M</small></div>
           <div class="num-lbl">Bridge withdrawal · LayerZero rsETH</div>
-          <div class="scoped"><strong>116,500 rsETH</strong> · ~18% of circulating supply, irreversible on-chain.</div>
+          <div class="scoped"><strong>116,500 rsETH</strong> · ~18% of circulating supply.</div>
         </div>
 
         <div class="timeline">
@@ -358,20 +357,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#54585F"/>
           </marker>
           <marker id="ar3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#2D5FE6"/>
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#4FA3FF"/>
           </marker>
           <radialGradient id="enclaveCore" cx="0.5" cy="0.5">
-            <stop offset="0%" stop-color="#2D5FE6" stop-opacity="0.15"/>
-            <stop offset="100%" stop-color="#2D5FE6" stop-opacity="0"/>
+            <stop offset="0%" stop-color="#4FA3FF" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#4FA3FF" stop-opacity="0"/>
           </radialGradient>
           <linearGradient id="silv2" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#F1F4F9"/>
             <stop offset="100%" stop-color="#6F7682"/>
           </linearGradient>
           <linearGradient id="scanGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%"  stop-color="#2D5FE6" stop-opacity="0"/>
+            <stop offset="0%"  stop-color="#4FA3FF" stop-opacity="0"/>
             <stop offset="50%" stop-color="#7AA8FF" stop-opacity="0.55"/>
-            <stop offset="100%" stop-color="#2D5FE6" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#4FA3FF" stop-opacity="0"/>
           </linearGradient>
           <clipPath id="enclaveClip">
             <rect x="2" y="2" width="440" height="180" rx="5"/>
@@ -386,8 +385,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <!-- consumer -->
         <g transform="translate(40,160)">
           <rect width="200" height="120" rx="6" fill="#0B0C10" stroke="#2C3038"/>
-          <text x="16" y="24" font-family="JetBrains Mono" font-size="10" fill="#2D5FE6" letter-spacing="1.5">CONSUMER</text>
-          <line x1="16" y1="32" x2="76" y2="32" stroke="#2D5FE6" stroke-opacity="0.6"/>
+          <text x="16" y="24" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="1.5">CONSUMER</text>
+          <line x1="16" y1="32" x2="76" y2="32" stroke="#4FA3FF" stroke-opacity="0.6"/>
           <text x="16" y="58" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">wallet · indexer</text>
           <text x="16" y="78" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">bridge · DVN</text>
           <text x="16" y="104" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">verifier-v2</text>
@@ -408,7 +407,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <!-- enclave (silicon-style) -->
           <g transform="translate(28,42)">
             <rect class="enclave-plate" width="444" height="184" rx="6" fill="url(#silv2)"/>
-            <rect x="2" y="2" width="440" height="180" rx="5" fill="#0A0D14" stroke="#2D5FE6" stroke-width="1.5"/>
+            <rect x="2" y="2" width="440" height="180" rx="5" fill="#0A0D14" stroke="#4FA3FF" stroke-width="1.5"/>
             <ellipse class="enclave-core-glow" cx="222" cy="92" rx="180" ry="80" fill="url(#enclaveCore)"/>
 
             <!-- scanning shimmer line -->
@@ -418,46 +417,46 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             <!-- pin lights along bottom edge -->
             <g>
-              <circle class="pin-light" cx="60"  cy="176" r="1.6" fill="#2D5FE6"/>
-              <circle class="pin-light" cx="130" cy="176" r="1.6" fill="#2D5FE6"/>
-              <circle class="pin-light" cx="200" cy="176" r="1.6" fill="#2D5FE6"/>
-              <circle class="pin-light" cx="270" cy="176" r="1.6" fill="#2D5FE6"/>
-              <circle class="pin-light" cx="340" cy="176" r="1.6" fill="#2D5FE6"/>
-              <circle class="pin-light" cx="400" cy="176" r="1.6" fill="#2D5FE6"/>
+              <circle class="pin-light" cx="60"  cy="176" r="1.6" fill="#4FA3FF"/>
+              <circle class="pin-light" cx="130" cy="176" r="1.6" fill="#4FA3FF"/>
+              <circle class="pin-light" cx="200" cy="176" r="1.6" fill="#4FA3FF"/>
+              <circle class="pin-light" cx="270" cy="176" r="1.6" fill="#4FA3FF"/>
+              <circle class="pin-light" cx="340" cy="176" r="1.6" fill="#4FA3FF"/>
+              <circle class="pin-light" cx="400" cy="176" r="1.6" fill="#4FA3FF"/>
             </g>
 
-            <text x="16" y="22" font-family="JetBrains Mono" font-size="10" fill="#2D5FE6" letter-spacing="1.5">TDX ENCLAVE</text>
-            <text x="428" y="22" font-family="JetBrains Mono" font-size="10" fill="#2D5FE6" text-anchor="end" letter-spacing="0.5">D_image ✓</text>
+            <text x="16" y="22" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="1.5">TDX ENCLAVE</text>
+            <text x="428" y="22" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" text-anchor="end" letter-spacing="0.5">D_image ✓</text>
 
             <!-- workload -->
-            <rect x="22" y="42" width="400" height="46" rx="3" fill="rgba(45, 95, 230,0.04)" stroke="#2C3038"/>
+            <rect x="22" y="42" width="400" height="46" rx="3" fill="rgba(79, 163, 255,0.04)" stroke="#2C3038"/>
             <text x="34" y="62" font-family="Space Grotesk" font-size="13" fill="#FFFFFF" font-weight="600">Chain Full Node · RPC</text>
             <text x="34" y="80" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A">EL.eth_getBalance() → resultHash · headBlock · finality</text>
 
             <!-- I_priv_n  -->
-            <rect class="id-block" x="22" y="98" width="194" height="68" rx="3" fill="rgba(45, 95, 230,0.05)" stroke="#2D5FE6"/>
-            <text x="34" y="116" font-family="JetBrains Mono" font-size="10" fill="#2D5FE6" letter-spacing="0.5">SIGNING IDENTITY</text>
+            <rect class="id-block" x="22" y="98" width="194" height="68" rx="3" fill="rgba(79, 163, 255,0.05)" stroke="#4FA3FF"/>
+            <text x="34" y="116" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="0.5">SIGNING IDENTITY</text>
             <text x="34" y="138" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">I_priv_n</text>
             <text x="34" y="156" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A">secp256k1 · const-time</text>
 
             <!-- A_live -->
             <rect x="228" y="98" width="194" height="68" rx="3" fill="rgba(11,12,16,0.6)" stroke="#2C3038"/>
-            <text x="240" y="116" font-family="JetBrains Mono" font-size="10" fill="#2D5FE6" letter-spacing="0.5">RUNTIME ATTESTATION</text>
+            <text x="240" y="116" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="0.5">RUNTIME ATTESTATION</text>
             <text x="240" y="138" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">A_live</text>
             <text x="240" y="156" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A">Cloud attestation · per-response</text>
           </g>
         </g>
 
         <!-- response -->
-        <line class="flow-signed" x1="935" y1="220" x2="1100" y2="220" stroke="#2D5FE6" stroke-width="2" marker-end="url(#ar3b)"/>
-        <text x="1018" y="212" font-family="JetBrains Mono" font-size="10" fill="#2D5FE6" text-anchor="middle">σ · A_live</text>
+        <line class="flow-signed" x1="935" y1="220" x2="1100" y2="220" stroke="#4FA3FF" stroke-width="2" marker-end="url(#ar3b)"/>
+        <text x="1018" y="212" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" text-anchor="middle">σ · A_live</text>
         <text x="1018" y="238" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">EIP-712 PolymerResponse</text>
 
         <!-- registry -->
         <g transform="translate(1105,160)">
           <rect width="160" height="120" rx="6" fill="#0B0C10" stroke="#2C3038"/>
-          <text x="14" y="24" font-family="JetBrains Mono" font-size="10" fill="#2D5FE6" letter-spacing="1.5">ON-CHAIN</text>
-          <line x1="14" y1="32" x2="74" y2="32" stroke="#2D5FE6" stroke-opacity="0.6"/>
+          <text x="14" y="24" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="1.5">ON-CHAIN</text>
+          <line x1="14" y1="32" x2="74" y2="32" stroke="#4FA3FF" stroke-opacity="0.6"/>
           <text x="14" y="58" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">Registry</text>
           <text x="14" y="76" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">getNodes(1)</text>
           <text x="14" y="98" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">ChainVersionRecord</text>
@@ -467,14 +466,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <!-- governance below -->
         <g transform="translate(1105,395)">
           <rect width="160" height="46" rx="6" fill="#0B0C10" stroke="#2C3038"/>
-          <text x="14" y="20" font-family="JetBrains Mono" font-size="10" fill="#2D5FE6" letter-spacing="1.5">GOVERNANCE</text>
+          <text x="14" y="20" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="1.5">GOVERNANCE</text>
           <text x="14" y="36" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">multisig · time-locked</text>
         </g>
-        <line x1="1185" y1="395" x2="1185" y2="280" stroke="#2D5FE6" stroke-dasharray="2 3" stroke-width="1"/>
+        <line x1="1185" y1="395" x2="1185" y2="280" stroke="#4FA3FF" stroke-dasharray="2 3" stroke-width="1"/>
 
         <!-- jwt registration up -->
-        <path d="M 680 90 L 680 50 L 1185 50 L 1185 160" fill="none" stroke="#2D5FE6" stroke-dasharray="3 3" stroke-opacity="0.6" marker-end="url(#ar3b)"/>
-        <text x="900" y="42" font-family="JetBrains Mono" font-size="10" fill="#2D5FE6" text-anchor="middle">register(I_pub_n, attestation) — once at boot</text>
+        <path d="M 680 90 L 680 50 L 1185 50 L 1185 160" fill="none" stroke="#4FA3FF" stroke-dasharray="3 3" stroke-opacity="0.6" marker-end="url(#ar3b)"/>
+        <text x="900" y="42" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" text-anchor="middle">register(I_pub_n, attestation) — once at boot</text>
 
         <!-- consumer reads registry -->
         <path d="M 140 350 L 140 420 L 1105 420" fill="none" stroke="#54585F" stroke-dasharray="3 3" marker-end="url(#ar3)"/>
@@ -482,8 +481,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <!-- verify badge -->
         <g transform="translate(40,308)">
-          <rect width="200" height="42" rx="4" fill="rgba(45, 95, 230,0.07)" stroke="#2D5FE6" stroke-opacity="0.5"/>
-          <text x="14" y="18" font-family="JetBrains Mono" font-size="9" fill="#2D5FE6">verify_response()</text>
+          <rect width="200" height="42" rx="4" fill="rgba(79, 163, 255,0.07)" stroke="#4FA3FF" stroke-opacity="0.5"/>
+          <text x="14" y="18" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF">verify_response()</text>
           <text x="14" y="32" font-family="Space Grotesk" font-size="13" fill="#FFFFFF" font-weight="600">ecrecover ≡ I_pub_n  ✓</text>
         </g>
       </svg>
@@ -591,6 +590,44 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   </div>
 
+</section>
+
+<!-- ============ INVESTORS ============ -->
+<section class="section investors-section" id="investors">
+  <div class="marker">05 // BACKED BY</div>
+  <h2 class="stitle">
+    Backed by <span class="blue">long-term capital</span> across crypto.
+  </h2>
+  <p class="ssub">
+    Polymer is funded by investors who've been backing on-chain
+    infrastructure since the early cycles.
+  </p>
+
+  <div class="investor-grid">
+    <div class="investor"><img src="/assets/investors/distributedglobal.webp" alt="Distributed Global" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/blockchaincapital.webp" alt="Blockchain Capital" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/maven.webp" alt="Maven 11" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/coinbase.webp" alt="Coinbase Ventures" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/digitalcurrencygroup.webp" alt="Digital Currency Group" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/placeholder.webp" alt="Placeholder" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/figmentcapital.webp" alt="Figment Capital" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/informalsystems.webp" alt="Informal Systems" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/cosmostation.webp" alt="Cosmostation" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/wintermute.webp" alt="Wintermute" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/longhash.webp" alt="LongHash Ventures" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/niv.webp" alt="NIV" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/tauren.webp" alt="Tauren" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/thelao.webp" alt="The LAO" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/basisset.webp" alt="Basis Set Ventures" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/signum.webp" alt="Signum" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/uob.webp" alt="UOB Venture" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/tane.webp" alt="Tane" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/youbicapital.webp" alt="Youbi Capital" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/wave.webp" alt="Wave" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/d1.webp" alt="D1 Ventures" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/kervecap.webp" alt="Kerve Capital" loading="lazy"/></div>
+    <div class="investor"><img src="/assets/investors/bitscalecapital.webp" alt="Bitscale Capital" loading="lazy"/></div>
+  </div>
 </section>
 
 </BaseLayout>

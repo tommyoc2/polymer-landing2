@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogCard from '../../../components/BlogCard.astro';
+import BlogPagination from '../../../components/BlogPagination.astro';
+import '../../../styles/blog.css';
+
+export async function getStaticPaths() {
+  const PAGE_SIZE = 9;
+  const all = await getCollection('blog', ({ data }) => !data.draft);
+  const sorted = all.sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime()
+  );
+  const featured = sorted.find((p) => p.data.featured) ?? sorted[0];
+  const rest = sorted.filter((p) => p.id !== featured.id);
+  const totalPages = Math.max(1, Math.ceil(rest.length / PAGE_SIZE));
+
+  // Pages 2..N — page 1 is served by /blog/index.astro
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => {
+    const pageNum = i + 2;
+    const start = (pageNum - 1) * PAGE_SIZE;
+    return {
+      params: { page: String(pageNum) },
+      props: {
+        posts: rest.slice(start, start + PAGE_SIZE),
+        currentPage: pageNum,
+        totalPages,
+        totalCount: sorted.length,
+      },
+    };
+  });
+}
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+}
+
+const { posts, currentPage, totalPages, totalCount } = Astro.props;
+---
+<BaseLayout
+  title={`Blog — Page ${currentPage} — Polymer`}
+  description="Latest updates from the Polymer ecosystem."
+  currentPage="blog"
+>
+  <div class="blog-shell">
+
+    <section class="blog-hero compact">
+      <div class="eyebrow">
+        <span>POLYMER <span class="v">/ Blog</span></span>
+      </div>
+      <h1>
+        All posts<br/>
+        <span class="blue">page {currentPage}.</span>
+      </h1>
+    </section>
+
+    <section class="blog-grid-section">
+      <div class="head">
+        <div class="marker">// ALL POSTS</div>
+        <div class="count">
+          Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+          <span class="count-sep">·</span>
+          <strong>{totalCount}</strong> posts
+        </div>
+      </div>
+
+      <div class="blog-grid">
+        {posts.map((entry) => (
+          <BlogCard entry={entry} />
+        ))}
+        {Array.from({ length: (3 - (posts.length % 3)) % 3 }).map(() => (
+          <div class="post-card-empty" aria-hidden="true"></div>
+        ))}
+      </div>
+
+      <BlogPagination current={currentPage} total={totalPages} />
+    </section>
+
+  </div>
+</BaseLayout>

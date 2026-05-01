@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ecosystem from '../../data/ecosystem.json';
+import '../../styles/ecosystem.css';
+
+interface Item { name: string; url: string | null; image: string | null }
+interface Section { index: string; title: string; items: Item[] }
+
+const sections = ecosystem.sections as Section[];
+
+const totalChains = sections.find((s) => s.title === 'Chains')?.items.length ?? 0;
+const totalApps = sections.find((s) => s.title === 'Apps')?.items.length ?? 0;
+const totalInfra = sections.find((s) => s.title === 'Infra')?.items.length ?? 0;
+
+// Always pad to a multiple of 6 for the wide-desktop layout. The CSS hides
+// trailing placeholders below the mobile breakpoint.
+const padTo = 6;
+const fillCount = (n: number) => (padTo - (n % padTo)) % padTo;
+---
+<BaseLayout
+  title={`${ecosystem.title} — Polymer`}
+  description={ecosystem.description}
+  currentPage="ecosystem"
+>
+  <div class="eco-shell">
+
+    <!-- ============ HERO ============ -->
+    <section class="eco-hero">
+      <div class="eyebrow">
+        <span>POLYMER <span class="v">/ Ecosystem</span></span>
+      </div>
+      <h1>
+        The chains, apps, and infra<br/>
+        <span class="blue">building on Polymer.</span>
+      </h1>
+      <p>{ecosystem.description}</p>
+
+      <div class="eco-stats">
+        <div class="stat">
+          <span class="lbl">Chains</span>
+          <span class="num"><span class="a">{totalChains}</span></span>
+        </div>
+        <div class="stat">
+          <span class="lbl">Apps</span>
+          <span class="num"><span class="a">{totalApps}</span></span>
+        </div>
+        <div class="stat">
+          <span class="lbl">Infra</span>
+          <span class="num"><span class="a">{totalInfra}</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTIONS ============ -->
+    {sections.map((section) => (
+      <section class="eco-section">
+        <div class="eco-section-head">
+          <div class="lhs">
+            <span class="index">[ {section.index} ]</span>
+            <h2>{section.title}</h2>
+          </div>
+          <div class="count"><strong>{section.items.length}</strong> {section.title.toLowerCase()}</div>
+        </div>
+
+        <div class="eco-grid">
+          {section.items.map((item) => {
+            const Tag = item.url ? 'a' : 'div';
+            const linkProps = item.url
+              ? { href: item.url, target: '_blank', rel: 'noopener', class: 'eco-cell is-link' }
+              : { class: 'eco-cell' };
+            return (
+              <Tag {...linkProps}>
+                {item.image && <img class="logo" src={item.image} alt={item.name} loading="lazy" />}
+                <span class="name">{item.name}</span>
+              </Tag>
+            );
+          })}
+          {Array.from({ length: fillCount(section.items.length) }).map(() => (
+            <div class="eco-cell-empty" aria-hidden="true"></div>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <!-- ============ CTA ============ -->
+    <div class="eco-cta">
+      <div>
+        <h3>Build on Polymer.</h3>
+        <p>Verifiable RPC, ProveAPI, and instant cross-rollup interop. Ship a feature in a day.</p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://docs.polymerlabs.org/" target="_blank" rel="noopener">ProveAPI docs</a>
+        <a class="btn btn-secondary" href="/proveapi/">Explore ProveAPI</a>
+      </div>
+    </div>
+
+  </div>
+</BaseLayout>

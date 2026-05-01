@@ -1,0 +1,249 @@
+{
+  "title": "Polymer Ecosystem",
+  "description": "The Polymer ecosystem is dedicated to fostering the most secure, neutral, and open framework for interoperability.",
+  "sections": [
+    {
+      "index": "01",
+      "title": "Chains",
+      "items": [
+        {
+          "name": "Ethereum",
+          "url": "https://ethereum.org/en/",
+          "image": "/assets/ecosystem/Ethereum-1.png"
+        },
+        {
+          "name": "Solana",
+          "url": null,
+          "image": "/assets/ecosystem/Solana.png"
+        },
+        {
+          "name": "Monad",
+          "url": null,
+          "image": "/assets/ecosystem/Monad.png"
+        },
+        {
+          "name": "Sonic",
+          "url": null,
+          "image": "/assets/ecosystem/Sonic.png"
+        },
+        {
+          "name": "Berachain",
+          "url": null,
+          "image": "/assets/ecosystem/Berachain.png"
+        },
+        {
+          "name": "Binance Smart Chain",
+          "url": null,
+          "image": "/assets/ecosystem/BSC.png"
+        },
+        {
+          "name": "Avalanche",
+          "url": null,
+          "image": "/assets/ecosystem/Avalanche.png"
+        },
+        {
+          "name": "Optimism",
+          "url": null,
+          "image": "/assets/ecosystem/1.png"
+        },
+        {
+          "name": "Arbitrum",
+          "url": null,
+          "image": "/assets/ecosystem/Arbitrum.png"
+        },
+        {
+          "name": "MegaETH",
+          "url": null,
+          "image": "/assets/ecosystem/MegaETH.png"
+        },
+        {
+          "name": "Unichain",
+          "url": null,
+          "image": "/assets/ecosystem/Unichain.png"
+        },
+        {
+          "name": "Base",
+          "url": null,
+          "image": "/assets/ecosystem/Base__1_.png"
+        },
+        {
+          "name": "Celo",
+          "url": null,
+          "image": "/assets/ecosystem/Celo.png"
+        },
+        {
+          "name": "Everclear",
+          "url": null,
+          "image": "/assets/ecosystem/Everclear.png"
+        },
+        {
+          "name": "Ink",
+          "url": null,
+          "image": "/assets/ecosystem/Ink.png"
+        },
+        {
+          "name": "Mode",
+          "url": null,
+          "image": "/assets/ecosystem/Mode.png"
+        },
+        {
+          "name": "Mantle",
+          "url": null,
+          "image": "/assets/ecosystem/Mantle.png"
+        },
+        {
+          "name": "Plume",
+          "url": null,
+          "image": "/assets/ecosystem/Plume.png"
+        },
+        {
+          "name": "B.O.B",
+          "url": null,
+          "image": "/assets/ecosystem/BOB.png"
+        },
+        {
+          "name": "Doma",
+          "url": null,
+          "image": "/assets/ecosystem/D3.png"
+        },
+        {
+          "name": "World Chain",
+          "url": null,
+          "image": "/assets/ecosystem/World_Chain.png"
+        },
+        {
+          "name": "Soneium",
+          "url": null,
+          "image": "/assets/ecosystem/Soneium.png"
+        },
+        {
+          "name": "Zora",
+          "url": null,
+          "image": "/assets/ecosystem/Zora.png"
+        },
+        {
+          "name": "B3",
+          "url": null,
+          "image": "/assets/ecosystem/B3.png"
+        },
+        {
+          "name": "Apechain",
+          "url": null,
+          "image": "/assets/ecosystem/Apechain.png"
+        },
+        {
+          "name": "Scroll",
+          "url": null,
+          "image": "/assets/ecosystem/Scroll.png"
+        },
+        {
+          "name": "t3rn",
+          "url": null,
+          "image": "/assets/ecosystem/t3rn.png"
+        },
+        {
+          "name": "Dia",
+          "url": null,
+          "image": "/assets/ecosystem/DIA.png"
+        },
+        {
+          "name": "Linea",
+          "url": null,
+          "image": "/assets/ecosystem/Linea.png"
+        },
+        {
+          "name": "Blast",
+          "url": null,
+          "image": "/assets/ecosystem/Blast.png"
+        },
+        {
+          "name": "Tron",
+          "url": null,
+          "image": "/assets/ecosystem/ChatGPT_Image_Jun_4__2025__04_10_33_PM.png"
+        }
+      ]
+    },
+    {
+      "index": "02",
+      "title": "Apps",
+      "items": [
+        {
+          "name": "Superform",
+          "url": null,
+          "image": "/assets/ecosystem/Superform.png"
+        },
+        {
+          "name": "Lucid",
+          "url": null,
+          "image": "/assets/ecosystem/Lucid.png"
+        },
+        {
+          "name": "LiFi",
+          "url": null,
+          "image": "/assets/ecosystem/LiFi.png"
+        },
+        {
+          "name": "Eco",
+          "url": null,
+          "image": "/assets/ecosystem/Eco.png"
+        },
+        {
+          "name": "Khalani Network",
+          "url": null,
+          "image": "/assets/ecosystem/Khalani.png"
+        },
+        {
+          "name": "Epoch",
+          "url": null,
+          "image": "/assets/ecosystem/Epoch.png"
+        },
+        {
+          "name": "Catalyst",
+          "url": null,
+          "image": "/assets/ecosystem/Catalyst.png"
+        },
+        {
+          "name": "Openfort",
+          "url": null,
+          "image": "/assets/ecosystem/Openfort.png"
+        },
+        {
+          "name": "t3rn",
+          "url": null,
+          "image": "/assets/ecosystem/t3rn.png"
+        },
+        {
+          "name": "Zeroway",
+          "url": null,
+          "image": "/assets/ecosystem/photo_2026-01-28_22.48.44.jpg"
+        }
+      ]
+    },
+    {
+      "index": "03",
+      "title": "Infra",
+      "items": [
+        {
+          "name": "Ethereum Settlement",
+          "url": null,
+          "image": "/assets/ecosystem/Ethereum.png"
+        },
+        {
+          "name": "OP Stack Framework",
+          "url": null,
+          "image": "/assets/ecosystem/1-1.png"
+        },
+        {
+          "name": "CosmosSDK Execution",
+          "url": null,
+          "image": "/assets/ecosystem/CosmosSDK.png"
+        },
+        {
+          "name": "Eigen DA",
+          "url": null,
+          "image": "/assets/ecosystem/logo_trimmed_500x500.png"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+backend:
+  name: github
+  repo: polymerdao/polymer-landing  # change to your <org>/<repo>
+  branch: main
+  base_url: https://polymerlabs.org   # OAuth proxy host (Cloudflare Pages Function below)
+  auth_endpoint: api/auth
+
+# Where Sveltia uploads images. Files committed to public/* are served from /*.
+media_folder: public/assets/blog/_uploads
+public_folder: /assets/blog/_uploads
+
+# Editorial workflow uses PRs instead of direct pushes
+publish_mode: editorial_workflow
+
+site_url: https://polymerlabs.org
+display_url: https://polymerlabs.org
+
+collections:
+  - name: blog
+    label: Blog
+    label_singular: Post
+    folder: src/content/blog
+    create: true
+    delete: true
+    slug: '{{slug}}'
+    extension: md
+    format: frontmatter
+    summary: '{{title}} — {{date | date(\"YYYY-MM-DD\")}}'
+    sortable_fields: [date, title]
+    view_filters:
+      - label: Drafts
+        field: draft
+        pattern: true
+      - label: Featured
+        field: featured
+        pattern: true
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Excerpt, widget: text, required: false }
+      - { name: date, label: Publish Date, widget: datetime }
+      - { name: author, label: Author, widget: string, default: 'Polymer Labs' }
+      - { name: readTime, label: Read time (min), widget: number, default: 3, value_type: int, min: 1 }
+      - { name: featured, label: Featured on /blog, widget: boolean, default: false }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+      - name: cover
+        label: Cover Image
+        widget: image
+        required: false
+        media_library:
+          config:
+            multiple: false
+      - { name: slug, label: URL Slug, widget: string, required: false, hint: 'Optional. Defaults to filename.' }
+      - { name: body, label: Body, widget: markdown }
+
+  - name: pages
+    label: Pages
+    label_singular: Page
+    folder: src/content/pages
+    create: true
+    delete: true
+    slug: '{{slug}}'
+    extension: md
+    format: frontmatter
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Description, widget: text, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: body, label: Body, widget: markdown }

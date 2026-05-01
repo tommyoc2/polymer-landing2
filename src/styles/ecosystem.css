@@ -1,0 +1,272 @@
+/* ===== Ecosystem ===== */
+
+.eco-shell {
+  position: relative;
+  isolation: isolate;
+}
+.eco-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 700px;
+  background:
+    radial-gradient(ellipse 1100px 500px at 80% 0%, rgba(45, 95, 230, 0.10), transparent 65%),
+    radial-gradient(ellipse 700px 350px at 10% 10%, rgba(107, 75, 255, 0.06), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.eco-shell > * { position: relative; z-index: 1; }
+
+/* ===== Hero ===== */
+.eco-hero {
+  padding: 88px 64px 72px;
+  border-bottom: 1px solid var(--hairline);
+}
+.eco-hero .eyebrow { margin-bottom: 24px; }
+.eco-hero h1 {
+  font-size: clamp(38px, 5.4vw, 76px);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  margin: 0 0 24px;
+  max-width: 1100px;
+  color: var(--fg-0);
+  text-wrap: balance;
+}
+.eco-hero h1 .blue {
+  background: var(--brand-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 30px rgba(45, 95, 230, 0.35));
+}
+.eco-hero p {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--fg-2);
+  max-width: 720px;
+  margin: 0 0 36px;
+  letter-spacing: -0.01em;
+}
+
+/* Stats strip across the bottom of the hero */
+.eco-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #0B0C10 0%, #050507 100%);
+  overflow: hidden;
+  max-width: 700px;
+}
+.eco-stats .stat {
+  padding: 22px 28px;
+  border-right: 1px solid var(--hairline);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.eco-stats .stat:last-child { border-right: 0; }
+.eco-stats .lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.eco-stats .num {
+  font-family: var(--sans);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--fg-0);
+  font-variant-numeric: tabular-nums;
+}
+.eco-stats .num .a {
+  background: var(--brand-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ===== Section ===== */
+.eco-section {
+  padding: 72px 64px 56px;
+  border-bottom: 1px solid var(--hairline);
+}
+.eco-section:last-of-type { border-bottom: 0; padding-bottom: 96px; }
+
+.eco-section-head {
+  display: flex; align-items: end; justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+.eco-section-head .lhs {
+  display: flex; align-items: center; gap: 18px;
+}
+.eco-section-head .index {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--fg-3);
+}
+.eco-section-head h2 {
+  font-size: clamp(28px, 3vw, 44px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--fg-0);
+  margin: 0;
+  line-height: 1;
+}
+.eco-section-head .count {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--fg-3);
+}
+.eco-section-head .count strong {
+  color: var(--fg-1);
+  font-weight: 500;
+}
+
+/* ===== Logo grid ===== */
+.eco-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.eco-cell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--bg-1);
+  border-right: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px;
+  padding: 20px 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 200ms;
+}
+.eco-cell:hover { background: var(--bg-2); }
+
+/* Strip the trailing internal border on the rightmost column */
+.eco-grid .eco-cell:nth-child(6n) { border-right: 0; }
+
+.eco-cell .logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  display: block;
+  /* Cream chip so dark-on-dark logos (Superform, OP-Stack, etc.) read
+     cleanly alongside colorful chain logos. */
+  background: var(--fg-1);
+  border-radius: 14px;
+  padding: 8px;
+  box-sizing: border-box;
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  transition: transform 220ms cubic-bezier(.2,.8,.2,1);
+}
+.eco-cell:hover .logo { transform: scale(1.06); }
+
+.eco-cell .name {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--fg-2);
+  text-align: center;
+  line-height: 1.25;
+  transition: color 160ms;
+}
+.eco-cell:hover .name { color: var(--fg-0); }
+
+/* External-link affordance */
+.eco-cell.is-link::after {
+  content: '↗';
+  position: absolute;
+  top: 12px; right: 14px;
+  font-size: 11px;
+  color: var(--fg-4);
+  transition: color 160ms, transform 200ms cubic-bezier(.2,.8,.2,1);
+}
+.eco-cell.is-link:hover::after {
+  color: var(--accent-hot);
+  transform: translate(2px, -2px);
+}
+
+/* Trailing empty cells blend into page bg */
+.eco-cell-empty {
+  background: var(--bg-0);
+  border-right: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.eco-grid .eco-cell-empty:nth-child(6n) { border-right: 0; }
+
+/* ===== CTA ===== */
+.eco-cta {
+  margin: 0 64px 96px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 8px;
+  padding: 40px 44px;
+  background:
+    radial-gradient(ellipse 60% 80% at 100% 50%, rgba(45, 95, 230, 0.10), transparent 70%),
+    linear-gradient(180deg, #0B0C10 0%, #050507 100%);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.eco-cta h3 {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--fg-0);
+  margin: 0 0 6px;
+}
+.eco-cta p {
+  font-size: 14px;
+  color: var(--fg-2);
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+.eco-cta .actions {
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1280px) {
+  .eco-grid { grid-template-columns: repeat(5, 1fr); }
+  .eco-grid .eco-cell:nth-child(6n) { border-right: 1px solid var(--hairline); }
+  .eco-grid .eco-cell-empty:nth-child(6n) { border-right: 1px solid var(--hairline); }
+  .eco-grid .eco-cell:nth-child(5n),
+  .eco-grid .eco-cell-empty:nth-child(5n) { border-right: 0; }
+}
+@media (max-width: 1024px) {
+  .eco-grid { grid-template-columns: repeat(4, 1fr); }
+  .eco-grid .eco-cell:nth-child(5n),
+  .eco-grid .eco-cell-empty:nth-child(5n) { border-right: 1px solid var(--hairline); }
+  .eco-grid .eco-cell:nth-child(4n),
+  .eco-grid .eco-cell-empty:nth-child(4n) { border-right: 0; }
+}
+@media (max-width: 720px) {
+  .eco-hero { padding: 56px 24px 48px; }
+  .eco-section { padding: 48px 24px 40px; }
+  .eco-cta { margin: 0 24px 64px; padding: 28px 24px; }
+  .eco-grid { grid-template-columns: repeat(3, 1fr); }
+  .eco-grid .eco-cell:nth-child(4n),
+  .eco-grid .eco-cell-empty:nth-child(4n) { border-right: 1px solid var(--hairline); }
+  .eco-grid .eco-cell:nth-child(3n),
+  .eco-grid .eco-cell-empty:nth-child(3n) { border-right: 0; }
+  .eco-cell .logo { width: 52px; height: 52px; padding: 7px; border-radius: 12px; }
+  .eco-cell .name { font-size: 11px; }
+  .eco-stats { grid-template-columns: 1fr; }
+  .eco-stats .stat { border-right: 0; border-bottom: 1px solid var(--hairline); }
+  .eco-stats .stat:last-child { border-bottom: 0; }
+  .eco-cell-empty { display: none; }
+}

@@ -1,0 +1,40 @@
+---
+interface Props {
+  current: number;
+  total: number;
+}
+const { current, total } = Astro.props;
+
+const hrefFor = (n: number) => (n === 1 ? '/blog/' : `/blog/page/${n}/`);
+const prev = current > 1 ? hrefFor(current - 1) : null;
+const next = current < total ? hrefFor(current + 1) : null;
+const pages = Array.from({ length: total }, (_, i) => i + 1);
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+{total > 1 && (
+  <nav class="pagination" aria-label="Blog pagination">
+    {prev ? (
+      <a class="pg-arrow" href={prev} rel="prev">← Newer</a>
+    ) : (
+      <span class="pg-arrow is-disabled" aria-disabled="true">← Newer</span>
+    )}
+
+    <ol class="pg-pages">
+      {pages.map((n) => (
+        <li>
+          {n === current ? (
+            <span class="pg-num is-current" aria-current="page">{pad(n)}</span>
+          ) : (
+            <a class="pg-num" href={hrefFor(n)}>{pad(n)}</a>
+          )}
+        </li>
+      ))}
+    </ol>
+
+    {next ? (
+      <a class="pg-arrow" href={next} rel="next">Older →</a>
+    ) : (
+      <span class="pg-arrow is-disabled" aria-disabled="true">Older →</span>
+    )}
+  </nav>
+)}

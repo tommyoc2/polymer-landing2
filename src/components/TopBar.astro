@@ -2,12 +2,20 @@
 import PolymerWordmark from './PolymerWordmark.astro';
 
 interface Props {
-  currentPage?: 'protocol' | 'proveapi';
+  currentPage?: 'protocol' | 'proveapi' | 'blog' | 'connect' | 'ecosystem';
 }
 const { currentPage = 'protocol' } = Astro.props;
+const isProtocol = currentPage === 'protocol';
 const isProveAPI = currentPage === 'proveapi';
+const isBlog = currentPage === 'blog';
+const isConnect = currentPage === 'connect';
+const isEcosystem = currentPage === 'ecosystem';
 const moreClass = isProveAPI ? 'nav-more has-current' : 'nav-more';
 const overviewClass = isProveAPI ? 'nav-current' : '';
+const homeClass = isProtocol ? 'nav-current' : '';
+const blogClass = isBlog ? 'nav-current' : '';
+const connectClass = isConnect ? 'nav-current' : '';
+const ecosystemClass = isEcosystem ? 'nav-current' : '';
 ---
 
 <header class="topbar">
@@ -19,17 +27,17 @@ const overviewClass = isProveAPI ? 'nav-current' : '';
     Menu
   </button>
   <nav>
-    <a href="/#architecture">Architecture</a>
-    <a href="/#attack">Attack Surface</a>
-    <a href="/#request">Request Flow</a>
-    <a href="/#pillars">Trust Pillars</a>
+    <a href="/" class={homeClass}>Home</a>
+    <a href="/blog" class={blogClass}>Blog</a>
+    <a href="/connect" class={connectClass}>Connect</a>
+    <a href="/ecosystem" class={ecosystemClass}>Ecosystem</a>
     <span class="nav-sep" aria-hidden="true"></span>
     <div class={moreClass}>
       <button type="button" class="nav-more-btn" aria-haspopup="true" aria-expanded="false" onclick="this.parentElement.classList.toggle('open');this.setAttribute('aria-expanded',this.parentElement.classList.contains('open'))">
         <span class="label">ProveAPI</span><span class="nav-more-caret" aria-hidden="true">▾</span>
       </button>
       <div class="nav-more-panel" role="menu">
-        <a href="/proveapi.html" role="menuitem" class={overviewClass}>Overview</a>
+        <a href="/proveapi/" role="menuitem" class={overviewClass}>Overview</a>
         <a href="https://docs.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Docs ↗</a>
         <div class="nav-more-divider"></div>
         <a href="https://accounts.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Accounts ↗</a>
@@ -38,10 +46,44 @@ const overviewClass = isProveAPI ? 'nav-current' : '';
       </div>
     </div>
     <div class="nav-status">
-      <span class="live">~$2B volume</span>
+      <a class="live" href="https://dashboard.polymerlabs.org/analytics" target="_blank" rel="noopener" aria-label="Network analytics">
+        <span class="live-num" data-live-volume>$1.94B</span>
+        <span class="live-lbl">volume</span>
+      </a>
     </div>
   </nav>
   <div class="right">
-    <span class="live">~$2B volume</span>
+    <a class="live" href="https://dashboard.polymerlabs.org/analytics" target="_blank" rel="noopener" aria-label="Network analytics">
+      <span class="live-num" data-live-volume>$1.94B</span>
+      <span class="live-lbl">volume</span>
+    </a>
   </div>
 </header>
+
+<script is:inline>
+  (async () => {
+    try {
+      const r = await fetch('/api/stats', { cache: 'no-store' });
+      if (!r.ok) return;
+      const { totalValue, totalChains, totalProofs } = await r.json();
+
+      const fmtMoney = (v) => {
+        if (v == null) return null;
+        if (v >= 1e9) return `$${(v / 1e9).toFixed(2)}B`;
+        if (v >= 1e6) return `$${(v / 1e6).toFixed(0)}M`;
+        return `$${Math.round(v).toLocaleString()}`;
+      };
+      const fmtInt = (v) => (v == null ? null : v.toLocaleString());
+
+      const set = (sel, val) => {
+        if (val == null) return;
+        document.querySelectorAll(sel).forEach((el) => {
+          el.textContent = val;
+        });
+      };
+      set('[data-live-volume]', fmtMoney(totalValue));
+      set('[data-live-chains]', fmtInt(totalChains));
+      set('[data-live-proofs]', fmtInt(totalProofs));
+    } catch {}
+  })();
+</script>
