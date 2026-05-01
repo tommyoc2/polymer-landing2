@@ -1,0 +1,2934 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Polymer is a verifiable RPC network. Every response is signed inside an Intel TDX enclave — the operator can drop traffic, but they cannot lie." />
+<title>Polymer — The Verifiable RPC Network</title>
+<link rel="icon" type="image/svg+xml" href="assets/polymer-mark.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Radio+Canada+Big:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== V3: Hardware-forward =====
+     Apple Silicon / NVIDIA. Deep black, chrome details,
+     die-shot imagery, electric blue accent. */
+
+  :root {
+    --bg-0: #050507;
+    --bg-1: #0B0C10;
+    --bg-2: #14161C;
+    --bg-3: #1D2029;
+
+    --fg-0: #FFFFFF;
+    --fg-1: #E2E5EB;
+    --fg-2: #8A8F9A;
+    --fg-3: #54585F;
+    --fg-4: #2A2D33;
+
+    --hairline: #1E2128;
+    --hairline-strong: #2C3038;
+
+    --accent: #5EA0FF;        /* electric/cobalt blue */
+    --accent-hot: #8FBEFF;
+    --accent-bg: rgba(94, 160, 255, 0.08);
+    --accent-border: rgba(94, 160, 255, 0.4);
+    --accent-glow: 0 0 24px rgba(94, 160, 255, 0.25);
+
+    --chrome-1: #C9CFD6;       /* silver wordmark */
+    --chrome-2: #6B7280;
+
+    --silver-grad: linear-gradient(180deg, #F1F4F9 0%, #B3B9C2 50%, #6F7682 100%);
+
+    --sans: 'Space Grotesk', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    background: var(--bg-0);
+    color: var(--fg-1);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  body {
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    overflow-x: hidden;
+    background:
+      radial-gradient(ellipse 1100px 600px at 80% -10%, rgba(94,160,255,0.08), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 0% 30%, rgba(94,160,255,0.04), transparent 60%),
+      var(--bg-0);
+  }
+  img, svg, video, canvas { max-width: 100%; height: auto; }
+  ::selection { background: var(--accent); color: var(--bg-0); }
+
+  /* Smooth in-page anchors; offset for the sticky topbar */
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  #architecture, #attack, #request, #pillars { scroll-margin-top: 100px; }
+
+  /* Better text rendering */
+  html, body {
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'ss01' 1;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar matching the deep-onyx palette */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg-0); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--hairline-strong);
+    border-radius: 5px;
+    border: 2px solid var(--bg-0);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-border); }
+  html { scrollbar-color: var(--hairline-strong) var(--bg-0); scrollbar-width: thin; }
+
+  /* Keyboard-only focus ring */
+  :focus { outline: none; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ===== Topbar ===== */
+  .topbar {
+    height: 56px;
+    border-bottom: 1px solid var(--hairline);
+    display: flex; align-items: center;
+    padding: 0 32px;
+    gap: 32px;
+    background: rgba(5,5,7,0.7);
+    backdrop-filter: blur(20px);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .wm {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none; color: inherit;
+  }
+  .wm-mark {
+    width: 26px; height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wm-mark svg {
+    width: 100%; height: 100%;
+    display: block;
+    filter: drop-shadow(0 0 12px rgba(94,160,255,0.25));
+    transition: filter 240ms ease;
+  }
+  .wm:hover .wm-mark svg {
+    filter: drop-shadow(0 0 18px rgba(94,160,255,0.55));
+  }
+  .wm-mark svg path { fill: var(--fg-0); }
+  .wm-text {
+    font-family: 'Radio Canada Big', var(--sans);
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    background: var(--silver-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-transform: uppercase;
+  }
+  .topbar nav {
+    display: flex; gap: 28px;
+  }
+  .menu-btn {
+    display: none;
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--hairline-strong);
+    color: var(--fg-1);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    align-items: center;
+    gap: 8px;
+  }
+  .menu-btn:hover { border-color: var(--accent-border); color: var(--fg-0); }
+  .menu-btn .bars {
+    display: inline-flex; flex-direction: column; gap: 3px;
+  }
+  .menu-btn .bars span {
+    width: 14px; height: 1.5px; background: currentColor;
+    transition: transform 160ms, opacity 160ms;
+  }
+  .topbar.menu-open .menu-btn .bars span:nth-child(1) {
+    transform: translateY(4.5px) rotate(45deg);
+  }
+  .topbar.menu-open .menu-btn .bars span:nth-child(2) { opacity: 0; }
+  .topbar.menu-open .menu-btn .bars span:nth-child(3) {
+    transform: translateY(-4.5px) rotate(-45deg);
+  }
+  .topbar nav a {
+    font-size: 13px;
+    color: var(--fg-2);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 160ms;
+  }
+  .topbar nav a:hover { color: var(--fg-0); }
+  .topbar nav .nav-sep {
+    width: 1px; height: 18px;
+    background: var(--hairline);
+    align-self: center;
+  }
+  .topbar nav .nav-status {
+    display: none;
+  }
+
+  /* Desktop "More" dropdown */
+  .nav-more { position: relative; display: inline-flex; align-items: center; }
+  .nav-more-btn {
+    background: transparent;
+    border: 0;
+    color: var(--fg-2);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 160ms;
+  }
+  .nav-more-btn:hover,
+  .nav-more.open .nav-more-btn { color: var(--fg-0); }
+  .nav-more-caret {
+    font-size: 10px;
+    color: var(--fg-3);
+    transition: transform 160ms, color 160ms;
+  }
+  .nav-more.open .nav-more-caret {
+    color: var(--accent);
+    transform: rotate(-180deg);
+  }
+  .nav-more-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 200px;
+    background: var(--bg-1);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 6px;
+    padding: 6px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 60;
+  }
+  .nav-more.open .nav-more-panel { display: flex; }
+  .nav-more.has-current .nav-more-btn { color: var(--fg-0); }
+  .nav-more.has-current .nav-more-btn::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(94,160,255,0.7);
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .nav-section-label { display: none; }
+  .nav-more-divider {
+    height: 1px;
+    background: var(--hairline);
+    margin: 6px 4px;
+  }
+  .nav-more-panel a {
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--fg-2);
+    text-decoration: none;
+    transition: background 160ms, color 160ms;
+    white-space: nowrap;
+  }
+  .nav-more-panel a:hover {
+    background: rgba(94,160,255,0.08);
+    color: var(--fg-0);
+  }
+  .nav-more-panel a.nav-current {
+    color: var(--fg-0);
+    background: rgba(94,160,255,0.08);
+  }
+  .nav-more-panel a.nav-current::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 8px;
+    box-shadow: 0 0 8px rgba(94,160,255,0.7);
+    vertical-align: middle;
+  }
+  .topbar nav a.nav-current {
+    color: var(--fg-0);
+    display: inline-flex; align-items: baseline; gap: 8px;
+  }
+  .topbar nav a.nav-current::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(94,160,255,0.7);
+    align-self: center;
+  }
+  .topbar .right {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-2);
+  }
+  .topbar .right .live {
+    color: var(--accent);
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--accent-border);
+    border-radius: 100px;
+    background: var(--accent-bg);
+    font-size: 11px;
+  }
+  .topbar .right .live::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: glow 1.6s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  /* Divider between hero copy and the §01 architecture figure */
+  .section-divider {
+    border: 0;
+    height: 1px;
+    background: var(--hairline);
+    margin: 56px 0 28px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 88px 64px 96px;
+    border-bottom: 1px solid var(--hairline);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero #chrome-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 0;
+    /* Tone the chrome down so dark UI reads on top */
+    opacity: 0.55;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+  .hero::after {
+    /* Vignette + bottom fade so chrome dissolves into the page */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 30%, transparent 0%, rgba(7,8,11,0.55) 80%),
+      linear-gradient(180deg, rgba(7,8,11,0.25) 0%, transparent 35%, transparent 60%, var(--bg-0) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .hero > *:not(#chrome-bg) {
+    position: relative;
+    z-index: 2;
+  }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 12px;
+    margin-bottom: 28px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .eyebrow::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    border-radius: 50%;
+  }
+  .eyebrow .v { color: var(--fg-2); }
+
+  h1.htitle {
+    font-size: clamp(38px, 6.2vw, 88px);
+    font-weight: 600;
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+    margin: 0 0 32px;
+    max-width: 1100px;
+    color: var(--fg-0);
+    text-wrap: balance;
+  }
+  h1.htitle .silver {
+    background: var(--silver-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  h1.htitle .blue {
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(94,160,255,0.4);
+  }
+
+  .lede {
+    font-size: 21px;
+    line-height: 1.45;
+    color: var(--fg-2);
+    max-width: 760px;
+    margin: 0 0 48px;
+    letter-spacing: -0.015em;
+    font-weight: 400;
+  }
+  .lede strong { color: var(--fg-0); font-weight: 500; }
+
+  .cta {
+    display: flex; gap: 14px; align-items: center;
+  }
+  .btn {
+    height: 48px;
+    padding: 0 24px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 10px;
+    letter-spacing: -0.005em;
+    transition: all 160ms;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg-0);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 0 1px rgba(94,160,255,0.3), 0 4px 24px rgba(94,160,255,0.25);
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: var(--accent-hot); box-shadow: 0 0 0 1px rgba(143,190,255,0.4), 0 6px 32px rgba(94,160,255,0.4); }
+  .btn-primary::after {
+    content: '→';
+    transition: transform 200ms cubic-bezier(.4,0,.2,1);
+  }
+  .btn-primary:hover::after { transform: translateX(3px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--fg-1);
+    border: 1px solid var(--hairline-strong);
+  }
+  .btn-secondary:hover { border-color: var(--fg-2); color: var(--fg-0); }
+
+  /* ===== HERO DIE-SHOT VISUAL ===== */
+  .die {
+    margin-top: 64px;
+    background: linear-gradient(180deg, #0B0C10 0%, #050507 100%);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 8px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.04),
+      0 30px 80px rgba(0,0,0,0.5);
+  }
+  .die::before {
+    content: ''; position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 40% 50% at 50% 50%, rgba(94,160,255,0.05), transparent);
+    pointer-events: none;
+  }
+  .die-frame {
+    display: grid;
+    grid-template-columns: 220px 1fr 220px;
+    gap: 24px;
+    align-items: stretch;
+    position: relative;
+    z-index: 1;
+  }
+  .die-side {
+    display: flex; flex-direction: column;
+    gap: 14px;
+    justify-content: center;
+  }
+  .die-side .row {
+    border: 1px solid var(--hairline-strong);
+    background: var(--bg-1);
+    padding: 14px 16px;
+    border-radius: 4px;
+    position: relative;
+  }
+  .die-side .row .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .die-side .row .val {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--fg-1);
+    letter-spacing: -0.01em;
+  }
+  .die-side .row .val .a { color: var(--accent); }
+  .die-side .row .sub {
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+  }
+  .die-side .row.live::before {
+    content: ''; position: absolute; top: 14px; right: 14px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: glow 1.6s ease-in-out infinite;
+  }
+
+  /* ===== Enclave diagram shimmer ===== */
+  .arch-body { position: relative; }
+  .arch-body svg { display: block; width: 100%; height: auto; }
+
+  /* the silicon plate behind the enclave gets a slow shimmer */
+  .enclave-plate {
+    transform-origin: center;
+    animation: enclaveBreath 5s ease-in-out infinite;
+  }
+  @keyframes enclaveBreath {
+    0%, 100% { opacity: 0.06; }
+    50%      { opacity: 0.14; }
+  }
+
+  /* scan line that sweeps across the enclave */
+  .enclave-scan {
+    animation: scanSweep 4.2s cubic-bezier(.55,.05,.45,.95) infinite;
+  }
+  @keyframes scanSweep {
+    0%   { transform: translateX(0); opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { transform: translateX(440px); opacity: 0; }
+  }
+
+  /* enclave core glow pulse */
+  .enclave-core-glow {
+    transform-origin: 222px 92px;
+    transform-box: fill-box;
+    animation: corePulse 3.6s ease-in-out infinite;
+  }
+  @keyframes corePulse {
+    0%, 100% { opacity: 0.6; transform: scale(0.96); }
+    50%      { opacity: 1;   transform: scale(1.04); }
+  }
+
+  /* identity + attestation block edge shimmer */
+  .id-block {
+    animation: idBlockGlow 2.4s ease-in-out infinite;
+  }
+  @keyframes idBlockGlow {
+    0%, 100% { stroke-opacity: 0.6; filter: drop-shadow(0 0 0px rgba(94,160,255,0)); }
+    50%      { stroke-opacity: 1;   filter: drop-shadow(0 0 6px rgba(94,160,255,0.7)); }
+  }
+
+  /* data packet flow on lines */
+  .flow-line {
+    stroke-dasharray: 6 8;
+    animation: flowDash 1.6s linear infinite;
+  }
+  .flow-line.reverse {
+    animation: flowDash 1.6s linear infinite reverse;
+  }
+  @keyframes flowDash {
+    to { stroke-dashoffset: -28; }
+  }
+
+  /* response line — brighter, faster */
+  .flow-signed {
+    stroke-dasharray: 4 10;
+    animation: flowDashSigned 1.1s linear infinite;
+  }
+  @keyframes flowDashSigned {
+    to { stroke-dashoffset: -28; }
+  }
+
+  /* small pin lights along the enclave perimeter */
+  .pin-light {
+    animation: pinBlink 2.8s ease-in-out infinite;
+  }
+  .pin-light:nth-child(1) { animation-delay: 0s; }
+  .pin-light:nth-child(2) { animation-delay: 0.4s; }
+  .pin-light:nth-child(3) { animation-delay: 0.8s; }
+  .pin-light:nth-child(4) { animation-delay: 1.2s; }
+  .pin-light:nth-child(5) { animation-delay: 1.6s; }
+  .pin-light:nth-child(6) { animation-delay: 2.0s; }
+  @keyframes pinBlink {
+    0%, 60%, 100% { opacity: 0.25; }
+    20%, 40%      { opacity: 1; }
+  }
+
+  /* ===== Hero chip-die SVG: pin chase synced to outer edge trace =====
+     Outer .die-chip edge trace runs clockwise on a 4.5s loop.
+     Top edge:    light moves L→R     → .pin-top chases L→R
+     Bottom edge: light moves R→L     → .pin-bot chases R→L  */
+  .pin-row circle {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pinChase 4.5s linear infinite;
+  }
+  /* Top row — light passes left to right during top quarter (~12.5%-37.5% of cycle).
+     18 pins; stagger across the top quarter of the cycle. */
+  .pin-top circle:nth-child(1)  { animation-delay: -3.375s; }
+  .pin-top circle:nth-child(2)  { animation-delay: -3.300s; }
+  .pin-top circle:nth-child(3)  { animation-delay: -3.225s; }
+  .pin-top circle:nth-child(4)  { animation-delay: -3.150s; }
+  .pin-top circle:nth-child(5)  { animation-delay: -3.075s; }
+  .pin-top circle:nth-child(6)  { animation-delay: -3.000s; }
+  .pin-top circle:nth-child(7)  { animation-delay: -2.925s; }
+  .pin-top circle:nth-child(8)  { animation-delay: -2.850s; }
+  .pin-top circle:nth-child(9)  { animation-delay: -2.775s; }
+  .pin-top circle:nth-child(10) { animation-delay: -2.700s; }
+  .pin-top circle:nth-child(11) { animation-delay: -2.625s; }
+  .pin-top circle:nth-child(12) { animation-delay: -2.550s; }
+  .pin-top circle:nth-child(13) { animation-delay: -2.475s; }
+  .pin-top circle:nth-child(14) { animation-delay: -2.400s; }
+  .pin-top circle:nth-child(15) { animation-delay: -2.325s; }
+  .pin-top circle:nth-child(16) { animation-delay: -2.250s; }
+  .pin-top circle:nth-child(17) { animation-delay: -2.175s; }
+  .pin-top circle:nth-child(18) { animation-delay: -2.100s; }
+  /* Bottom row — light passes right to left during bottom quarter (~62.5%-87.5%).
+     Reverse the stagger so leftmost lights last. */
+  .pin-bot circle:nth-child(1)  { animation-delay: -1.275s; }
+  .pin-bot circle:nth-child(2)  { animation-delay: -1.350s; }
+  .pin-bot circle:nth-child(3)  { animation-delay: -1.425s; }
+  .pin-bot circle:nth-child(4)  { animation-delay: -1.500s; }
+  .pin-bot circle:nth-child(5)  { animation-delay: -1.575s; }
+  .pin-bot circle:nth-child(6)  { animation-delay: -1.650s; }
+  .pin-bot circle:nth-child(7)  { animation-delay: -1.725s; }
+  .pin-bot circle:nth-child(8)  { animation-delay: -1.800s; }
+  .pin-bot circle:nth-child(9)  { animation-delay: -1.875s; }
+  .pin-bot circle:nth-child(10) { animation-delay: -1.950s; }
+  .pin-bot circle:nth-child(11) { animation-delay: -2.025s; }
+  .pin-bot circle:nth-child(12) { animation-delay: -2.100s; }
+  .pin-bot circle:nth-child(13) { animation-delay: -2.175s; }
+  .pin-bot circle:nth-child(14) { animation-delay: -2.250s; }
+  .pin-bot circle:nth-child(15) { animation-delay: -2.325s; }
+  .pin-bot circle:nth-child(16) { animation-delay: -2.400s; }
+  .pin-bot circle:nth-child(17) { animation-delay: -2.475s; }
+  .pin-bot circle:nth-child(18) { animation-delay: -2.550s; }
+
+  @keyframes pinChase {
+    0%, 100% { fill: #5EA0FF; opacity: 0.18; filter: none; }
+    /* brief flare (~0.4s window per pin); fade smoothly back */
+    47%      { fill: #5EA0FF; opacity: 0.18; filter: none; }
+    50%      { fill: #FFFFFF; opacity: 1;    filter: drop-shadow(0 0 6px #B8D4FF) drop-shadow(0 0 10px #5EA0FF); }
+    53%      { fill: #5EA0FF; opacity: 0.18; filter: none; }
+  }
+
+  /* The chip itself — with edge-trace lighting */
+  .die-chip {
+    background: linear-gradient(180deg, #0F1116 0%, #07080B 100%);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 6px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      inset 0 0 0 1px var(--bg-0);
+    min-height: 320px;
+    --edge-radius: 6px;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Edge trace: a glowing arc travels around the chip perimeter via conic-gradient masks. */
+  .die-chip::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--edge-radius);
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--trace-angle, 0deg),
+      transparent 0deg,
+      transparent 300deg,
+      rgba(94,160,255,0.0) 305deg,
+      rgba(94,160,255,0.6) 330deg,
+      rgba(180,215,255,1) 350deg,
+      #ffffff 358deg,
+      rgba(180,215,255,1) 360deg,
+      rgba(94,160,255,0.0) 360deg,
+      transparent 360deg
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+    animation: edgeTrace 4.5s linear infinite;
+    filter: drop-shadow(0 0 6px rgba(94,160,255,0.55)) drop-shadow(0 0 14px rgba(94,160,255,0.3));
+    z-index: 2;
+  }
+  @property --trace-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+  @keyframes edgeTrace {
+    0%   { --trace-angle: 0deg; }
+    100% { --trace-angle: 360deg; }
+  }
+  /* Fallback for browsers without @property: rotate the pseudo-element. */
+  @supports not (background: conic-gradient(from var(--x, 0deg), red, blue)) {
+    .die-chip::after {
+      background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        transparent 300deg,
+        rgba(94,160,255,0.6) 330deg,
+        #ffffff 358deg,
+        rgba(94,160,255,0.0) 360deg
+      );
+      animation: edgeTraceRotate 4.5s linear infinite;
+    }
+    @keyframes edgeTraceRotate {
+      to { transform: rotate(360deg); }
+    }
+  }
+
+  /* Faint static edge so the chip outline reads even between trace passes */
+  .die-chip > .chip-rim {
+    position: absolute; inset: 0;
+    border-radius: var(--edge-radius);
+    box-shadow: inset 0 0 0 1px rgba(94,160,255,0.18);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .die-chip > .chip-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(94,160,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(94,160,255,0.06) 1px, transparent 1px);
+    background-size: 16px 16px;
+    background-position: -1px -1px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .die-chip-label {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+    position: relative; z-index: 3;
+  }
+  .die-chip-label .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+  .die-chip-label .id {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+  }
+
+  .die-svg-wrap {
+    position: relative;
+    z-index: 3;
+    background: radial-gradient(ellipse at center, rgba(94,160,255,0.08), transparent 70%);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .die-svg-wrap svg { width: 100%; }
+
+  /* corner tick marks (printed circuit aesthetic) */
+  .die-chip .corner {
+    position: absolute;
+    width: 14px; height: 14px;
+    z-index: 3;
+    border: 1px solid var(--accent);
+    opacity: 0.5;
+  }
+  .die-chip .corner.tl { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
+  .die-chip .corner.tr { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
+  .die-chip .corner.bl { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
+  .die-chip .corner.br { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
+
+  /* Stat strip */
+  .strip {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .strip .stat {
+    background: rgba(11,12,16,0.6);
+    border: 1px solid var(--hairline);
+    backdrop-filter: blur(20px);
+    border-radius: 6px;
+    padding: 20px 22px;
+  }
+  .strip .stat .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .strip .stat .val {
+    font-family: var(--sans);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--fg-0);
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .strip .stat .val .a { color: var(--accent); }
+  .strip .stat .sub {
+    font-size: 12px;
+    color: var(--fg-2);
+    margin-top: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ===== Sections ===== */
+  .section {
+    padding: 96px 64px;
+    border-bottom: 1px solid var(--hairline);
+    position: relative;
+  }
+  .marker {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  h2.stitle {
+    font-size: clamp(28px, 4.2vw, 56px);
+    line-height: 1.04;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--fg-0);
+    margin: 0 0 24px;
+    max-width: 980px;
+    text-wrap: balance;
+  }
+  h2.stitle .dim { color: var(--fg-3); }
+  h2.stitle .blue { color: var(--accent); }
+  .ssub {
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--fg-2);
+    max-width: 760px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ===== Exploit forensic (redesigned) ===== */
+  .exploit {
+    margin-top: 48px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 6px;
+    background:
+      linear-gradient(180deg, rgba(20,12,10,0.5), rgba(11,12,16,0.6));
+    overflow: hidden;
+    position: relative;
+  }
+  .exploit::before {
+    /* faint red caution scanline along the top edge */
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255,90,90,0.6) 20%,
+      rgba(255,90,90,0.9) 50%,
+      rgba(255,90,90,0.6) 80%,
+      transparent 100%);
+    box-shadow: 0 0 12px rgba(255,90,90,0.5);
+  }
+
+  .exploit-head {
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--hairline);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--fg-2);
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: rgba(11,12,16,0.4);
+  }
+  .exploit-head .sev {
+    color: #FF8585;
+    background: rgba(255,90,90,0.12);
+    border: 1px solid rgba(255,90,90,0.4);
+    padding: 3px 8px;
+    font-weight: 600;
+    border-radius: 2px;
+    letter-spacing: 0.15em;
+  }
+  .exploit-head .id { color: var(--fg-1); }
+  .exploit-head .ts { color: var(--fg-3); }
+  .exploit-head .attr { margin-left: auto; color: var(--fg-3); }
+
+  .exploit-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    align-items: stretch;
+  }
+
+  /* Left: forensic visualization */
+  .exploit-vis {
+    padding: 32px 32px 28px;
+    border-right: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .exploit-vis .caption {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* The two-node binary swap diagram */
+  .swap {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+  .swap-node {
+    border: 1px solid var(--hairline-strong);
+    border-radius: 4px;
+    padding: 14px 14px 12px;
+    background: linear-gradient(180deg, rgba(11,12,16,0.7), rgba(7,8,11,0.7));
+    position: relative;
+    overflow: hidden;
+  }
+  .swap-node .hd {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+    display: flex; justify-content: space-between;
+  }
+  .swap-node .hd .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    display: inline-block;
+  }
+  .swap-node .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-1);
+    margin-bottom: 4px;
+  }
+  .swap-node .hash {
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.5;
+    word-break: break-all;
+    letter-spacing: 0.02em;
+  }
+  .swap-node.honest .hash { color: var(--accent); }
+  .swap-node.honest .hd .dot { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+  .swap-node.swapped { border-color: rgba(255,90,90,0.45); background: linear-gradient(180deg, rgba(40,12,12,0.6), rgba(11,12,16,0.7)); }
+  .swap-node.swapped .hash { color: #FFA0A0; }
+  .swap-node.swapped .hd .dot { background: #FF6060; box-shadow: 0 0 6px #FF6060; animation: swapBlink 1.4s ease-in-out infinite; }
+  @keyframes swapBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+  .swap-node .delta {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--hairline);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    line-height: 1.5;
+  }
+  .swap-node .delta .k { color: var(--fg-2); }
+  .swap-node.swapped .delta .v { color: #FFA0A0; }
+  .swap-node.honest .delta .v { color: var(--accent); }
+
+  .swap-arrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-3);
+    text-align: center;
+    line-height: 1.4;
+    width: 56px;
+    position: relative;
+  }
+  .swap-arrow .glyph {
+    font-size: 22px;
+    color: #FF6060;
+    line-height: 1;
+    margin-bottom: 4px;
+    display: block;
+    text-shadow: 0 0 8px rgba(255,90,90,0.5);
+  }
+  .swap-arrow .lbl {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--fg-3);
+  }
+
+  /* Same-bytes-different-payload row */
+  .selective {
+    border-top: 1px dashed var(--hairline);
+    padding-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .selective .row {
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    padding: 11px 13px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    line-height: 1.5;
+  }
+  .selective .row .who {
+    color: var(--fg-3);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    margin-bottom: 5px;
+  }
+  .selective .row .resp {
+    color: var(--fg-1);
+  }
+  .selective .row.honest { border-left: 2px solid var(--accent); }
+  .selective .row.honest .resp { color: var(--accent); }
+  .selective .row.lied { border-left: 2px solid #FF6060; background: rgba(255,90,90,0.04); }
+  .selective .row.lied .resp { color: #FFA0A0; }
+
+  /* Right: hero loss number + timeline */
+  .exploit-loss {
+    padding: 32px 32px 28px;
+    background: radial-gradient(ellipse at right, rgba(255,90,90,0.08), transparent 65%);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    justify-content: space-between;
+  }
+  .exploit-loss .single {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: #FF8585;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,90,90,0.35);
+    background: rgba(255,90,90,0.06);
+    padding: 5px 9px;
+    align-self: flex-start;
+    border-radius: 2px;
+  }
+  .exploit-loss .num {
+    font-size: 108px;
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 0.92;
+    background: linear-gradient(180deg, #FFFFFF 0%, #FF8585 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    margin: 6px 0 4px;
+  }
+  .exploit-loss .num small {
+    font-size: 38px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: #FF8585;
+    -webkit-text-fill-color: #FF8585;
+  }
+  .exploit-loss .num-lbl {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-2);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .exploit-loss .scoped {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--fg-2);
+    line-height: 1.6;
+  }
+  .exploit-loss .scoped strong {
+    color: var(--fg-0);
+    font-weight: 500;
+  }
+
+  /* Forensic timeline strip */
+  .timeline {
+    border-top: 1px dashed var(--hairline);
+    padding-top: 16px;
+  }
+  .timeline .tl-lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+  .timeline .tl-rail {
+    position: relative;
+    height: 2px;
+    background: var(--hairline-strong);
+    margin: 50px 0 8px;
+  }
+  .timeline .tl-rail .seg {
+    position: absolute;
+    top: 0; bottom: 0;
+    background: #FF6060;
+    box-shadow: 0 0 8px rgba(255,90,90,0.6);
+  }
+  .timeline .tl-marks {
+    position: relative;
+    height: 0;
+  }
+  .timeline .tl-marks .m {
+    position: absolute;
+    top: -22px;
+    transform: translateX(-50%);
+    width: 1px; height: 18px;
+    background: var(--fg-3);
+  }
+  .timeline .tl-marks .m.hot { background: #FF6060; box-shadow: 0 0 6px #FF6060; }
+  .timeline .tl-marks .m .cap {
+    position: absolute;
+    top: -16px; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--fg-3);
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+  }
+  /* Anchor edge captions so they don't overflow the rail */
+  .timeline .tl-marks .m:first-child .cap {
+    left: 0; transform: translateX(0);
+  }
+  .timeline .tl-marks .m:last-child .cap {
+    left: auto; right: 0; transform: translateX(0);
+  }
+  .timeline .tl-marks .m.hot .cap { color: #FFA0A0; }
+  .timeline .tl-bottom {
+    display: flex; justify-content: space-between;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+  }
+  .timeline .tl-bottom .duration {
+    color: #FF8585;
+  }
+
+  /* Incident (legacy block — kept to avoid breaking unrelated styles) */
+  .incident-block {
+    margin-top: 56px;
+    border: 1px solid var(--hairline-strong);
+    background: linear-gradient(180deg, var(--bg-1), var(--bg-0));
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .incident-block::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(94,160,255,0.04), transparent 40%);
+    pointer-events: none;
+  }
+  .incident-header {
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--hairline);
+    display: flex; align-items: center; gap: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-3);
+    letter-spacing: 0.06em;
+  }
+  .incident-header .sev {
+    color: var(--accent);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .incident-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    align-items: stretch;
+  }
+  .incident-text {
+    padding: 40px 32px;
+    border-right: 1px solid var(--hairline);
+  }
+  .incident-text .quote {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--fg-0);
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+    text-wrap: balance;
+  }
+  .incident-text .meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--fg-3);
+    line-height: 1.8;
+  }
+  .incident-text .meta .label {
+    display: inline-block;
+    width: 92px;
+    color: var(--fg-2);
+  }
+  .incident-stat {
+    padding: 40px 32px;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: flex-start;
+    gap: 16px;
+    background: radial-gradient(ellipse at right, rgba(94,160,255,0.06), transparent 70%);
+  }
+  .incident-stat .num {
+    font-size: 88px;
+    font-weight: 600;
+    color: var(--fg-0);
+    letter-spacing: -0.045em;
+    line-height: 0.9;
+    background: var(--silver-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .incident-stat .lbl {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .incident-stat .ledger {
+    margin-top: 14px;
+    border-top: 1px solid var(--hairline);
+    padding-top: 16px;
+    width: 100%;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-2);
+    line-height: 1.8;
+  }
+  .incident-stat .ledger .row {
+    display: flex; justify-content: space-between;
+  }
+  .incident-stat .ledger .row .v { color: var(--accent); }
+
+  /* Architecture diagram */
+  .arch {
+    margin-top: 56px;
+    background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .arch::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 50% 50%, rgba(94,160,255,0.04), transparent 70%);
+    pointer-events: none;
+  }
+  .arch-head {
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--hairline);
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(0,0,0,0.3);
+  }
+  .arch-head .pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    padding: 4px 12px;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+  .arch-head .title {
+    font-size: 13px;
+    color: var(--fg-1);
+    letter-spacing: -0.005em;
+  }
+  .arch-head .right {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    display: flex; gap: 16px;
+  }
+  .arch-body { padding: 48px 40px; position: relative; z-index: 1; }
+  .arch svg { display: block; width: 100%; height: auto; }
+
+  /* Mobile vertical version of architecture diagram */
+  .arch-mobile {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+  }
+  .am-step { display: flex; flex-direction: column; gap: 8px; }
+  .am-lane {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--fg-4);
+    letter-spacing: 0.16em;
+  }
+  .am-card {
+    background: #0B0C10;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .am-card.am-host {
+    background: rgba(11,12,16,0.5);
+    border-style: dashed;
+  }
+  .am-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+    margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .am-tag.am-tag-dim { color: var(--fg-4); }
+  .am-tag.am-blue { color: var(--accent); }
+  .am-meta-r { color: var(--accent); font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.04em; }
+  .am-name {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--fg-0);
+    line-height: 1.3;
+  }
+  .am-meta {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--fg-3);
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+  .am-meta.am-dim { color: var(--fg-4); }
+  .am-host-foot { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--hairline); }
+  .am-enclave {
+    margin-top: 6px;
+    background: #0A0D14;
+    border: 1.5px solid var(--accent);
+    border-radius: 5px;
+    padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 8px;
+    box-shadow: 0 0 0 4px rgba(94,160,255,0.06) inset;
+  }
+  .am-row {
+    background: rgba(94,160,255,0.04);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    padding: 8px 10px;
+  }
+  .am-row.am-blue-row {
+    background: rgba(94,160,255,0.05);
+    border-color: var(--accent);
+  }
+  .am-row-tag {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+    color: var(--fg-3);
+  }
+  .am-row-tag.am-blue { color: var(--accent); }
+  .am-row-name {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fg-0);
+    margin-top: 2px;
+  }
+  .am-row-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    margin-top: 2px;
+    word-break: break-word;
+  }
+  .am-edge {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px;
+    padding: 4px 0;
+    height: 36px;
+    justify-content: center;
+  }
+  .am-edge-line {
+    width: 1px; height: 14px;
+    background: var(--fg-4);
+    position: relative;
+  }
+  .am-edge-line::after {
+    content: '';
+    position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--fg-4);
+  }
+  .am-edge.am-edge-signed .am-edge-line { background: var(--accent); width: 2px; }
+  .am-edge.am-edge-signed .am-edge-line::after { border-top-color: var(--accent); }
+  .am-edge-lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-2);
+    text-align: center;
+  }
+  .am-edge-lbl.am-blue { color: var(--accent); font-weight: 600; }
+  .am-dim { color: var(--fg-4); font-weight: 400; }
+
+  /* ===== Trust chain (cryptographic chain visualization) ===== */
+  .trustchain {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    position: relative;
+  }
+  .tc-rail {
+    position: relative;
+    padding: 36px 0 28px;
+  }
+  /* The horizontal rail line behind everything */
+  .tc-rail::before {
+    content: ''; position: absolute;
+    left: 60px; right: 60px; top: 124px; height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      var(--hairline-strong) 8%,
+      var(--hairline-strong) 92%,
+      transparent 100%);
+  }
+  /* Animated signature pulse traveling along the rail */
+  .tc-rail::after {
+    content: ''; position: absolute;
+    left: 60px; right: 60px; top: 122px; height: 5px;
+    border-radius: 999px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      transparent 35%,
+      rgba(94,160,255,0.5) 48%,
+      #B8D4FF 50%,
+      rgba(94,160,255,0.5) 52%,
+      transparent 65%,
+      transparent 100%);
+    background-size: 280% 100%;
+    background-position: -100% 50%;
+    animation: tcPulse 5.5s linear infinite;
+    filter: blur(0.5px) drop-shadow(0 0 6px rgba(94,160,255,0.7));
+    pointer-events: none;
+  }
+  @keyframes tcPulse {
+    0%   { background-position: -100% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  .tc-nodes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    position: relative;
+    z-index: 2;
+  }
+  .tc-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 0 24px;
+    position: relative;
+  }
+
+  /* Top half: input received */
+  .tc-input {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 18px;
+    min-height: 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+  .tc-input .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .tc-input .value {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--fg-1);
+  }
+  .tc-input .value.in {
+    color: var(--fg-2);
+  }
+  .tc-input .arrow {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  /* The seal disc — where the signing happens */
+  .tc-seal {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    position: relative;
+    background:
+      radial-gradient(circle at 30% 25%, rgba(94,160,255,0.15), transparent 50%),
+      radial-gradient(circle, var(--bg-1) 60%, var(--bg-0) 100%);
+    border: 1px solid var(--accent-border);
+    box-shadow:
+      inset 0 0 0 1px rgba(94,160,255,0.08),
+      inset 0 0 24px rgba(94,160,255,0.08),
+      0 0 0 1px var(--bg-0),
+      0 0 24px rgba(94,160,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  /* Engraved ring */
+  .tc-seal::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    border: 1px dashed rgba(94,160,255,0.25);
+  }
+  /* Active scanning ring around the seal, synced loosely to the rail pulse */
+  .tc-seal::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: conic-gradient(
+      from var(--seal-angle, 0deg),
+      rgba(94,160,255,0) 0deg,
+      rgba(94,160,255,0) 280deg,
+      rgba(94,160,255,0.5) 320deg,
+      #B8D4FF 350deg,
+      rgba(94,160,255,0) 360deg) border-box;
+    -webkit-mask:
+      linear-gradient(#000 0 0) padding-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    animation: sealSpin 5.5s linear infinite;
+    filter: drop-shadow(0 0 6px rgba(94,160,255,0.6));
+  }
+  @property --seal-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+  @keyframes sealSpin {
+    0%   { --seal-angle: 0deg; }
+    100% { --seal-angle: 360deg; }
+  }
+  .tc-node:nth-child(2) .tc-seal::after { animation-delay: -1.83s; }
+  .tc-node:nth-child(3) .tc-seal::after { animation-delay: -3.66s; }
+
+  .tc-seal .glyph {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .tc-seal .glyph .big {
+    font-size: 28px;
+    color: var(--fg-0);
+    letter-spacing: -0.02em;
+    display: block;
+    margin-bottom: 2px;
+    font-family: var(--sans);
+    font-weight: 600;
+  }
+
+  /* Vendor label below seal */
+  .tc-vendor {
+    margin-top: 16px;
+    font-family: var(--sans);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--fg-0);
+    letter-spacing: -0.02em;
+  }
+  .tc-role {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .tc-ix {
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.15em;
+    margin-bottom: 14px;
+  }
+
+  /* Output emitted (below) */
+  .tc-output {
+    margin-top: 20px;
+    width: 100%;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: linear-gradient(180deg, rgba(11,12,16,0.6), rgba(7,8,11,0.6));
+    text-align: left;
+  }
+  .tc-output .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  .tc-output .credential {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-1);
+    line-height: 1.5;
+    word-break: break-all;
+  }
+  .tc-output .credential code {
+    color: var(--accent);
+    background: var(--accent-bg);
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-size: 10.5px;
+  }
+  .tc-output .signedby {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--hairline);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+  }
+  .tc-output .signedby .k {
+    color: var(--fg-2);
+  }
+  .tc-body {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--fg-2);
+    line-height: 1.55;
+    width: 100%;
+  }
+  .tc-body code {
+    color: var(--accent);
+    font-size: 11px;
+  }
+
+  /* Chain connectors between nodes (link icons on the rail) */
+  .tc-link {
+    position: absolute;
+    top: 110px;
+    width: 28px; height: 28px;
+    background: var(--bg-0);
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    box-shadow: 0 0 12px rgba(94,160,255,0.3);
+  }
+  .tc-link.l1 { left: calc(33.333% - 14px); }
+  .tc-link.l2 { left: calc(66.666% - 14px); }
+
+  /* Final verification panel below the chain */
+  .tc-verify {
+    margin-top: 12px;
+    border: 1px solid var(--accent-border);
+    border-radius: 6px;
+    padding: 22px 28px;
+    background:
+      linear-gradient(180deg, rgba(94,160,255,0.04), rgba(94,160,255,0.01));
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 28px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .tc-verify::before {
+    /* sweeping audit beam, right-to-left */
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; width: 80px;
+    background: linear-gradient(90deg, transparent, rgba(94,160,255,0.12), transparent);
+    animation: tcAudit 5.5s linear infinite;
+    animation-delay: -0.5s;
+    pointer-events: none;
+  }
+  @keyframes tcAudit {
+    0%   { right: -10%; }
+    100% { right: 105%; }
+  }
+  .tc-verify .vlbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .tc-verify .vh {
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--fg-0);
+    letter-spacing: -0.02em;
+    margin-top: 2px;
+    line-height: 1.3;
+  }
+  .tc-verify .veq {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--fg-2);
+    line-height: 1.6;
+  }
+  .tc-verify .veq code {
+    color: var(--accent);
+  }
+  .tc-verify .vbadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: var(--bg-0);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    box-shadow: 0 0 0 1px rgba(94,160,255,0.4), 0 0 24px rgba(94,160,255,0.4);
+  }
+  .tc-verify .vbadge::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--bg-0);
+    box-shadow: 0 0 4px var(--bg-0);
+    animation: glow 1.6s ease-in-out infinite;
+  }
+
+  /* Footer */
+  .foot {
+    padding: 64px;
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) repeat(4, auto);
+    align-items: start;
+    gap: 40px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .foot .lt { max-width: 360px; }
+  .foot .lt .wm { align-items: center; }
+  .foot .lt .wm-text {
+    font-size: 30px;
+    line-height: 1;
+  }
+  .foot .lt p {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--fg-2);
+    line-height: 1.55;
+  }
+  .foot-col {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.9;
+    color: var(--fg-2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 140px;
+  }
+  .foot-col .head {
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-size: 10.5px;
+  }
+  .foot-col a {
+    color: var(--fg-1);
+    text-decoration: none;
+    transition: color 160ms;
+  }
+  .foot-col a:hover { color: var(--accent); }
+
+  .foot-bar {
+    padding: 18px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--fg-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .foot-bar a {
+    color: var(--fg-3);
+    text-decoration: none;
+    transition: color 160ms;
+  }
+  .foot-bar a:hover { color: var(--fg-1); }
+  .foot-bar .sep { color: var(--fg-4); margin: 0 8px; }
+
+  /* ============ RESPONSIVE ============ */
+  /* Tighten oversize hero/section padding for mid-width viewports */
+  @media (max-width: 1280px) {
+    .hero { padding: 72px 40px 80px; }
+    .section { padding: 80px 40px; }
+    .die-frame { grid-template-columns: 1fr; }
+    .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .strip .stat .val { font-size: 24px; }
+  }
+
+  @media (max-width: 1100px) {
+    .tc-nodes { grid-template-columns: 1fr; gap: 32px; }
+    .tc-rail::before, .tc-rail::after { display: none; }
+    .tc-link { display: none; }
+    .tc-node { padding: 0; }
+    .tc-verify { grid-template-columns: 1fr; gap: 16px; text-align: left; }
+    .tc-verify .vbadge { justify-self: start; }
+  }
+
+  /* Architecture: switch from wide SVG to vertical card stack
+     before the SVG labels become illegible. */
+  @media (max-width: 1100px) {
+    .arch-body svg.arch-desktop { display: none; }
+    .arch-mobile { display: flex; }
+    .arch-body { padding: 24px 16px; }
+  }
+
+  @media (max-width: 900px) {
+    /* Topbar collapses */
+    .topbar { padding: 0 18px; gap: 12px; height: auto; min-height: 56px; flex-wrap: wrap; position: relative; }
+    .menu-btn { display: inline-flex; }
+    .topbar nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: var(--bg-1);
+      border-top: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+      padding: 8px 0;
+      z-index: 50;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    }
+    .topbar nav a, .topbar nav .nav-more-panel a {
+      text-align: left;
+    }
+    .topbar.menu-open nav { display: flex; }
+    .topbar nav a {
+      padding: 20px 24px;
+      font-size: 15px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .topbar nav a:last-child { border-bottom: 0; }
+    .topbar nav .nav-sep { display: none; }
+    .topbar nav a.nav-current {
+      background: rgba(94,160,255,0.04);
+      color: var(--fg-0);
+    }
+    /* Collapsible ProveAPI section on mobile */
+    .nav-more {
+      display: block;
+      width: 100%;
+    }
+    .nav-more-btn {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--accent);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      background: rgba(94,160,255,0.04);
+      border: 0;
+      border-top: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+      text-align: left;
+      cursor: pointer;
+    }
+    .nav-more-btn:hover { background: rgba(94,160,255,0.08); }
+    .nav-more-btn::before,
+    .nav-more.has-current .nav-more-btn::before {
+      content: '// ';
+      color: var(--fg-3);
+      margin-right: 0;
+      letter-spacing: 0.16em;
+      width: auto; height: auto;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      vertical-align: baseline;
+      display: inline;
+    }
+    .nav-more-btn .label {
+      flex: 1;
+    }
+    .nav-more.has-current .nav-more-btn .label::after {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(94,160,255,0.7);
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    .nav-more-caret {
+      font-size: 12px;
+      color: var(--accent);
+      transition: transform 200ms ease;
+      letter-spacing: 0;
+    }
+    .nav-more.open .nav-more-caret {
+      transform: rotate(-180deg);
+    }
+    .nav-more-panel {
+      position: static;
+      flex-direction: column;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+      gap: 0;
+      display: none;
+    }
+    .nav-more.open .nav-more-panel {
+      display: flex;
+    }
+    .nav-more-panel a {
+      padding: 18px 24px 18px 36px;
+      border-radius: 0;
+      font-size: 15px;
+      color: var(--fg-2);
+      border-bottom: 1px solid var(--hairline);
+    }
+    .nav-more-panel a:last-child { border-bottom: 0; }
+    .nav-more-divider {
+      display: block;
+      height: 1px;
+      background: var(--hairline);
+      margin: 0;
+    }
+    .topbar nav .nav-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 24px;
+      border-top: 1px solid var(--hairline);
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--fg-2);
+    }
+    .topbar nav .nav-status .live {
+      color: var(--accent);
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 10px;
+      border: 1px solid var(--accent-border);
+      border-radius: 100px;
+      background: var(--accent-bg);
+      font-size: 11px;
+    }
+    .topbar nav .nav-status .live::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    .topbar .right { display: none; }
+    .topbar .wm { order: 1; }
+    .menu-btn { order: 2; }
+
+    /* Hero scales down */
+    .hero { padding: 56px 20px 64px; }
+    .lede { font-size: 17px; line-height: 1.5; margin-bottom: 32px; }
+    .cta { flex-wrap: wrap; gap: 10px; }
+    .btn { height: 44px; padding: 0 18px; font-size: 13px; }
+
+    /* Sections */
+    .section { padding: 64px 20px; }
+    .ssub { font-size: 16px; }
+    .marker { font-size: 10px; }
+
+    /* Stat strip stacks */
+    .strip { grid-template-columns: 1fr; gap: 10px; margin-top: 24px; }
+    .strip .stat { padding: 16px 18px; }
+    .strip .stat .val { font-size: 22px; }
+
+    /* Die-shot visual */
+    .die { padding: 18px; margin-top: 40px; }
+    .die-frame { gap: 14px; }
+    .die-side { gap: 10px; }
+    .die-side .row { padding: 10px 12px; }
+    .die-chip-label { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .die-chip-label .id { font-size: 10px; }
+
+    /* Exploit forensic */
+    .exploit-grid { grid-template-columns: 1fr; }
+    .exploit-vis { border-right: none; border-bottom: 1px solid var(--hairline); padding: 24px 20px; }
+    .exploit-loss { padding: 24px 20px; }
+    .exploit-loss .num { font-size: 80px; }
+    .exploit-loss .num small { font-size: 30px; }
+    .exploit-head { flex-wrap: wrap; gap: 8px; padding: 12px 18px; font-size: 9.5px; }
+    .exploit-head .attr { margin-left: 0; width: 100%; }
+    .swap { grid-template-columns: 1fr; gap: 12px; }
+    .swap-arrow { width: 100%; transform: rotate(90deg); }
+    .selective { grid-template-columns: 1fr; }
+
+    /* Architecture mobile padding tightening */
+    .arch-body { padding: 18px 14px; }
+    .arch-head { flex-wrap: wrap; gap: 8px; padding: 12px 16px; font-size: 10px; }
+
+    /* Timeline: hide non-hot marker captions at narrow widths to avoid collisions */
+    .timeline .tl-marks .m:not(.hot) .cap { display: none; }
+
+    /* Trust chain seals shrink */
+    .tc-seal { width: 96px; height: 96px; }
+    .tc-seal .glyph .big { font-size: 24px; }
+    .tc-vendor { font-size: 16px; }
+    .tc-output { padding: 10px 12px; }
+
+    /* Footer */
+    .foot { padding: 40px 20px; grid-template-columns: 1fr; gap: 32px; }
+    .foot-col { min-width: 0; }
+    .foot-bar { padding: 14px 20px; flex-direction: column; gap: 8px; align-items: flex-start; }
+  }
+
+  @media (max-width: 480px) {
+    .exploit-loss .num { font-size: 64px; }
+    .exploit-loss .num small { font-size: 24px; }
+    .timeline .tl-marks .m .cap { font-size: 8.5px; }
+    .topbar .wm-text { font-size: 14px; }
+    .eyebrow { font-size: 10px; }
+
+    /* Tighter padding everywhere */
+    .hero { padding: 48px 16px 56px; }
+    .section { padding: 48px 16px; }
+    .die { padding: 14px; }
+    .arch-body { padding: 14px 10px; }
+    .exploit-vis, .exploit-loss { padding: 18px 14px; }
+    .arch-head { padding: 10px 12px; }
+    .arch-head .right { display: none; }
+    .exploit-head { padding: 10px 14px; }
+
+    /* Eyebrow and pre-section markers wrap */
+    .eyebrow { flex-wrap: wrap; gap: 8px; }
+    .marker { flex-wrap: wrap; gap: 6px; }
+
+    /* Timeline marks crowd at narrow — only show key markers */
+    .timeline .tl-marks .m .cap { font-size: 9px; white-space: nowrap; }
+
+    /* Trust chain seals */
+    .tc-seal { width: 80px; height: 80px; }
+    .tc-seal .glyph .big { font-size: 20px; }
+    .tc-seal .glyph { font-size: 8px; }
+
+    /* Footer ProveAPI link block */
+    .foot { padding: 32px 16px; }
+  }
+
+  /* Hard safety: prevent any horizontal scroll on narrow viewports */
+  html { overflow-x: hidden; }
+
+</style>
+</head>
+<body data-screen-label="V3 Hardware-forward">
+
+<header class="topbar">
+  <a href="index.html" class="wm">
+    <div class="wm-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 43" fill="none"><path d="M0.885669 31.9059V16.1258L6.21497 19.1732C6.76432 19.4875 7.10684 20.0727 7.11012 20.7013L7.13529 27.0693C7.14295 28.8314 8.10375 30.4743 9.64455 31.3554L18.0686 36.179C18.166 36.2397 18.3082 36.1628 18.3038 36.0457V26.069C18.3137 24.7609 18.0434 23.4745 17.3726 22.3486C16.7412 21.2518 15.8274 20.3274 14.7276 19.688L0.00146484 11.1147L19.4693 0L33.2686 7.88951L29.3236 10.1447C28.7863 10.4579 28.0793 10.459 27.5398 10.148C25.9345 9.37421 22.7281 6.95859 20.8492 7.12332C19.9661 7.12332 19.0994 7.35198 18.34 7.78547L8.45065 13.4284C8.34779 13.4815 8.34669 13.6419 8.45065 13.6961L15.7136 17.9389C16.8079 18.5761 18.0587 18.9197 19.3292 18.9316C20.6687 18.9728 22.0059 18.6541 23.1735 17.9963L37.9993 9.67224L37.9894 31.8441L24.1901 39.7337V33.6399C24.1901 33.0113 24.5305 32.425 25.0787 32.1086L30.6346 28.9029C32.1721 28.0164 33.1274 26.3703 33.1285 24.6081L33.1351 14.9706C33.1351 14.9131 33.1077 14.8654 33.0574 14.8362C33.007 14.8069 32.9512 14.8069 32.9009 14.8362L24.0928 19.7823C22.9656 20.4152 22.0278 21.3374 21.38 22.4483C20.7518 23.5255 20.4148 24.7523 20.4049 25.9953V42.9989L0.885669 31.9059Z"/></svg></div>
+    <div class="wm-text">POLYMER</div>
+  </a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-label="Toggle menu" onclick="this.closest('.topbar').classList.toggle('menu-open');this.setAttribute('aria-expanded',this.closest('.topbar').classList.contains('menu-open'))">
+    <span class="bars"><span></span><span></span><span></span></span>
+    Menu
+  </button>
+  <nav>
+    <a href="index.html#architecture">Architecture</a>
+    <a href="index.html#attack">Attack Surface</a>
+    <a href="index.html#request">Request Flow</a>
+    <a href="index.html#pillars">Trust Pillars</a>
+    <span class="nav-sep" aria-hidden="true"></span>
+    <div class="nav-more">
+      <button type="button" class="nav-more-btn" aria-haspopup="true" aria-expanded="false" onclick="this.parentElement.classList.toggle('open');this.setAttribute('aria-expanded',this.parentElement.classList.contains('open'))">
+        <span class="label">ProveAPI</span><span class="nav-more-caret" aria-hidden="true">▾</span>
+      </button>
+      <div class="nav-more-panel" role="menu">
+        <a href="proveapi.html" role="menuitem">Overview</a>
+        <a href="https://docs.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Docs ↗</a>
+        <div class="nav-more-divider"></div>
+        <a href="https://accounts.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Accounts ↗</a>
+        <a href="https://dashboard.polymerlabs.org/analytics" target="_blank" rel="noopener" role="menuitem">Analytics ↗</a>
+        <a href="https://dashboard.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Explorer ↗</a>
+      </div>
+    </div>
+    <div class="nav-status">
+      <span class="live">~$2B volume</span>
+    </div>
+  </nav>
+  <div class="right">
+    <span class="live">~$2B volume</span>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <canvas id="chrome-bg"></canvas>
+  <div class="eyebrow">
+    <span>POLYMER <span class="v">/ The Verifiable RPC Network</span></span>
+  </div>
+
+  <h1 class="htitle">
+    <span class="silver">Secure the</span><br/>
+    <span class="blue">Onchain Economy.</span>
+  </h1>
+
+  <p class="lede">
+    Every wallet, bridge, and exchange reads the blockchain through someone
+    else's server, and trusts whatever it says. Polymer signs every response
+    inside <strong>tamper-proof hardware</strong>.
+  </p>
+
+  <div class="cta">
+    <a class="btn btn-primary" href="#">Run a Polymer node</a>
+    <a class="btn btn-secondary" href="#">Read the whitepaper</a>
+  </div>
+
+  <hr class="section-divider"/>
+  <div class="marker" id="architecture">01 // PROTOCOL ARCHITECTURE</div>
+
+  <!-- DIE-SHOT VISUAL -->
+  <div class="die">
+    <div class="die-frame">
+
+      <!-- Left side meta rows -->
+      <div class="die-side">
+        <div class="row">
+          <div class="lbl">Hardware</div>
+          <div class="val">Intel TDX <span class="a">·</span> sealed RAM</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Image digest</div>
+          <div class="val">sha256:<span class="a">7f3c8b…d92c</span></div>
+        </div>
+        <div class="row live">
+          <div class="lbl">Boot identity</div>
+          <div class="val">I_priv_n <span class="a">·</span> ephemeral</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Lifetime</div>
+          <div class="val">RAM-only · vanishes on reboot</div>
+        </div>
+      </div>
+
+      <!-- Center: chip die -->
+      <div class="die-chip">
+        <div class="chip-grid"></div>
+        <div class="chip-rim"></div>
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+
+        <div class="die-chip-label">
+          <span class="tag">TDX ENCLAVE · CHAIN FULL NODE</span>
+          <span class="id">node:0x4a8f2c1b…e92c</span>
+        </div>
+
+        <div class="die-svg-wrap">
+          <svg viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#F1F4F9"/>
+                <stop offset="50%" stop-color="#B3B9C2"/>
+                <stop offset="100%" stop-color="#6F7682"/>
+              </linearGradient>
+              <linearGradient id="diegrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#1A1F2A"/>
+                <stop offset="100%" stop-color="#0A0D14"/>
+              </linearGradient>
+              <radialGradient id="core" cx="0.5" cy="0.5">
+                <stop offset="0%" stop-color="#5EA0FF" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="#5EA0FF" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- Outer chip body (silver bezel) -->
+            <rect x="40" y="20" width="520" height="190" rx="6" fill="url(#silver)" opacity="0.15"/>
+            <rect x="42" y="22" width="516" height="186" rx="5" fill="url(#diegrad)" stroke="#5EA0FF" stroke-opacity="0.6"/>
+
+            <!-- Pin grid top -->
+            <g class="pin-row pin-top" fill="#5EA0FF">
+              <circle cx="80"  cy="14" r="2"/><circle cx="100" cy="14" r="2"/><circle cx="120" cy="14" r="2"/>
+              <circle cx="140" cy="14" r="2"/><circle cx="160" cy="14" r="2"/><circle cx="180" cy="14" r="2"/>
+              <circle cx="200" cy="14" r="2"/><circle cx="220" cy="14" r="2"/><circle cx="240" cy="14" r="2"/>
+              <circle cx="260" cy="14" r="2"/><circle cx="300" cy="14" r="2"/><circle cx="340" cy="14" r="2"/>
+              <circle cx="380" cy="14" r="2"/><circle cx="420" cy="14" r="2"/><circle cx="460" cy="14" r="2"/>
+              <circle cx="480" cy="14" r="2"/><circle cx="500" cy="14" r="2"/><circle cx="520" cy="14" r="2"/>
+            </g>
+            <g class="pin-row pin-bot" fill="#5EA0FF">
+              <circle cx="80"  cy="216" r="2"/><circle cx="100" cy="216" r="2"/><circle cx="120" cy="216" r="2"/>
+              <circle cx="140" cy="216" r="2"/><circle cx="160" cy="216" r="2"/><circle cx="180" cy="216" r="2"/>
+              <circle cx="200" cy="216" r="2"/><circle cx="220" cy="216" r="2"/><circle cx="240" cy="216" r="2"/>
+              <circle cx="260" cy="216" r="2"/><circle cx="300" cy="216" r="2"/><circle cx="340" cy="216" r="2"/>
+              <circle cx="380" cy="216" r="2"/><circle cx="420" cy="216" r="2"/><circle cx="460" cy="216" r="2"/>
+              <circle cx="480" cy="216" r="2"/><circle cx="500" cy="216" r="2"/><circle cx="520" cy="216" r="2"/>
+            </g>
+
+            <!-- Glow halo around core -->
+            <ellipse cx="300" cy="115" rx="180" ry="80" fill="url(#core)"/>
+
+            <!-- Inner functional units -->
+            <!-- left block: workload -->
+            <g>
+              <rect x="62" y="46" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
+              <text x="70" y="62" font-family="JetBrains Mono" font-size="9" fill="#5EA0FF" letter-spacing="1">CHAIN FULL NODE</text>
+              <line x1="70" y1="68" x2="160" y2="68" stroke="#5EA0FF"/>
+              <text x="70" y="82" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">EL + CL · RPC server</text>
+              <text x="70" y="93" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">canonical answer</text>
+
+              <rect x="62" y="110" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
+              <text x="70" y="126" font-family="JetBrains Mono" font-size="9" fill="#5EA0FF" letter-spacing="1">EIP-712</text>
+              <line x1="70" y1="132" x2="120" y2="132" stroke="#5EA0FF"/>
+              <text x="70" y="146" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">PolymerResponse</text>
+              <text x="70" y="157" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">typed-data digest</text>
+            </g>
+
+            <!-- centre: signing core -->
+            <g>
+              <rect x="240" y="62" width="120" height="106" fill="rgba(94,160,255,0.05)" stroke="#5EA0FF" stroke-width="1.5"/>
+              <text x="300" y="80" font-family="JetBrains Mono" font-size="9" fill="#5EA0FF" letter-spacing="1.5" text-anchor="middle">SIGNING CORE</text>
+              <line x1="270" y1="86" x2="330" y2="86" stroke="#5EA0FF" opacity="0.6"/>
+              <text x="300" y="106" font-family="Space Grotesk" font-size="14" fill="#FFFFFF" font-weight="600" text-anchor="middle">I_priv_n</text>
+              <text x="300" y="124" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">secp256k1</text>
+              <text x="300" y="138" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">libsecp256k1</text>
+              <text x="300" y="158" font-family="JetBrains Mono" font-size="8" fill="#5EA0FF" text-anchor="middle">CONST-TIME</text>
+              <!-- decorative trace lines -->
+              <path d="M222 80 H240 M222 104 H240 M222 128 H240 M222 152 H240" stroke="#5EA0FF" stroke-opacity="0.3"/>
+              <path d="M360 80 H378 M360 104 H378 M360 128 H378 M360 152 H378" stroke="#5EA0FF" stroke-opacity="0.5"/>
+            </g>
+
+            <!-- right block: attestation -->
+            <g>
+              <rect x="378" y="46" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
+              <text x="386" y="62" font-family="JetBrains Mono" font-size="9" fill="#5EA0FF" letter-spacing="1">ATTESTATION</text>
+              <line x1="386" y1="68" x2="476" y2="68" stroke="#5EA0FF"/>
+              <text x="386" y="82" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">Cloud attestation</text>
+              <text x="386" y="93" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">RS256 · per-response</text>
+
+              <rect x="378" y="110" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
+              <text x="386" y="126" font-family="JetBrains Mono" font-size="9" fill="#5EA0FF" letter-spacing="1">KEY BINDING</text>
+              <line x1="386" y1="132" x2="476" y2="132" stroke="#5EA0FF"/>
+              <text x="386" y="146" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">hash(I_pub_n) bound</text>
+              <text x="386" y="157" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">binds identity to image</text>
+            </g>
+
+            <!-- bottom label -->
+            <text x="300" y="190" font-family="JetBrains Mono" font-size="8" fill="#54585F" text-anchor="middle" letter-spacing="2">D_image · sha256:7f3c8b2e4f1a · POLYMER · v2.0</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Right side meta rows -->
+      <div class="die-side">
+        <div class="row">
+          <div class="lbl">Output</div>
+          <div class="val">PolymerResponse <span class="a">·</span> EIP-712</div>
+          <div class="sub">TEE-secured RPC response · typed-data digest</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Signature</div>
+          <div class="val">σ = <span class="a">ECDSA-secp256k1</span>(I_priv_n, digest)</div>
+          <div class="sub">key generated &amp; sealed inside the enclave · never exfiltrable</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Verifies in</div>
+          <div class="val">any <span class="a">EIP-712</span> wallet <span class="a">·</span> Solidity ECDSA.recover <span class="a">·</span> verifier-v2</div>
+          <div class="sub">no bespoke library · no protocol-wide setup · no shared key</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ INCIDENT ============ -->
+<section class="section" id="attack">
+  <div class="marker">02 // THE HIDDEN ATTACK SURFACE</div>
+  <h2 class="stitle">
+    You don't read the blockchain. <span class="dim">A server does.</span>
+  </h2>
+  <p class="ssub">
+    Wallets, bridges, exchanges. Every app on chain depends on someone
+    else's server to fetch on-chain data. If that server lies, the lie
+    looks identical to the truth.
+  </p>
+
+  <!-- Forensic exploit visualization -->
+  <div class="exploit">
+    <div class="exploit-head">
+      <span class="sev">CRITICAL</span>
+      <span class="id">kelp.layerzero.node-swap</span>
+      <span class="ts">2026-04-18T11:14:23Z</span>
+      <span class="attr">attribution: Lazarus Group (DPRK)</span>
+    </div>
+
+    <div class="exploit-grid">
+
+      <!-- LEFT: forensic visualization -->
+      <div class="exploit-vis">
+        <div class="caption">// Forensic · binary diff at T+0</div>
+
+        <div class="swap">
+          <div class="swap-node honest">
+            <div class="hd"><span>NODE · BEFORE</span><span class="dot"></span></div>
+            <div class="label">canonical worker</div>
+            <div class="hash">sha256:<br/>9f2c…e4a8</div>
+            <div class="delta"><span class="k">behavior:</span> <span class="v">honest</span></div>
+          </div>
+          <div class="swap-arrow">
+            <span class="glyph">⤖</span>
+            <span class="lbl">SWAPPED</span>
+          </div>
+          <div class="swap-node swapped">
+            <div class="hd"><span>NODE · AFTER</span><span class="dot"></span></div>
+            <div class="label">tampered worker</div>
+            <div class="hash">sha256:<br/>71b3…d92c</div>
+            <div class="delta"><span class="k">behavior:</span> <span class="v">selective lie</span></div>
+          </div>
+        </div>
+
+        <div class="selective">
+          <div class="row honest">
+            <div class="who">// SAME NODE → OTHER CLIENTS</div>
+            <div class="resp">eth_getProof → valid Merkle proof</div>
+          </div>
+          <div class="row lied">
+            <div class="who">// SAME NODE → LZ VERIFIER</div>
+            <div class="resp">eth_getProof → forged Merkle proof</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: loss + timeline -->
+      <div class="exploit-loss">
+        <div>
+          <span class="single">Drained in a single exploit</span>
+          <div class="num"><small>$</small>292<small>M</small></div>
+          <div class="num-lbl">Bridge withdrawal · LayerZero rsETH</div>
+          <div class="scoped"><strong>116,500 rsETH</strong> · ~18% of circulating supply, irreversible on-chain.</div>
+        </div>
+
+        <div class="timeline">
+          <div class="tl-lbl">// Window</div>
+          <div class="tl-rail">
+            <div class="seg" style="left:18%; width:64%;"></div>
+            <div class="tl-marks">
+              <div class="m" style="left:0%;"><span class="cap">T−5m · DDoS</span></div>
+              <div class="m hot" style="left:18%;"><span class="cap">T+0 · swap</span></div>
+              <div class="m hot" style="left:50%;"><span class="cap">T+19 · forge</span></div>
+              <div class="m hot" style="left:82%;"><span class="cap">T+47 · drain</span></div>
+            </div>
+          </div>
+          <div class="tl-bottom">
+            <span>UTC 2026-04-18 11:14</span>
+            <span class="duration">47 min · 0 alerts</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ ARCHITECTURE ============ -->
+<section class="section" id="request">
+  <div class="marker">03 // REQUEST FLOW</div>
+  <h2 class="stitle">
+    From <span class="blue">RPC call</span> to <span class="dim">verified response.</span>
+  </h2>
+  <p class="ssub">
+    A consumer sends an RPC call. The node answers from inside a hardware
+    enclave, signs the response, and attaches a fresh attestation. The
+    consumer verifies everything against keys pinned on chain.
+  </p>
+
+  <div class="arch">
+    <div class="arch-head">
+      <span class="pill">FIG · 04</span>
+      <span class="title">Per-request path · consumer to chain full node to registry</span>
+      <span class="right">
+        <span>━━ data</span>
+        <span style="color:var(--accent)">━━ signed</span>
+        <span style="color:var(--fg-2)">┄┄ attested</span>
+      </span>
+    </div>
+    <div class="arch-body">
+      <!-- Mobile-only: vertical step diagram -->
+      <div class="arch-mobile">
+        <div class="am-step am-off">
+          <div class="am-lane">// OFF-CHAIN</div>
+          <div class="am-card">
+            <div class="am-tag">CONSUMER</div>
+            <div class="am-name">wallet · indexer · bridge · DVN</div>
+            <div class="am-meta">verifier-v2</div>
+          </div>
+        </div>
+        <div class="am-edge">
+          <div class="am-edge-line"></div>
+          <div class="am-edge-lbl">eth_getBalance(...) <span class="am-dim">· x402 stablecoin</span></div>
+        </div>
+        <div class="am-step am-off">
+          <div class="am-card am-host">
+            <div class="am-tag am-tag-dim">HOST · OPERATOR-CONTROLLED</div>
+            <div class="am-enclave">
+              <div class="am-tag am-blue">TDX ENCLAVE <span class="am-meta-r">D_image ✓</span></div>
+              <div class="am-row">
+                <div class="am-row-name">Chain Full Node · RPC</div>
+                <div class="am-row-meta">EL.eth_getBalance() → resultHash · headBlock · finality</div>
+              </div>
+              <div class="am-row am-blue-row">
+                <div class="am-row-tag">SIGNING IDENTITY</div>
+                <div class="am-row-name">I_priv_n</div>
+                <div class="am-row-meta">secp256k1 · const-time</div>
+              </div>
+              <div class="am-row">
+                <div class="am-row-tag am-blue">RUNTIME ATTESTATION</div>
+                <div class="am-row-name">A_live</div>
+                <div class="am-row-meta">Cloud attestation · per-response</div>
+              </div>
+            </div>
+            <div class="am-meta am-host-foot">root @ host = drop, throttle, isolate · cannot reach inside</div>
+          </div>
+        </div>
+        <div class="am-edge am-edge-signed">
+          <div class="am-edge-line"></div>
+          <div class="am-edge-lbl am-blue">σ · A_live <span class="am-dim">· EIP-712 PolymerResponse</span></div>
+        </div>
+        <div class="am-step am-on">
+          <div class="am-lane">// ON-CHAIN</div>
+          <div class="am-card">
+            <div class="am-tag am-blue">ON-CHAIN</div>
+            <div class="am-name">Registry</div>
+            <div class="am-meta">getNodes(1) · ChainVersionRecord</div>
+            <div class="am-meta am-dim">D_image · governance</div>
+          </div>
+        </div>
+      </div>
+      <svg class="arch-desktop" viewBox="0 0 1280 460" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#54585F"/>
+          </marker>
+          <marker id="ar3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#5EA0FF"/>
+          </marker>
+          <radialGradient id="enclaveCore" cx="0.5" cy="0.5">
+            <stop offset="0%" stop-color="#5EA0FF" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#5EA0FF" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="silv2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F1F4F9"/>
+            <stop offset="100%" stop-color="#6F7682"/>
+          </linearGradient>
+          <linearGradient id="scanGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"  stop-color="#5EA0FF" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#B8D4FF" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#5EA0FF" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="enclaveClip">
+            <rect x="2" y="2" width="440" height="180" rx="5"/>
+          </clipPath>
+        </defs>
+
+        <!-- swimlane labels -->
+        <text x="0" y="20" font-family="JetBrains Mono" font-size="10" fill="#54585F" letter-spacing="1.5">// OFF-CHAIN</text>
+        <text x="0" y="408" font-family="JetBrains Mono" font-size="10" fill="#54585F" letter-spacing="1.5">// ON-CHAIN</text>
+        <line x1="0" y1="380" x2="1280" y2="380" stroke="#1E2128" stroke-dasharray="2 4"/>
+
+        <!-- consumer -->
+        <g transform="translate(40,160)">
+          <rect width="200" height="120" rx="6" fill="#0B0C10" stroke="#2C3038"/>
+          <text x="16" y="24" font-family="JetBrains Mono" font-size="10" fill="#5EA0FF" letter-spacing="1.5">CONSUMER</text>
+          <line x1="16" y1="32" x2="76" y2="32" stroke="#5EA0FF" stroke-opacity="0.6"/>
+          <text x="16" y="58" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">wallet · indexer</text>
+          <text x="16" y="78" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">bridge · DVN</text>
+          <text x="16" y="104" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">verifier-v2</text>
+        </g>
+
+        <!-- request -->
+        <line class="flow-line" x1="245" y1="220" x2="425" y2="220" stroke="#7A828F" stroke-width="1" marker-end="url(#ar3)"/>
+        <text x="335" y="212" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A" text-anchor="middle">eth_getBalance(...)</text>
+        <text x="335" y="238" font-family="JetBrains Mono" font-size="9" fill="#54585F" text-anchor="middle">x402 stablecoin</text>
+
+        <!-- HOST + ENCLAVE -->
+        <g transform="translate(430,90)">
+          <!-- host -->
+          <rect width="500" height="260" rx="6" fill="rgba(11,12,16,0.5)" stroke="#2C3038" stroke-dasharray="3 3"/>
+          <text x="16" y="22" font-family="JetBrains Mono" font-size="10" fill="#54585F" letter-spacing="1.5">HOST · OPERATOR-CONTROLLED</text>
+          <text x="16" y="246" font-family="JetBrains Mono" font-size="9" fill="#54585F">root @ host = drop, throttle, isolate · cannot reach inside</text>
+
+          <!-- enclave (silicon-style) -->
+          <g transform="translate(28,42)">
+            <rect class="enclave-plate" width="444" height="184" rx="6" fill="url(#silv2)"/>
+            <rect x="2" y="2" width="440" height="180" rx="5" fill="#0A0D14" stroke="#5EA0FF" stroke-width="1.5"/>
+            <ellipse class="enclave-core-glow" cx="222" cy="92" rx="180" ry="80" fill="url(#enclaveCore)"/>
+
+            <!-- scanning shimmer line -->
+            <g clip-path="url(#enclaveClip)">
+              <rect class="enclave-scan" x="-30" y="4" width="30" height="176" fill="url(#scanGrad)" opacity="0.85"/>
+            </g>
+
+            <!-- pin lights along bottom edge -->
+            <g>
+              <circle class="pin-light" cx="60"  cy="176" r="1.6" fill="#5EA0FF"/>
+              <circle class="pin-light" cx="130" cy="176" r="1.6" fill="#5EA0FF"/>
+              <circle class="pin-light" cx="200" cy="176" r="1.6" fill="#5EA0FF"/>
+              <circle class="pin-light" cx="270" cy="176" r="1.6" fill="#5EA0FF"/>
+              <circle class="pin-light" cx="340" cy="176" r="1.6" fill="#5EA0FF"/>
+              <circle class="pin-light" cx="400" cy="176" r="1.6" fill="#5EA0FF"/>
+            </g>
+
+            <text x="16" y="22" font-family="JetBrains Mono" font-size="10" fill="#5EA0FF" letter-spacing="1.5">TDX ENCLAVE</text>
+            <text x="428" y="22" font-family="JetBrains Mono" font-size="10" fill="#5EA0FF" text-anchor="end" letter-spacing="0.5">D_image ✓</text>
+
+            <!-- workload -->
+            <rect x="22" y="42" width="400" height="46" rx="3" fill="rgba(94,160,255,0.04)" stroke="#2C3038"/>
+            <text x="34" y="62" font-family="Space Grotesk" font-size="13" fill="#FFFFFF" font-weight="600">Chain Full Node · RPC</text>
+            <text x="34" y="80" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A">EL.eth_getBalance() → resultHash · headBlock · finality</text>
+
+            <!-- I_priv_n  -->
+            <rect class="id-block" x="22" y="98" width="194" height="68" rx="3" fill="rgba(94,160,255,0.05)" stroke="#5EA0FF"/>
+            <text x="34" y="116" font-family="JetBrains Mono" font-size="10" fill="#5EA0FF" letter-spacing="0.5">SIGNING IDENTITY</text>
+            <text x="34" y="138" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">I_priv_n</text>
+            <text x="34" y="156" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A">secp256k1 · const-time</text>
+
+            <!-- A_live -->
+            <rect x="228" y="98" width="194" height="68" rx="3" fill="rgba(11,12,16,0.6)" stroke="#2C3038"/>
+            <text x="240" y="116" font-family="JetBrains Mono" font-size="10" fill="#5EA0FF" letter-spacing="0.5">RUNTIME ATTESTATION</text>
+            <text x="240" y="138" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">A_live</text>
+            <text x="240" y="156" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A">Cloud attestation · per-response</text>
+          </g>
+        </g>
+
+        <!-- response -->
+        <line class="flow-signed" x1="935" y1="220" x2="1100" y2="220" stroke="#5EA0FF" stroke-width="2" marker-end="url(#ar3b)"/>
+        <text x="1018" y="212" font-family="JetBrains Mono" font-size="10" fill="#5EA0FF" text-anchor="middle">σ · A_live</text>
+        <text x="1018" y="238" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">EIP-712 PolymerResponse</text>
+
+        <!-- registry -->
+        <g transform="translate(1105,160)">
+          <rect width="160" height="120" rx="6" fill="#0B0C10" stroke="#2C3038"/>
+          <text x="14" y="24" font-family="JetBrains Mono" font-size="10" fill="#5EA0FF" letter-spacing="1.5">ON-CHAIN</text>
+          <line x1="14" y1="32" x2="74" y2="32" stroke="#5EA0FF" stroke-opacity="0.6"/>
+          <text x="14" y="58" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">Registry</text>
+          <text x="14" y="76" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">getNodes(1)</text>
+          <text x="14" y="98" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">ChainVersionRecord</text>
+          <text x="14" y="114" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">D_image · governance</text>
+        </g>
+
+        <!-- governance below -->
+        <g transform="translate(1105,395)">
+          <rect width="160" height="46" rx="6" fill="#0B0C10" stroke="#2C3038"/>
+          <text x="14" y="20" font-family="JetBrains Mono" font-size="10" fill="#5EA0FF" letter-spacing="1.5">GOVERNANCE</text>
+          <text x="14" y="36" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">multisig · time-locked</text>
+        </g>
+        <line x1="1185" y1="395" x2="1185" y2="280" stroke="#5EA0FF" stroke-dasharray="2 3" stroke-width="1"/>
+
+        <!-- jwt registration up -->
+        <path d="M 680 90 L 680 50 L 1185 50 L 1185 160" fill="none" stroke="#5EA0FF" stroke-dasharray="3 3" stroke-opacity="0.6" marker-end="url(#ar3b)"/>
+        <text x="900" y="42" font-family="JetBrains Mono" font-size="10" fill="#5EA0FF" text-anchor="middle">register(I_pub_n, attestation) — once at boot</text>
+
+        <!-- consumer reads registry -->
+        <path d="M 140 350 L 140 420 L 1105 420" fill="none" stroke="#54585F" stroke-dasharray="3 3" marker-end="url(#ar3)"/>
+        <text x="600" y="412" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A" text-anchor="middle">getNodes(networkId) → I_pub_n[]</text>
+
+        <!-- verify badge -->
+        <g transform="translate(40,308)">
+          <rect width="200" height="42" rx="4" fill="rgba(94,160,255,0.07)" stroke="#5EA0FF" stroke-opacity="0.5"/>
+          <text x="14" y="18" font-family="JetBrains Mono" font-size="9" fill="#5EA0FF">verify_response()</text>
+          <text x="14" y="32" font-family="Space Grotesk" font-size="13" fill="#FFFFFF" font-weight="600">ecrecover ≡ I_pub_n  ✓</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRUST PILLARS ============ -->
+<section class="section" id="pillars">
+  <div class="marker">04 // TRUST PILLARS</div>
+  <h2 class="stitle">
+    Three pillars. <span class="blue">Hardware.</span> Cryptography. <span class="dim">Public verifiability.</span>
+  </h2>
+  <p class="ssub">
+    <strong>Hardware</strong> locks the node down. <strong>Cryptography</strong>
+    signs every response. <strong>Open source</strong> lets anyone audit what's
+    actually running. Three independent checks behind every read.
+  </p>
+
+  <!-- ===== CHAIN-OF-TRUST VISUALIZATION ===== -->
+  <div class="trustchain">
+    <div class="tc-rail">
+      <div class="tc-nodes">
+
+        <!-- LINK 1: HARDWARE — Intel TDX silicon enclave -->
+        <div class="tc-node">
+          <div class="tc-ix">PILLAR / 01 · HARDWARE</div>
+          <div class="tc-input">
+            <span class="label">Receives</span>
+            <span class="value in">workload binary · enclave memory</span>
+            <span class="arrow">↓</span>
+          </div>
+          <div class="tc-seal">
+            <div class="glyph"><span class="big">TDX</span>SILICON<br/>ENCLAVE</div>
+          </div>
+          <div class="tc-vendor">Intel TDX</div>
+          <div class="tc-role">Silicon root · sealed memory</div>
+          <div class="tc-output">
+            <div class="label">→ EMITS</div>
+            <div class="credential"><code>image_digest</code> = sha256(measured pages)</div>
+            <div class="signedby"><span class="k">signed_by:</span> Intel root CA</div>
+          </div>
+          <div class="tc-body">Intel's chip seals the node and signs a fingerprint of what's running. Nothing outside the enclave can change it: not the host OS, not the hypervisor, not the cloud admin.</div>
+        </div>
+
+        <!-- LINK 2: CRYPTOGRAPHY — per-node key, attested binding, signed RPC -->
+        <div class="tc-node">
+          <div class="tc-ix">PILLAR / 02 · CRYPTOGRAPHY</div>
+          <div class="tc-input">
+            <span class="label">Receives</span>
+            <span class="value"><code style="color:var(--accent)">image_digest</code> + per-node <code style="color:var(--accent)">I_pub_n</code></span>
+            <span class="arrow">↓</span>
+          </div>
+          <div class="tc-seal">
+            <div class="glyph"><span class="big">SIG</span>KEY-BINDING<br/>+ ECDSA</div>
+          </div>
+          <div class="tc-vendor">Per-node identity</div>
+          <div class="tc-role">Key in silicon · ECDSA secp256k1</div>
+          <div class="tc-output">
+            <div class="label">→ EMITS</div>
+            <div class="credential">RPC signed by <code>I_priv_n</code> + cloud attestation { <code>image_digest</code>, hash(<code>I_pub_n</code>) }</div>
+            <div class="signedby"><span class="k">signed_by:</span> enclave key + cloud key</div>
+          </div>
+          <div class="tc-body">The enclave generates a fresh signing key that never leaves the hardware. The cloud signs an attestation binding the key to the measured image. Every response is signed by the enclave's key.</div>
+        </div>
+
+        <!-- LINK 3: PUBLIC VERIFIABILITY — reproducible builds + public source -->
+        <div class="tc-node">
+          <div class="tc-ix">PILLAR / 03 · PUBLIC VERIFIABILITY</div>
+          <div class="tc-input">
+            <span class="label">Receives</span>
+            <span class="value">public source → deterministic <code style="color:var(--accent)">D_image</code></span>
+            <span class="arrow">↓</span>
+          </div>
+          <div class="tc-seal">
+            <div class="glyph"><span class="big">SRC</span>REPRODUCIBLE<br/>BUILD</div>
+          </div>
+          <div class="tc-vendor">Reproducible builds</div>
+          <div class="tc-role">Public source · anyone can audit</div>
+          <div class="tc-output">
+            <div class="label">→ PROVES</div>
+            <div class="credential">sha256(rebuild) ≡ <code>ChainVersionRecord.D_image</code></div>
+            <div class="signedby"><span class="k">verified_by:</span> independent rebuilders</div>
+          </div>
+          <div class="tc-body">The node's code is open source and built deterministically. Anyone can rebuild from source and confirm the on-chain image is what the public code compiles to.</div>
+        </div>
+
+      </div>
+      <!-- chain link bridges sitting on the rail -->
+      <div class="tc-link l1">⧉</div>
+      <div class="tc-link l2">⧉</div>
+    </div>
+
+    <!-- final verification badge -->
+    <div class="tc-verify">
+      <div>
+        <div class="vlbl">→ CONSUMER VERIFIES</div>
+        <div class="vh">Three roots, one check.</div>
+      </div>
+      <div class="veq">
+        <code>σ → <span style="color:var(--accent)">I_pub_n</span> → <span style="color:var(--accent)">A_live</span>.D_image ∈ <span style="color:var(--accent)">Registry</span></code>
+      </div>
+      <div class="vbadge">VERIFIED</div>
+    </div>
+
+  </div>
+
+</section>
+
+<footer class="foot">
+  <div class="lt">
+    <div class="wm">
+      <div class="wm-mark" style="width:42px;height:48px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 43" fill="none"><path d="M0.885669 31.9059V16.1258L6.21497 19.1732C6.76432 19.4875 7.10684 20.0727 7.11012 20.7013L7.13529 27.0693C7.14295 28.8314 8.10375 30.4743 9.64455 31.3554L18.0686 36.179C18.166 36.2397 18.3082 36.1628 18.3038 36.0457V26.069C18.3137 24.7609 18.0434 23.4745 17.3726 22.3486C16.7412 21.2518 15.8274 20.3274 14.7276 19.688L0.00146484 11.1147L19.4693 0L33.2686 7.88951L29.3236 10.1447C28.7863 10.4579 28.0793 10.459 27.5398 10.148C25.9345 9.37421 22.7281 6.95859 20.8492 7.12332C19.9661 7.12332 19.0994 7.35198 18.34 7.78547L8.45065 13.4284C8.34779 13.4815 8.34669 13.6419 8.45065 13.6961L15.7136 17.9389C16.8079 18.5761 18.0587 18.9197 19.3292 18.9316C20.6687 18.9728 22.0059 18.6541 23.1735 17.9963L37.9993 9.67224L37.9894 31.8441L24.1901 39.7337V33.6399C24.1901 33.0113 24.5305 32.425 25.0787 32.1086L30.6346 28.9029C32.1721 28.0164 33.1274 26.3703 33.1285 24.6081L33.1351 14.9706C33.1351 14.9131 33.1077 14.8654 33.0574 14.8362C33.007 14.8069 32.9512 14.8069 32.9009 14.8362L24.0928 19.7823C22.9656 20.4152 22.0278 21.3374 21.38 22.4483C20.7518 23.5255 20.4148 24.7523 20.4049 25.9953V42.9989L0.885669 31.9059Z"/></svg></div>
+      <div class="wm-text">POLYMER</div>
+    </div>
+    <p>Verifiable infrastructure for the on-chain economy.</p>
+  </div>
+  <div class="foot-col">
+    <div class="head">// Products</div>
+    <a href="index.html">Verifiable RPC</a>
+    <a href="proveapi.html">ProveAPI</a>
+  </div>
+  <div class="foot-col">
+    <div class="head">// ProveAPI</div>
+    <a href="https://docs.polymerlabs.org/" target="_blank" rel="noopener">Docs ↗</a>
+    <a href="https://accounts.polymerlabs.org/" target="_blank" rel="noopener">Accounts ↗</a>
+    <a href="https://dashboard.polymerlabs.org/analytics" target="_blank" rel="noopener">Analytics ↗</a>
+    <a href="https://dashboard.polymerlabs.org/" target="_blank" rel="noopener">Explorer ↗</a>
+  </div>
+  <div class="foot-col">
+    <div class="head">// Developers</div>
+    <a href="https://github.com/polymerdao" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+  <div class="foot-col">
+    <div class="head">// Socials</div>
+    <a href="https://discord.com/invite/5UZmbmjG" target="_blank" rel="noopener">Discord ↗</a>
+    <a href="https://x.com/Polymer_Labs" target="_blank" rel="noopener">X ↗</a>
+    <a href="https://www.linkedin.com/company/polymerdao/" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <a href="https://www.youtube.com/@PolymerDAO" target="_blank" rel="noopener">YouTube ↗</a>
+  </div>
+</footer>
+<div class="foot-bar">
+  <div>MONOMER LABS 2026</div>
+  <div>
+    <a href="https://cdn.polymerlabs.org/legal/privacy-policy" target="_blank" rel="noopener">Privacy</a><span class="sep">·</span><a href="https://cdn.polymerlabs.org/legal/terms-of-service" target="_blank" rel="noopener">Terms</a>
+  </div>
+</div>
+
+<!-- ============ HERO LIQUID CHROME (WebGL) ============ -->
+<script>
+(function() {
+  const canvas = document.getElementById('chrome-bg');
+  if (!canvas) return;
+  const gl = canvas.getContext('webgl', { antialias: true, premultipliedAlpha: false });
+  if (!gl) return;
+
+  const vertSrc = `
+    attribute vec2 a_pos;
+    attribute vec2 a_uv;
+    varying vec2 vUv;
+    void main() {
+      vUv = a_uv;
+      gl_Position = vec4(a_pos, 0.0, 1.0);
+    }
+  `;
+
+  // Liquid chrome — tuned for a dark hero. Deep onyx/graphite mids,
+  // cool steel & glacial-blue highlights, slow flow.
+  const fragSrc = `
+    precision highp float;
+    varying vec2 vUv;
+    uniform float u_time;
+    uniform vec2 u_res;
+
+    const float ax = 5.0, ay = 7.0, az = 9.0, aw = 13.0;
+    const float scale = 0.34;
+
+    // dark chrome palette
+    const vec3 color1 = vec3(0.86, 0.91, 1.00); // glacial highlight
+    const vec3 color2 = vec3(0.34, 0.40, 0.52); // brushed steel
+    const vec3 color3 = vec3(0.03, 0.04, 0.06); // onyx
+    const vec3 color4 = vec3(0.16, 0.22, 0.34); // cool shadow
+
+    float cheapNoise(vec3 stp) {
+      vec3 p = vec3(stp.st, stp.p);
+      vec4 a = vec4(ax, ay, az, aw);
+      return mix(
+        sin(p.z + p.x * a.x + cos(p.x * a.x - p.z)) *
+        cos(p.z + p.y * a.y + cos(p.y * a.x + p.z)),
+        sin(1.0 + p.x * a.z + p.z + cos(p.y * a.w - p.z)) *
+        cos(1.0 + p.y * a.w + p.z + cos(p.x * a.x + p.z)),
+        0.436
+      );
+    }
+
+    void main() {
+      vec2 aR = vec2(u_res.x / u_res.y, 1.0);
+      vec2 st = vUv * aR * scale;
+      float t = u_time * 0.32;
+      float S = sin(t * 0.005), C = cos(t * 0.005);
+
+      vec2 v1 = vec2(cheapNoise(vec3(st, 2.0)), cheapNoise(vec3(st, 1.0)));
+      vec2 v2 = vec2(
+        cheapNoise(vec3(st + v1 + vec2(C * 1.7, S * 9.2), 0.15 * t)),
+        cheapNoise(vec3(st + v1 + vec2(S * 8.3, C * 2.8), 0.126 * t))
+      );
+      float n = 0.5 + 0.5 * cheapNoise(vec3(st + v2, 0.0));
+
+      vec3 color = mix(color1, color2, clamp((n * n) * 8.0, 0.0, 1.0));
+      color = mix(color, color3, clamp(length(v1), 0.0, 1.0));
+      color = mix(color, color4, clamp(length(v2.x), 0.0, 1.0));
+
+      color /= n * n + n * 5.0;
+      color = pow(color, vec3(0.9));
+
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `;
+
+  function compile(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.warn('chrome shader compile error:', gl.getShaderInfoLog(s));
+    }
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, vertSrc));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fragSrc));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  const posBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1, 1,1,-1,-1,1,-1]), gl.STATIC_DRAW);
+  const aPos = gl.getAttribLocation(prog, 'a_pos');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+  const uvBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,0,1,1,0, 1,0,0,1,1,1]), gl.STATIC_DRAW);
+  const aUv = gl.getAttribLocation(prog, 'a_uv');
+  gl.enableVertexAttribArray(aUv);
+  gl.vertexAttribPointer(aUv, 2, gl.FLOAT, false, 0, 0);
+
+  const uRes = gl.getUniformLocation(prog, 'u_res');
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Pause when not visible (saves cycles when scrolled past hero)
+  let visible = true;
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting;
+    }, { threshold: 0 });
+    io.observe(canvas);
+  }
+
+  const start = performance.now();
+  function frame() {
+    if (visible) {
+      const now = (performance.now() - start) / 1000;
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform1f(uTime, now);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+</script>
+
+</body>
+</html>

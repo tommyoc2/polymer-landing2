@@ -1,0 +1,2015 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="ProveAPI — hosted cross-chain proof generation from Polymer. Drop in an HTTP call where you'd otherwise stand up a relayer or light client." />
+<title>ProveAPI — Polymer</title>
+<link rel="icon" type="image/svg+xml" href="assets/polymer-mark.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Radio+Canada+Big:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-0: #050507;
+    --bg-1: #0B0C10;
+    --bg-2: #14161C;
+    --bg-3: #1D2029;
+
+    --fg-0: #FFFFFF;
+    --fg-1: #E2E5EB;
+    --fg-2: #8A8F9A;
+    --fg-3: #54585F;
+    --fg-4: #2A2D33;
+
+    --hairline: #1E2128;
+    --hairline-strong: #2C3038;
+
+    --accent: #5EA0FF;
+    --accent-hot: #8FBEFF;
+    --accent-bg: rgba(94, 160, 255, 0.08);
+    --accent-border: rgba(94, 160, 255, 0.4);
+
+    --green: #6FCB8E;
+    --amber: #E6C07B;
+
+    --chrome-1: #C9CFD6;
+    --chrome-2: #6B7280;
+    --silver-grad: linear-gradient(180deg, #F1F4F9 0%, #B3B9C2 50%, #6F7682 100%);
+
+    --sans: 'Space Grotesk', system-ui, sans-serif;
+    --display: 'Radio Canada Big', 'Space Grotesk', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    background: var(--bg-0);
+    color: var(--fg-1);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  body {
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    background:
+      radial-gradient(ellipse 1100px 600px at 80% -10%, rgba(94,160,255,0.06), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 0% 30%, rgba(94,160,255,0.03), transparent 60%),
+      var(--bg-0);
+    overflow-x: hidden;
+  }
+  img, svg, video, canvas { max-width: 100%; height: auto; }
+
+  ::selection { background: var(--accent); color: var(--bg-0); }
+
+  /* Smooth in-page anchors; offset for the sticky topbar */
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  #architecture, #attack, #request, #pillars { scroll-margin-top: 100px; }
+
+  /* Better text rendering */
+  html, body {
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'ss01' 1;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar matching the deep-onyx palette */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg-0); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--hairline-strong);
+    border-radius: 5px;
+    border: 2px solid var(--bg-0);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-border); }
+  html { scrollbar-color: var(--hairline-strong) var(--bg-0); scrollbar-width: thin; }
+
+  /* Keyboard-only focus ring */
+  :focus { outline: none; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ===== Topbar (matches main protocol page) ===== */
+  .topbar {
+    height: 56px;
+    border-bottom: 1px solid var(--hairline);
+    display: flex; align-items: center;
+    padding: 0 28px;
+    gap: 32px;
+    position: sticky; top: 0;
+    background: rgba(5,5,7,0.92);
+    backdrop-filter: blur(8px);
+    z-index: 50;
+  }
+  .topbar .wm {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: inherit;
+  }
+  .topbar .wm-mark {
+    width: 22px; height: 26px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .wm-mark svg { width: 100%; height: 100%; fill: var(--chrome-1); }
+  .topbar .wm-mark svg {
+    filter: drop-shadow(0 0 12px rgba(94,160,255,0.25));
+    transition: filter 240ms ease;
+  }
+  .topbar .wm:hover .wm-mark svg {
+    filter: drop-shadow(0 0 18px rgba(94,160,255,0.55));
+  }
+  .topbar .wm-text {
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    background: var(--silver-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-transform: uppercase;
+  }
+  .topbar nav {
+    display: flex; gap: 28px; align-items: center;
+  }
+  .menu-btn {
+    display: none;
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--hairline-strong);
+    color: var(--fg-1);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    align-items: center;
+    gap: 8px;
+  }
+  .menu-btn:hover { border-color: var(--accent-border); color: var(--fg-0); }
+  .menu-btn .bars {
+    display: inline-flex; flex-direction: column; gap: 3px;
+  }
+  .menu-btn .bars span {
+    width: 14px; height: 1.5px; background: currentColor;
+    transition: transform 160ms, opacity 160ms;
+  }
+  .topbar.menu-open .menu-btn .bars span:nth-child(1) {
+    transform: translateY(4.5px) rotate(45deg);
+  }
+  .topbar.menu-open .menu-btn .bars span:nth-child(2) { opacity: 0; }
+  .topbar.menu-open .menu-btn .bars span:nth-child(3) {
+    transform: translateY(-4.5px) rotate(-45deg);
+  }
+  .topbar nav a {
+    font-size: 13px;
+    color: var(--fg-2);
+    text-decoration: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    transition: color 160ms;
+  }
+  .topbar nav a:hover { color: var(--fg-0); }
+  .topbar nav .nav-sep {
+    width: 1px; height: 18px;
+    background: var(--hairline);
+    align-self: center;
+  }
+  .topbar nav a.nav-current {
+    color: var(--fg-0);
+    display: inline-flex; align-items: baseline; gap: 8px;
+  }
+  .topbar nav a.nav-current::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(94,160,255,0.7);
+    align-self: center;
+  }
+  .topbar nav .nav-status { display: none; }
+
+  /* Desktop "More" dropdown */
+  .nav-more { position: relative; display: inline-flex; align-items: center; }
+  .nav-more-btn {
+    background: transparent;
+    border: 0;
+    color: var(--fg-2);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 160ms;
+  }
+  .nav-more-btn:hover,
+  .nav-more.open .nav-more-btn { color: var(--fg-0); }
+  .nav-more-caret {
+    font-size: 10px;
+    color: var(--fg-3);
+    transition: transform 160ms, color 160ms;
+  }
+  .nav-more.open .nav-more-caret {
+    color: var(--accent);
+    transform: rotate(-180deg);
+  }
+  .nav-more-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 200px;
+    background: var(--bg-1);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 6px;
+    padding: 6px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 60;
+  }
+  .nav-more.open .nav-more-panel { display: flex; }
+  .nav-more.has-current .nav-more-btn { color: var(--fg-0); }
+  .nav-more.has-current .nav-more-btn::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(94,160,255,0.7);
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .nav-section-label { display: none; }
+  .nav-more-divider {
+    height: 1px;
+    background: var(--hairline);
+    margin: 6px 4px;
+  }
+  .nav-more-panel a {
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--fg-2);
+    text-decoration: none;
+    transition: background 160ms, color 160ms;
+    white-space: nowrap;
+  }
+  .nav-more-panel a:hover {
+    background: rgba(94,160,255,0.08);
+    color: var(--fg-0);
+  }
+  .nav-more-panel a.nav-current {
+    color: var(--fg-0);
+    background: rgba(94,160,255,0.08);
+  }
+  .nav-more-panel a.nav-current::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 8px;
+    box-shadow: 0 0 8px rgba(94,160,255,0.7);
+    vertical-align: middle;
+  }
+  .topbar .right {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-2);
+  }
+  .topbar .right .live,
+  .topbar nav .nav-status .live {
+    color: var(--accent);
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--accent-border);
+    border-radius: 100px;
+    background: var(--accent-bg);
+    font-size: 11px;
+  }
+  .topbar .right .live::before,
+  .topbar nav .nav-status .live::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: glow 1.6s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  /* ===== Eyebrow markers (shared vocabulary with main page) ===== */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .eyebrow .v { color: var(--fg-3); }
+  .marker {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-3);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 120px 64px 96px;
+    border-bottom: 1px solid var(--hairline);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero #chrome-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    z-index: 0;
+    opacity: 0.5;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 30%, transparent 0%, rgba(7,8,11,0.55) 80%),
+      linear-gradient(180deg, rgba(7,8,11,0.25) 0%, transparent 35%, transparent 60%, var(--bg-0) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .hero > *:not(#chrome-bg) {
+    position: relative;
+    z-index: 2;
+  }
+
+  .htitle {
+    font-family: var(--sans);
+    font-size: clamp(38px, 6.7vw, 96px);
+    font-weight: 600;
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+    margin: 0 0 28px;
+    max-width: 1100px;
+  }
+  .htitle .silver {
+    background: var(--silver-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .htitle .blue { color: var(--accent); }
+  .htitle .dim { color: var(--fg-3); }
+
+  .lede {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--fg-1);
+    max-width: 720px;
+    margin: 0 0 36px;
+    letter-spacing: -0.005em;
+  }
+  .lede strong { color: var(--fg-0); font-weight: 500; }
+
+  .cta-row {
+    display: flex; align-items: center; gap: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 12px 22px;
+    border-radius: 3px;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 10px;
+    transition: all 160ms;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .btn.primary {
+    background: var(--accent);
+    color: var(--bg-0);
+    box-shadow: 0 0 0 1px var(--accent), 0 0 24px rgba(94,160,255,0.3);
+  }
+  .btn.primary:hover { background: var(--accent-hot); }
+  .btn span {
+    transition: transform 200ms cubic-bezier(.4,0,.2,1);
+    display: inline-block;
+  }
+  .btn:hover span { transform: translate(2px, -2px); }
+  .btn.ghost {
+    background: transparent;
+    color: var(--fg-1);
+    border-color: var(--hairline-strong);
+  }
+  .btn.ghost:hover { color: var(--fg-0); border-color: var(--fg-2); }
+
+  /* ===== HERO PROOF-PACKET DIE-SHOT (mirrors v3 die styling) ===== */
+  .die {
+    margin-top: 64px;
+    background: linear-gradient(180deg, #0B0C10 0%, #050507 100%);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 8px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.04),
+      0 30px 80px rgba(0,0,0,0.5);
+  }
+  .die::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 40% 50% at 50% 50%, rgba(94,160,255,0.05), transparent);
+    pointer-events: none;
+  }
+  .die-frame {
+    display: grid;
+    grid-template-columns: 220px 1fr 220px;
+    gap: 24px;
+    align-items: stretch;
+    position: relative;
+    z-index: 1;
+  }
+  .die-side {
+    display: flex; flex-direction: column;
+    gap: 14px;
+    justify-content: center;
+  }
+  .die-side .row {
+    border: 1px solid var(--hairline-strong);
+    background: var(--bg-1);
+    padding: 14px 16px;
+    border-radius: 4px;
+    position: relative;
+  }
+  .die-side .row .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .die-side .row .val {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--fg-1);
+    letter-spacing: -0.01em;
+    line-height: 1.4;
+  }
+  .die-side .row .val .a { color: var(--accent); }
+  .die-side .row.live::before {
+    content: ''; position: absolute; top: 14px; right: 14px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: glow 1.6s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* The cryptographic manifest panel (NOT silicon — silicon belongs to v3) */
+  .die-chip {
+    background:
+      repeating-linear-gradient(45deg,
+        rgba(94,160,255,0.018) 0 1px,
+        transparent 1px 7px),
+      linear-gradient(180deg, #0A0C11 0%, #06070A 100%);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 2px;
+    padding: 18px 22px 22px;
+    position: relative;
+    overflow: hidden;
+    min-height: 340px;
+    box-shadow: inset 0 0 0 4px var(--bg-0), inset 0 0 0 5px rgba(94,160,255,0.18);
+    display: flex;
+    flex-direction: column;
+  }
+  /* Inner double-rule (security paper) */
+  .die-chip > .rule {
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(94,160,255,0.22);
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  /* Corner notary marks */
+  .die-chip > .notary {
+    position: absolute;
+    width: 14px; height: 14px;
+    border: 1px solid var(--accent);
+    transform: rotate(45deg);
+    background: var(--bg-0);
+    z-index: 2;
+  }
+  .die-chip > .notary::before {
+    content: '';
+    position: absolute; inset: 3px;
+    background: var(--accent);
+    opacity: 0.45;
+  }
+  .die-chip > .notary.tl { top: 4px;    left: 4px; }
+  .die-chip > .notary.tr { top: 4px;    right: 4px; }
+  .die-chip > .notary.bl { bottom: 4px; left: 4px; }
+  .die-chip > .notary.br { bottom: 4px; right: 4px; }
+
+  /* Hash bytestream marching along the bottom edge */
+  .die-chip > .hashstream {
+    position: absolute;
+    left: 22px; right: 22px;
+    bottom: 14px;
+    height: 14px;
+    overflow: hidden;
+    z-index: 2;
+    border-top: 1px dashed rgba(94,160,255,0.18);
+  }
+  .die-chip > .hashstream .track {
+    display: inline-block;
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(94,160,255,0.55);
+    letter-spacing: 0.08em;
+    padding-top: 1px;
+    animation: hashScroll 60s linear infinite;
+  }
+  @keyframes hashScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  .die-chip-label {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+    position: relative; z-index: 3;
+  }
+  .die-chip-label .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+  .die-chip-label .id {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+  }
+  .die-chip-label .sealtxt {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+  }
+
+  .die-svg-wrap {
+    position: relative;
+    z-index: 3;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+  }
+  .proof-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 8px;
+  }
+  .proof-part {
+    width: 100%;
+    height: auto;
+    max-width: 220px;
+    margin: 0 auto;
+    display: block;
+  }
+  .proof-arrow {
+    width: 22px; height: 1px;
+    background: var(--accent);
+    opacity: 0.7;
+    position: relative;
+    align-self: center;
+  }
+  .proof-arrow::after {
+    content: '';
+    position: absolute;
+    right: -1px; top: 50%;
+    transform: translateY(-50%);
+    border-left: 6px solid var(--accent);
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+  }
+  .proof-anchor {
+    border-top: 1px solid rgba(94,160,255,0.18);
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .proof-anchor .pa-row {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .proof-anchor .pa-lbl {
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    min-width: 78px;
+  }
+  .proof-anchor .pa-val { color: #C8CDD3; word-break: break-all; }
+  .proof-anchor .pa-accent { color: var(--accent); }
+
+  /* Vertical layout below this width — cards stack with down-arrows */
+  @media (max-width: 900px) {
+    .proof-grid {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+    .proof-arrow {
+      width: 1px; height: 22px;
+      justify-self: center;
+    }
+    .proof-arrow::after {
+      right: 50%; top: auto; bottom: -1px;
+      transform: translateX(50%);
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 6px solid var(--accent);
+      border-bottom: 0;
+    }
+    .proof-part { max-width: 280px; }
+  }
+
+  /* Notary seal: slowly rotating ring */
+  .seal-ring {
+    transform-origin: 100px 110px;
+    transform-box: view-box;
+    animation: sealSpin 28s linear infinite;
+  }
+  @keyframes sealSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Merkle ladder pulse: each parent hash lights up after its children */
+  .merkle-node {
+    animation: nodePulse 5s ease-in-out infinite;
+  }
+  .merkle-node.lvl0 { animation-delay: 0s; }
+  .merkle-node.lvl1 { animation-delay: 0.5s; }
+  .merkle-node.lvl2 { animation-delay: 1.0s; }
+  .merkle-node.root { animation-delay: 1.5s; }
+  @keyframes nodePulse {
+    0%, 70%, 100% { fill: rgba(94,160,255,0.25); }
+    35%           { fill: rgba(255,255,255,0.95); filter: drop-shadow(0 0 4px #B8D4FF); }
+  }
+
+  .flow-line {
+    stroke-dasharray: 6 8;
+    animation: flowDash 1.6s linear infinite;
+  }
+  @keyframes flowDash {
+    to { stroke-dashoffset: -28; }
+  }
+
+  /* ===== Hero stat strip ===== */
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    background: linear-gradient(180deg, transparent, rgba(94,160,255,0.015));
+  }
+  .strip .item {
+    padding: 28px 32px;
+    border-right: 1px solid var(--hairline);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .strip .item:last-child { border-right: none; }
+  .strip .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .strip .v {
+    font-family: var(--sans);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--fg-0);
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+  .strip .v .accent { color: var(--accent); }
+  .strip .sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-2);
+    line-height: 1.5;
+  }
+
+  /* ===== Section ===== */
+  .section {
+    padding: 120px 64px;
+    border-bottom: 1px solid var(--hairline);
+    position: relative;
+  }
+  .stitle {
+    font-family: var(--sans);
+    font-size: clamp(28px, 4.2vw, 56px);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    margin: 0 0 24px;
+    max-width: 1000px;
+    text-wrap: balance;
+  }
+  .stitle .blue { color: var(--accent); }
+  .stitle .dim { color: var(--fg-3); }
+  .ssub {
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--fg-1);
+    max-width: 760px;
+    margin: 0 0 56px;
+  }
+  .ssub strong { color: var(--fg-0); font-weight: 500; }
+  .ssub code {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    background: var(--accent-bg);
+    padding: 1px 6px;
+    border-radius: 2px;
+  }
+
+  /* ===== HOW IT WORKS — three-step flow ===== */
+  .flow {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr 60px 1fr;
+    align-items: stretch;
+    margin-top: 24px;
+  }
+  .flow .step {
+    border: 1px solid var(--hairline-strong);
+    background: var(--bg-1);
+    padding: 28px 24px 24px;
+    display: flex; flex-direction: column; gap: 12px;
+    position: relative;
+    border-radius: 3px;
+  }
+  .flow .step .ix {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.14em;
+  }
+  .flow .step .title {
+    font-family: var(--sans);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--fg-0);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .flow .step .body {
+    font-size: 13px;
+    color: var(--fg-2);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .flow .step .body code {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--accent);
+    background: var(--accent-bg);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+  .flow .step .actor {
+    margin-top: auto;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--fg-3);
+    letter-spacing: 0.1em;
+    border-top: 1px dashed var(--hairline-strong);
+    padding-top: 12px;
+  }
+  .flow .arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 18px;
+    position: relative;
+  }
+  .flow .arrow::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-border), transparent);
+  }
+
+  /* ===== Code block ===== */
+  .codepane {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .code {
+    background: var(--bg-1);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .code .head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--hairline-strong);
+    background: var(--bg-2);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .code .head .verb {
+    padding: 2px 8px;
+    background: var(--accent-bg);
+    color: var(--accent);
+    border-radius: 2px;
+    border: 1px solid var(--accent-border);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+  .code .head .verb.res {
+    background: rgba(111,203,142,0.08);
+    color: var(--green);
+    border-color: rgba(111,203,142,0.3);
+  }
+  .code .head .url {
+    color: var(--fg-1);
+    font-size: 11px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .code pre {
+    margin: 0;
+    padding: 20px 22px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--fg-1);
+    overflow-x: auto;
+  }
+  .code .k { color: var(--accent); }
+  .code .s { color: var(--green); }
+  .code .n { color: var(--amber); }
+  .code .c { color: var(--fg-3); font-style: italic; }
+  .code .p { color: var(--fg-2); }
+
+  /* ===== USE CASES ===== */
+  .cases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 24px;
+  }
+  .case {
+    border: 1px solid var(--hairline);
+    background: linear-gradient(180deg, var(--bg-1), var(--bg-0));
+    border-radius: 4px;
+    padding: 32px 28px 28px;
+    display: flex; flex-direction: column; gap: 14px;
+    min-height: 260px;
+  }
+  .case .ix {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.14em;
+  }
+  .case .glyph {
+    width: 64px; height: 64px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg-2);
+    margin-bottom: 4px;
+  }
+  .case .glyph svg { width: 36px; height: 36px; }
+  .case h3 {
+    font-family: var(--sans);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--fg-0);
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .case p {
+    font-size: 13px;
+    color: var(--fg-2);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .case .examples {
+    margin-top: auto;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--fg-3);
+    letter-spacing: 0.06em;
+    line-height: 1.7;
+    border-top: 1px dashed var(--hairline-strong);
+    padding-top: 12px;
+  }
+  .case .examples .k { color: var(--fg-2); margin-right: 6px; }
+
+  /* ===== Specs panel ===== */
+  .specs {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .spec {
+    padding: 24px 28px;
+    border-right: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .spec:nth-child(2n) { border-right: none; }
+  .spec:nth-last-child(-n+2) { border-bottom: none; }
+  .spec .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .spec .v {
+    font-family: var(--sans);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--fg-0);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .spec .v .accent { color: var(--accent); font-family: var(--mono); font-size: 16px; }
+  .spec .sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-2);
+    line-height: 1.5;
+  }
+
+  /* ===== Status callout ===== */
+  .status {
+    margin-top: 56px;
+    border: 1px solid var(--accent-border);
+    border-radius: 4px;
+    padding: 22px 28px;
+    background: linear-gradient(180deg, rgba(94,160,255,0.04), rgba(94,160,255,0.01));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .status .badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: 1px solid rgba(111,203,142,0.4);
+    padding: 8px 14px;
+    border-radius: 2px;
+    background: rgba(111,203,142,0.06);
+  }
+  .status .badge::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px rgba(111,203,142,0.7);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .status .text {
+    font-size: 15px;
+    color: var(--fg-1);
+    line-height: 1.5;
+  }
+  .status .text strong { color: var(--fg-0); font-weight: 500; }
+  .status .docs-link {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent-border);
+    padding: 10px 16px;
+    border-radius: 2px;
+    transition: all 160ms;
+    white-space: nowrap;
+  }
+  .status .docs-link:hover {
+    background: var(--accent);
+    color: var(--bg-0);
+  }
+
+  /* ===== Compare callout (ProveAPI vs new protocol) ===== */
+  .compare {
+    margin-top: 56px;
+    border: 1px dashed var(--hairline-strong);
+    border-radius: 4px;
+    padding: 28px 32px;
+    background: rgba(11,12,16,0.5);
+    display: grid;
+    grid-template-columns: 220px 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  .compare .head {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-left: 2px solid var(--fg-3);
+    padding-left: 12px;
+    line-height: 1.5;
+  }
+  .compare .col {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .compare .col .name {
+    font-family: var(--sans);
+    font-size: 18px;
+    color: var(--fg-0);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .compare .col .name .arrow {
+    font-size: 12px;
+    color: var(--fg-3);
+    margin-left: 4px;
+  }
+  .compare .col .name a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .compare .col .name a:hover { color: var(--accent); }
+  .compare .col .name a:hover .arrow { color: var(--accent); }
+  .compare .col .what {
+    font-size: 13px;
+    color: var(--fg-2);
+    line-height: 1.55;
+  }
+  .compare .col .meta {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--fg-3);
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+  }
+  .compare .col .meta .k { color: var(--fg-2); }
+
+  /* ===== Footer ===== */
+  .foot {
+    padding: 64px;
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) repeat(4, auto);
+    align-items: start;
+    gap: 40px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .foot .lt { max-width: 360px; }
+  .foot .lt .wm {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .foot .lt .wm-text {
+    font-size: 30px;
+    letter-spacing: 0.18em;
+    line-height: 1;
+  }
+  .foot .lt p {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--fg-2);
+    line-height: 1.55;
+  }
+  .foot-col {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.9;
+    color: var(--fg-2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 140px;
+  }
+  .foot-col .head {
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-size: 10.5px;
+  }
+  .foot-col a {
+    color: var(--fg-1);
+    text-decoration: none;
+    transition: color 160ms;
+  }
+  .foot-col a:hover { color: var(--accent); }
+
+  .foot-bar {
+    padding: 18px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--fg-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .foot-bar a {
+    color: var(--fg-3);
+    text-decoration: none;
+    transition: color 160ms;
+  }
+  .foot-bar a:hover { color: var(--fg-1); }
+  .foot-bar .sep { color: var(--fg-4); margin: 0 8px; }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1280px) {
+    .hero { padding: 80px 40px 80px; }
+    .section { padding: 80px 40px; }
+    .die-frame { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 1100px) {
+    .hero { padding: 80px 32px 64px; }
+    .section { padding: 80px 32px; }
+    .strip .item { padding: 22px; }
+    .die-side { gap: 10px; }
+    .die { padding: 18px; margin-top: 40px; }
+    .flow {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .flow .arrow {
+      transform: rotate(90deg);
+      padding: 6px 0;
+      height: 36px;
+    }
+    .flow .arrow::before {
+      left: 50%;
+      right: auto;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      height: auto;
+      background: linear-gradient(180deg, transparent, var(--accent-border), transparent);
+      transform: translateX(-50%);
+    }
+    .codepane { grid-template-columns: 1fr; }
+    .cases { grid-template-columns: 1fr; }
+    .compare { grid-template-columns: 1fr; gap: 18px; }
+    .specs { grid-template-columns: 1fr; }
+    .spec { border-right: none; }
+    .status { grid-template-columns: 1fr; gap: 16px; }
+  }
+
+  @media (max-width: 900px) {
+    .topbar { padding: 0 18px; gap: 12px; height: auto; min-height: 56px; flex-wrap: wrap; position: relative; }
+    .menu-btn { display: inline-flex; }
+    .topbar nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: var(--bg-1);
+      border-top: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+      padding: 8px 0;
+      z-index: 50;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    }
+    .topbar nav a, .topbar nav .nav-more-panel a {
+      text-align: left;
+    }
+    .topbar.menu-open nav { display: flex; }
+    .topbar nav a {
+      padding: 20px 24px;
+      font-size: 15px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .topbar nav a:last-child { border-bottom: 0; }
+    .topbar nav .nav-sep { display: none; }
+    .topbar nav a.nav-current {
+      background: rgba(94,160,255,0.04);
+      color: var(--fg-0);
+    }
+    /* Collapsible ProveAPI section on mobile */
+    .nav-more {
+      display: block;
+      width: 100%;
+    }
+    .nav-more-btn {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--accent);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      background: rgba(94,160,255,0.04);
+      border: 0;
+      border-top: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+      text-align: left;
+      cursor: pointer;
+    }
+    .nav-more-btn:hover { background: rgba(94,160,255,0.08); }
+    .nav-more-btn::before,
+    .nav-more.has-current .nav-more-btn::before {
+      content: '// ';
+      color: var(--fg-3);
+      margin-right: 0;
+      letter-spacing: 0.16em;
+      width: auto; height: auto;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      vertical-align: baseline;
+      display: inline;
+    }
+    .nav-more-btn .label {
+      flex: 1;
+    }
+    .nav-more.has-current .nav-more-btn .label::after {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(94,160,255,0.7);
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    .nav-more-caret {
+      font-size: 12px;
+      color: var(--accent);
+      transition: transform 200ms ease;
+      letter-spacing: 0;
+    }
+    .nav-more.open .nav-more-caret {
+      transform: rotate(-180deg);
+    }
+    .nav-more-panel {
+      position: static;
+      flex-direction: column;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+      gap: 0;
+      display: none;
+    }
+    .nav-more.open .nav-more-panel {
+      display: flex;
+    }
+    .nav-more-panel a {
+      padding: 18px 24px 18px 36px;
+      border-radius: 0;
+      font-size: 15px;
+      color: var(--fg-2);
+      border-bottom: 1px solid var(--hairline);
+    }
+    .nav-more-panel a:last-child { border-bottom: 0; }
+    .nav-more-divider {
+      display: block;
+      height: 1px;
+      background: var(--hairline);
+      margin: 0;
+    }
+    .topbar nav .nav-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 24px;
+      border-top: 1px solid var(--hairline);
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--fg-2);
+    }
+    .topbar .right { display: none; }
+    .topbar .wm { order: 1; }
+    .menu-btn { order: 2; }
+    .strip { grid-template-columns: 1fr; }
+    .strip .item { border-right: none; border-bottom: 1px solid var(--hairline); }
+    .strip .item:last-child { border-bottom: none; }
+    .foot { padding: 40px 20px; grid-template-columns: 1fr; gap: 32px; }
+    .foot-col { min-width: 0; }
+    .foot-bar { padding: 14px 20px; flex-direction: column; gap: 8px; align-items: flex-start; }
+  }
+
+  @media (max-width: 480px) {
+    .lede { font-size: 16px; }
+    .strip .v { font-size: 22px; }
+    .case h3 { font-size: 18px; }
+    .flow .step .title { font-size: 18px; }
+
+    .hero { padding: 56px 16px 48px; }
+    .section { padding: 48px 16px; }
+    .die { padding: 14px; }
+    .eyebrow { flex-wrap: wrap; gap: 8px; }
+    .cta-row { flex-wrap: wrap; gap: 10px; }
+    .btn { height: 44px; padding: 0 18px; font-size: 13px; }
+    .compare-row { padding: 14px; }
+    .specs .spec { padding: 18px; }
+    .codepane pre { font-size: 11px; }
+  }
+
+  /* Hard safety: prevent any horizontal scroll on narrow viewports */
+  html { overflow-x: hidden; }
+</style>
+</head>
+<body data-screen-label="ProveAPI">
+
+<header class="topbar">
+  <a href="index.html" class="wm">
+    <div class="wm-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 43" fill="none"><path d="M0.885669 31.9059V16.1258L6.21497 19.1732C6.76432 19.4875 7.10684 20.0727 7.11012 20.7013L7.13529 27.0693C7.14295 28.8314 8.10375 30.4743 9.64455 31.3554L18.0686 36.179C18.166 36.2397 18.3082 36.1628 18.3038 36.0457V26.069C18.3137 24.7609 18.0434 23.4745 17.3726 22.3486C16.7412 21.2518 15.8274 20.3274 14.7276 19.688L0.00146484 11.1147L19.4693 0L33.2686 7.88951L29.3236 10.1447C28.7863 10.4579 28.0793 10.459 27.5398 10.148C25.9345 9.37421 22.7281 6.95859 20.8492 7.12332C19.9661 7.12332 19.0994 7.35198 18.34 7.78547L8.45065 13.4284C8.34779 13.4815 8.34669 13.6419 8.45065 13.6961L15.7136 17.9389C16.8079 18.5761 18.0587 18.9197 19.3292 18.9316C20.6687 18.9728 22.0059 18.6541 23.1735 17.9963L37.9993 9.67224L37.9894 31.8441L24.1901 39.7337V33.6399C24.1901 33.0113 24.5305 32.425 25.0787 32.1086L30.6346 28.9029C32.1721 28.0164 33.1274 26.3703 33.1285 24.6081L33.1351 14.9706C33.1351 14.9131 33.1077 14.8654 33.0574 14.8362C33.007 14.8069 32.9512 14.8069 32.9009 14.8362L24.0928 19.7823C22.9656 20.4152 22.0278 21.3374 21.38 22.4483C20.7518 23.5255 20.4148 24.7523 20.4049 25.9953V42.9989L0.885669 31.9059Z"/></svg></div>
+    <div class="wm-text">POLYMER</div>
+  </a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-label="Toggle menu" onclick="this.closest('.topbar').classList.toggle('menu-open');this.setAttribute('aria-expanded',this.closest('.topbar').classList.contains('menu-open'))">
+    <span class="bars"><span></span><span></span><span></span></span>
+    Menu
+  </button>
+  <nav>
+    <a href="index.html#architecture">Architecture</a>
+    <a href="index.html#attack">Attack Surface</a>
+    <a href="index.html#request">Request Flow</a>
+    <a href="index.html#pillars">Trust Pillars</a>
+    <span class="nav-sep" aria-hidden="true"></span>
+    <div class="nav-more has-current">
+      <button type="button" class="nav-more-btn" aria-haspopup="true" aria-expanded="false" onclick="this.parentElement.classList.toggle('open');this.setAttribute('aria-expanded',this.parentElement.classList.contains('open'))">
+        <span class="label">ProveAPI</span><span class="nav-more-caret" aria-hidden="true">▾</span>
+      </button>
+      <div class="nav-more-panel" role="menu">
+        <a href="proveapi.html" role="menuitem" class="nav-current">Overview</a>
+        <a href="https://docs.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Docs ↗</a>
+        <div class="nav-more-divider"></div>
+        <a href="https://accounts.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Accounts ↗</a>
+        <a href="https://dashboard.polymerlabs.org/analytics" target="_blank" rel="noopener" role="menuitem">Analytics ↗</a>
+        <a href="https://dashboard.polymerlabs.org/" target="_blank" rel="noopener" role="menuitem">Explorer ↗</a>
+      </div>
+    </div>
+    <div class="nav-status">
+      <span class="live">~$2B volume</span>
+    </div>
+  </nav>
+  <div class="right">
+    <span class="live">~$2B volume</span>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <canvas id="chrome-bg"></canvas>
+  <div class="eyebrow">
+    <span>POLYMER PROVEAPI <span class="v">/ cross-chain proof generation</span></span>
+  </div>
+
+  <h1 class="htitle">
+    <span class="silver">Proofs across</span><br/>
+    <span class="blue">every chain.</span>
+  </h1>
+
+  <p class="lede">
+    One HTTP call. A <strong>cryptographic proof</strong> that something
+    happened on another chain. Your contract verifies it in one line of
+    Solidity. No relayer, no light client, no custom infrastructure to
+    maintain.
+  </p>
+
+  <div class="cta-row">
+    <a href="https://docs.polymerlabs.org/" target="_blank" rel="noopener" class="btn primary">
+      READ THE DOCS <span>↗</span>
+    </a>
+    <a href="#how" class="btn ghost">
+      HOW IT WORKS <span>↓</span>
+    </a>
+  </div>
+
+  <!-- PROOF-PACKET DIE-SHOT VISUAL -->
+  <div class="die">
+    <div class="die-frame">
+
+      <!-- Left side: source chain meta -->
+      <div class="die-side">
+        <div class="row">
+          <div class="lbl">Source chain</div>
+          <div class="val">Base <span class="a">·</span> chain_id 8453</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Tx hash</div>
+          <div class="val">0x9a3f<span class="a">…</span>b21c</div>
+        </div>
+        <div class="row live">
+          <div class="lbl">Event</div>
+          <div class="val">log_index <span class="a">2</span></div>
+        </div>
+        <div class="row">
+          <div class="lbl">Block</div>
+          <div class="val">23,448,219 <span class="a">·</span> finalized</div>
+        </div>
+      </div>
+
+      <!-- Center: cryptographic manifest -->
+      <div class="die-chip">
+        <div class="rule"></div>
+        <div class="notary tl"></div>
+        <div class="notary tr"></div>
+        <div class="notary bl"></div>
+        <div class="notary br"></div>
+
+        <div class="die-chip-label">
+          <span class="tag">CRYPTOGRAPHIC PROOF · CrossL2ProverV2</span>
+          <span class="id">proof_id 0x4a8f2c1b…e92c</span>
+          <span class="sealtxt">// 2,341 bytes · RLP</span>
+        </div>
+
+        <div class="die-svg-wrap">
+          <div class="proof-grid">
+
+            <!-- 1. MERKLE INCLUSION -->
+            <svg class="proof-part proof-merkle" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(16, 0)" font-family="JetBrains Mono, monospace" fill="#8A8F9A">
+                <text x="0" y="14" font-size="9" fill="#5EA0FF" letter-spacing="1.5">MERKLE INCLUSION</text>
+                <line x1="0" y1="20" x2="168" y2="20" stroke="#5EA0FF" stroke-opacity="0.4"/>
+                <g font-size="8">
+                  <rect x="0"   y="40" width="38" height="22" fill="none" stroke="#2C3038"/>
+                  <text x="19"  y="54" text-anchor="middle">0xa1..</text>
+                  <rect x="42"  y="40" width="38" height="22" fill="none" stroke="#2C3038"/>
+                  <text x="61"  y="54" text-anchor="middle">0xb7..</text>
+                  <rect x="84"  y="40" width="38" height="22" fill="none" stroke="#2C3038"/>
+                  <text x="103" y="54" text-anchor="middle">0x3e..</text>
+                  <rect x="126" y="40" width="38" height="22" fill="none" stroke="#2C3038"/>
+                  <text x="145" y="54" text-anchor="middle">0xff..</text>
+                  <text x="0" y="74" font-size="7" fill="#54585F" letter-spacing="0.5">leaves · receipt logs</text>
+                </g>
+                <g stroke="#5EA0FF" stroke-opacity="0.35" stroke-width="0.8">
+                  <path d="M 19,62 L 40,90"/>
+                  <path d="M 61,62 L 40,90"/>
+                  <path d="M 103,62 L 124,90"/>
+                  <path d="M 145,62 L 124,90"/>
+                </g>
+                <g font-size="8">
+                  <rect x="20"  y="92" width="40" height="22" fill="rgba(94,160,255,0.06)" stroke="#5EA0FF" stroke-opacity="0.45"/>
+                  <text x="40"  y="106" text-anchor="middle" fill="#C8CDD3">h(a1‖b7)</text>
+                  <rect x="104" y="92" width="40" height="22" fill="rgba(94,160,255,0.06)" stroke="#5EA0FF" stroke-opacity="0.45"/>
+                  <text x="124" y="106" text-anchor="middle" fill="#C8CDD3">h(3e‖ff)</text>
+                </g>
+                <g stroke="#5EA0FF" stroke-opacity="0.5" stroke-width="0.8">
+                  <path d="M 40,114  L 82,144"/>
+                  <path d="M 124,114 L 82,144"/>
+                </g>
+                <g font-size="8">
+                  <rect x="52" y="146" width="60" height="24" fill="rgba(94,160,255,0.12)" stroke="#5EA0FF"/>
+                  <text x="82" y="161" text-anchor="middle" fill="#FFFFFF" font-weight="600">receipts_root</text>
+                  <text x="82" y="180" text-anchor="middle" font-size="7" fill="#5EA0FF" letter-spacing="0.5">↓ committed in block header</text>
+                </g>
+                <g font-size="7" fill="#5EA0FF">
+                  <text x="0"  y="200" letter-spacing="1">PATH:</text>
+                  <text x="34" y="200" fill="#C8CDD3">[ 0xb7.., h(3e‖ff) ]</text>
+                  <text x="0"  y="212" letter-spacing="1">DEPTH:</text>
+                  <text x="34" y="212" fill="#C8CDD3">2</text>
+                </g>
+              </g>
+            </svg>
+
+            <div class="proof-arrow"></div>
+
+            <!-- 2. PROOF SEAL -->
+            <svg class="proof-part proof-seal" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="halo" cx="0.5" cy="0.5">
+                  <stop offset="0%"  stop-color="#5EA0FF" stop-opacity="0.18"/>
+                  <stop offset="60%" stop-color="#5EA0FF" stop-opacity="0.04"/>
+                  <stop offset="100%" stop-color="#5EA0FF" stop-opacity="0"/>
+                </radialGradient>
+                <path id="sealring-text" d="M 100,110 m -72,0 a 72,72 0 1,1 144,0 a 72,72 0 1,1 -144,0"/>
+              </defs>
+              <ellipse cx="100" cy="110" rx="98" ry="98" fill="url(#halo)"/>
+              <g class="seal-ring" fill="none" stroke="#5EA0FF" stroke-opacity="0.55">
+                <circle cx="100" cy="110" r="72"/>
+                <circle cx="100" cy="110" r="78" stroke-dasharray="2 5" stroke-opacity="0.35"/>
+                <text font-family="JetBrains Mono, monospace" font-size="7.5" fill="#5EA0FF" letter-spacing="3">
+                  <textPath href="#sealring-text" startOffset="0">POLYMER · CRYPTOGRAPHIC PROOF · VERIFIABLE · POLYMER · CRYPTOGRAPHIC PROOF · VERIFIABLE · </textPath>
+                </text>
+              </g>
+              <g text-anchor="middle">
+                <circle cx="100" cy="110" r="58" fill="rgba(94,160,255,0.05)" stroke="#5EA0FF" stroke-opacity="0.7"/>
+                <text x="100" y="84" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#5EA0FF" letter-spacing="2">PROOF_BYTES</text>
+                <line x1="64"  y1="90" x2="136" y2="90" stroke="#5EA0FF" stroke-opacity="0.45"/>
+                <text x="100" y="108" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">0x4a8f…e92c</text>
+                <text x="100" y="123" font-family="JetBrains Mono, monospace" font-size="8" fill="#8A8F9A">keccak256 · 32 B</text>
+                <line x1="78"  y1="132" x2="122" y2="132" stroke="#5EA0FF" stroke-opacity="0.45"/>
+                <text x="100" y="146" font-family="JetBrains Mono, monospace" font-size="8" fill="#5EA0FF" letter-spacing="1.5">VERIFIED ✓</text>
+              </g>
+            </svg>
+
+            <div class="proof-arrow"></div>
+
+            <!-- 3. SRC BLOCK HEADER -->
+            <svg class="proof-part proof-block" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+              <g font-family="JetBrains Mono, monospace">
+                <text x="0" y="14" font-size="9" fill="#5EA0FF" letter-spacing="1.5">SRC BLOCK HEADER</text>
+                <line x1="0" y1="20" x2="200" y2="20" stroke="#5EA0FF" stroke-opacity="0.4"/>
+                <g font-size="8" fill="#8A8F9A">
+                  <text x="0"  y="40">number</text>      <text x="200" y="40" text-anchor="end" fill="#C8CDD3">23,448,219</text>
+                  <line x1="0" y1="46" x2="200" y2="46" stroke="#1A1D24"/>
+                  <text x="0"  y="62">parent_hash</text> <text x="200" y="62" text-anchor="end" fill="#C8CDD3">0x9f12…aa01</text>
+                  <line x1="0" y1="68" x2="200" y2="68" stroke="#1A1D24"/>
+                  <text x="0"  y="84">state_root</text>  <text x="200" y="84" text-anchor="end" fill="#C8CDD3">0x73c8…b14d</text>
+                  <line x1="0" y1="90" x2="200" y2="90" stroke="#1A1D24"/>
+                  <text x="0"  y="106">receipts_root</text> <text x="200" y="106" text-anchor="end" fill="#5EA0FF">0xe4ab…0c2f</text>
+                  <line x1="0" y1="112" x2="200" y2="112" stroke="#1A1D24"/>
+                  <text x="0"  y="128">tx_hash</text>    <text x="200" y="128" text-anchor="end" fill="#C8CDD3">0x9a3f…b21c</text>
+                  <line x1="0" y1="134" x2="200" y2="134" stroke="#1A1D24"/>
+                  <text x="0"  y="150">log_index</text>  <text x="200" y="150" text-anchor="end" fill="#C8CDD3">2</text>
+                </g>
+                <g font-size="7" fill="#5EA0FF" letter-spacing="0.5">
+                  <text x="0"  y="174">SIGNED:</text>
+                  <text x="43" y="174" fill="#C8CDD3">consensus · finalized</text>
+                  <text x="0"  y="186">ANCHOR:</text>
+                  <text x="43" y="186" fill="#C8CDD3">receipts_root ≡ merkle root</text>
+                </g>
+              </g>
+            </svg>
+
+          </div>
+
+          <!-- bottom anchor strip (always horizontal) -->
+          <div class="proof-anchor">
+            <div class="pa-row"><span class="pa-lbl">CONTAINS</span><span class="pa-val">block_header · merkle_path · log_payload</span></div>
+            <div class="pa-row"><span class="pa-lbl">VERIFIES TO</span><span class="pa-val pa-accent">CrossL2ProverV2.validateEvent(proof) → (chainId, emitter, topics, data)</span></div>
+          </div>
+        </div>
+
+        <div class="hashstream">
+          <span class="track">0x4a8f2c1b9d7e4f3a8c61b9027ee9d4a8c2f1b73d6e4a91c8f3b27d1e9c4a8f2c · 0x9f12aa01b73d6e4a91c8f3b27d1e9c4a8f2c1b9d7e4f3a8c61b902 · 0xe4ab0c2f3a8c61b9027ee9d4a8c2f1b73d6e4a91c8f3b27d1e9c4a8f · 0x73c8b14d6e4a91c8f3b27d1e9c4a8f2c1b9d7e4f3a8c61b9027ee9d4 · 0x4a8f2c1b9d7e4f3a8c61b9027ee9d4a8c2f1b73d6e4a91c8f3b27d1e9c4a8f2c · 0x9f12aa01b73d6e4a91c8f3b27d1e9c4a8f2c1b9d7e4f3a8c61b902 · 0xe4ab0c2f3a8c61b9027ee9d4a8c2f1b73d6e4a91c8f3b27d1e9c4a8f · 0x73c8b14d6e4a91c8f3b27d1e9c4a8f2c1b9d7e4f3a8c61b9027ee9d4 · </span>
+        </div>
+      </div>
+
+      <!-- Right side: dst chain meta -->
+      <div class="die-side">
+        <div class="row">
+          <div class="lbl">Dest chain</div>
+          <div class="val">Optimism <span class="a">·</span> chain_id 10</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Verifier</div>
+          <div class="val">CrossL2ProverV2 <span class="a">·</span> Solidity</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Integration</div>
+          <div class="val">1 HTTP call <span class="a">+</span> 1 verify call</div>
+        </div>
+        <div class="row">
+          <div class="lbl">Latency</div>
+          <div class="val"><span class="a">seconds</span> after finality</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ STAT STRIP ============ -->
+<div class="strip">
+  <div class="item">
+    <div class="lbl">// PROOF SHAPE</div>
+    <div class="v">Source-chain state <span class="accent">→</span> dest-chain bytes</div>
+    <div class="sub">Merkle inclusion · packed for the consumer's verifier contract</div>
+  </div>
+  <div class="item">
+    <div class="lbl">// INTEGRATION</div>
+    <div class="v"><span class="accent">1</span> HTTP call · <span class="accent">~50</span> lines of Solidity</div>
+    <div class="sub">No relayer to run. No light client to maintain.</div>
+  </div>
+  <div class="item">
+    <div class="lbl">// STATUS</div>
+    <div class="v">Live in production</div>
+    <div class="sub">Actively supported · existing customer integrations</div>
+  </div>
+</div>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section" id="how">
+  <div class="marker">01 // HOW IT WORKS</div>
+  <h2 class="stitle">
+    Request a proof. <span class="dim">Verify on the other side.</span>
+  </h2>
+  <p class="ssub">
+    ProveAPI sits between any two chains. Ask it to prove an
+    <strong>event</strong> or piece of <strong>state</strong> on the source
+    chain. It returns a single payload your destination contract verifies
+    in one call.
+  </p>
+
+  <div class="flow">
+    <div class="step">
+      <div class="ix">STEP / 01</div>
+      <div class="title">Application calls ProveAPI</div>
+      <p class="body">Tell ProveAPI which event you want to prove: chain, block, log index. Authenticate with your API key.</p>
+      <div class="actor">CALLER · OFFCHAIN</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="ix">STEP / 02</div>
+      <div class="title">Service composes the proof</div>
+      <p class="body">ProveAPI builds a cryptographic proof against the source chain's state and packages it into a single payload your destination contract will accept.</p>
+      <div class="actor">PROVEAPI · MANAGED</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="ix">STEP / 03</div>
+      <div class="title">Destination contract verifies</div>
+      <p class="body">Your contract calls <code>validateEvent(proof)</code> on the <code>CrossL2ProverV2</code> predeploy. Returns the verified event payload. ~50 lines of Solidity to integrate.</p>
+      <div class="actor">CONSUMER · ONCHAIN</div>
+    </div>
+  </div>
+
+  <div class="codepane">
+    <div class="code">
+      <div class="head">
+        <span class="verb">POST</span>
+        <span class="url">api.polymer.zone/v1/ · log_requestProof</span>
+        <span style="margin-left:auto">REQUEST</span>
+      </div>
+<pre><span class="p">{</span>
+  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>, <span class="k">"id"</span>: <span class="n">1</span>,
+  <span class="k">"method"</span>: <span class="s">"log_requestProof"</span>,
+  <span class="k">"params"</span>: <span class="p">[{</span>
+    <span class="k">"srcChainId"</span>:      <span class="n">8453</span>,        <span class="c">// Base</span>
+    <span class="k">"srcBlockNumber"</span>:  <span class="n">23448219</span>,
+    <span class="k">"globalLogIndex"</span>:  <span class="n">42</span>           <span class="c">// log index in block</span>
+  <span class="p">}]</span>
+<span class="p">}</span></pre>
+    </div>
+    <div class="code">
+      <div class="head">
+        <span class="verb res">200</span>
+        <span class="url">application/json · proof_query</span>
+        <span style="margin-left:auto">POLL → COMPLETE</span>
+      </div>
+<pre><span class="p">{</span>
+  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>, <span class="k">"id"</span>: <span class="n">2</span>,
+  <span class="k">"result"</span>: <span class="p">{</span>
+    <span class="k">"status"</span>: <span class="s">"complete"</span>,
+    <span class="k">"proof"</span>:  <span class="s">"0x01f9…a2d4"</span>      <span class="c">// base64 IAVL proof bytes</span>
+  <span class="p">}</span>
+<span class="p">}</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ USE CASES ============ -->
+<section class="section">
+  <div class="marker">02 // USE CASES</div>
+  <h2 class="stitle">
+    Anywhere a contract needs to know <span class="blue">something happened elsewhere.</span>
+  </h2>
+  <p class="ssub">
+    Bridges, intent solvers, omnichain governance, cross-chain oracles.
+    Anywhere you currently run your own relayer infrastructure or trust a
+    multisig to pass data between chains.
+  </p>
+
+  <div class="cases">
+    <div class="case">
+      <div class="ix">CASE / 01</div>
+      <div class="glyph">
+        <svg viewBox="0 0 36 36" fill="none">
+          <path d="M4 18 L14 18" stroke="#5EA0FF" stroke-width="1.4"/>
+          <path d="M22 18 L32 18" stroke="#5EA0FF" stroke-width="1.4"/>
+          <rect x="14" y="13" width="8" height="10" stroke="#5EA0FF" stroke-width="1.4" fill="none"/>
+          <circle cx="4" cy="18" r="2" fill="#5EA0FF"/>
+          <circle cx="32" cy="18" r="2" fill="#5EA0FF"/>
+        </svg>
+      </div>
+      <h3>Bridges &amp; messaging</h3>
+      <p>Move funds across chains. Replace your relayer pipeline with a verified proof of the source-chain event.</p>
+      <div class="examples">
+        <span class="k">e.g.</span>token bridges · order routing · vault rebalancing
+      </div>
+    </div>
+    <div class="case">
+      <div class="ix">CASE / 02</div>
+      <div class="glyph">
+        <svg viewBox="0 0 36 36" fill="none">
+          <path d="M6 10 L14 10 L18 18 L22 26 L30 26" stroke="#5EA0FF" stroke-width="1.4" fill="none"/>
+          <path d="M14 10 L22 10 L18 18" stroke="#5EA0FF" stroke-width="1.4" fill="none"/>
+          <circle cx="6" cy="10" r="2" fill="#5EA0FF"/>
+          <circle cx="30" cy="26" r="2" fill="#5EA0FF"/>
+          <circle cx="18" cy="18" r="1.5" fill="#5EA0FF"/>
+        </svg>
+      </div>
+      <h3>Intent solvers</h3>
+      <p>Settle cross-chain intents the moment they're filled. No extra trust assumption, no off-chain attesters.</p>
+      <div class="examples">
+        <span class="k">e.g.</span>cross-chain swaps · solver settlement · escrow release
+      </div>
+    </div>
+    <div class="case">
+      <div class="ix">CASE / 03</div>
+      <div class="glyph">
+        <svg viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="11" stroke="#5EA0FF" stroke-width="1.4" fill="none"/>
+          <circle cx="18" cy="18" r="3" fill="#5EA0FF"/>
+          <path d="M18 7 L18 4 M18 32 L18 29 M7 18 L4 18 M32 18 L29 18" stroke="#5EA0FF" stroke-width="1.4"/>
+          <path d="M10 10 L8 8 M28 28 L26 26 M28 8 L26 10 M8 28 L10 26" stroke="#5EA0FF" stroke-width="1.4"/>
+        </svg>
+      </div>
+      <h3>Oracles &amp; governance</h3>
+      <p>Read a value or vote on one chain, prove it on another. Powers omnichain DAOs, cross-network price feeds, and policies that span L2s.</p>
+      <div class="examples">
+        <span class="k">e.g.</span>omnichain voting · price refs · L1↔L2 readbacks
+      </div>
+    </div>
+  </div>
+
+  <!-- Specs -->
+  <div class="specs">
+    <div class="spec">
+      <div class="lbl">// CHAINS SUPPORTED</div>
+      <div class="v">Ethereum mainnet · L2 rollups</div>
+      <div class="sub">Base · Optimism · Arbitrum · Polygon zkEVM · others — see docs</div>
+    </div>
+    <div class="spec">
+      <div class="lbl">// PROOF FORMAT</div>
+      <div class="v"><span class="accent">CrossL2ProverV2</span> · Solidity predeploy</div>
+      <div class="sub">Single bytestring · onchain verifier library · stable ABI</div>
+    </div>
+    <div class="spec">
+      <div class="lbl">// LATENCY</div>
+      <div class="v">Seconds, not minutes</div>
+      <div class="sub">Available once the source-chain block is finalized to the destination's expected depth</div>
+    </div>
+    <div class="spec">
+      <div class="lbl">// AUTH</div>
+      <div class="v">API key · per-project quotas</div>
+      <div class="sub">Self-serve in dashboard · usage tiers in docs</div>
+    </div>
+  </div>
+
+  <!-- Status callout -->
+  <div class="status">
+    <div class="badge">LIVE IN PRODUCTION</div>
+    <a href="https://docs.polymerlabs.org/" target="_blank" rel="noopener" class="docs-link">
+      Read the full docs ↗
+    </a>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="foot">
+  <div class="lt">
+    <div class="wm">
+      <div class="wm-mark" style="width:42px;height:48px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 43" fill="none"><path d="M0.885669 31.9059V16.1258L6.21497 19.1732C6.76432 19.4875 7.10684 20.0727 7.11012 20.7013L7.13529 27.0693C7.14295 28.8314 8.10375 30.4743 9.64455 31.3554L18.0686 36.179C18.166 36.2397 18.3082 36.1628 18.3038 36.0457V26.069C18.3137 24.7609 18.0434 23.4745 17.3726 22.3486C16.7412 21.2518 15.8274 20.3274 14.7276 19.688L0.00146484 11.1147L19.4693 0L33.2686 7.88951L29.3236 10.1447C28.7863 10.4579 28.0793 10.459 27.5398 10.148C25.9345 9.37421 22.7281 6.95859 20.8492 7.12332C19.9661 7.12332 19.0994 7.35198 18.34 7.78547L8.45065 13.4284C8.34779 13.4815 8.34669 13.6419 8.45065 13.6961L15.7136 17.9389C16.8079 18.5761 18.0587 18.9197 19.3292 18.9316C20.6687 18.9728 22.0059 18.6541 23.1735 17.9963L37.9993 9.67224L37.9894 31.8441L24.1901 39.7337V33.6399C24.1901 33.0113 24.5305 32.425 25.0787 32.1086L30.6346 28.9029C32.1721 28.0164 33.1274 26.3703 33.1285 24.6081L33.1351 14.9706C33.1351 14.9131 33.1077 14.8654 33.0574 14.8362C33.007 14.8069 32.9512 14.8069 32.9009 14.8362L24.0928 19.7823C22.9656 20.4152 22.0278 21.3374 21.38 22.4483C20.7518 23.5255 20.4148 24.7523 20.4049 25.9953V42.9989L0.885669 31.9059Z"/></svg></div>
+      <div class="wm-text">POLYMER</div>
+    </div>
+    <p>Verifiable infrastructure for the on-chain economy.</p>
+  </div>
+  <div class="foot-col">
+    <div class="head">// Products</div>
+    <a href="index.html">Verifiable RPC</a>
+    <a href="proveapi.html">ProveAPI</a>
+  </div>
+  <div class="foot-col">
+    <div class="head">// ProveAPI</div>
+    <a href="https://docs.polymerlabs.org/" target="_blank" rel="noopener">Docs ↗</a>
+    <a href="https://accounts.polymerlabs.org/" target="_blank" rel="noopener">Accounts ↗</a>
+    <a href="https://dashboard.polymerlabs.org/analytics" target="_blank" rel="noopener">Analytics ↗</a>
+    <a href="https://dashboard.polymerlabs.org/" target="_blank" rel="noopener">Explorer ↗</a>
+  </div>
+  <div class="foot-col">
+    <div class="head">// Developers</div>
+    <a href="https://github.com/polymerdao" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+  <div class="foot-col">
+    <div class="head">// Socials</div>
+    <a href="https://discord.com/invite/5UZmbmjG" target="_blank" rel="noopener">Discord ↗</a>
+    <a href="https://x.com/Polymer_Labs" target="_blank" rel="noopener">X ↗</a>
+    <a href="https://www.linkedin.com/company/polymerdao/" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <a href="https://www.youtube.com/@PolymerDAO" target="_blank" rel="noopener">YouTube ↗</a>
+  </div>
+</footer>
+<div class="foot-bar">
+  <div>MONOMER LABS 2026</div>
+  <div>
+    <a href="https://cdn.polymerlabs.org/legal/privacy-policy" target="_blank" rel="noopener">Privacy</a><span class="sep">·</span><a href="https://cdn.polymerlabs.org/legal/terms-of-service" target="_blank" rel="noopener">Terms</a>
+  </div>
+</div>
+
+<!-- ============ HERO LIQUID CHROME (WebGL) ============ -->
+<script>
+(function() {
+  const canvas = document.getElementById('chrome-bg');
+  if (!canvas) return;
+  const gl = canvas.getContext('webgl', { antialias: true, premultipliedAlpha: false });
+  if (!gl) return;
+
+  const vertSrc = `
+    attribute vec2 a_pos;
+    attribute vec2 a_uv;
+    varying vec2 vUv;
+    void main() {
+      vUv = a_uv;
+      gl_Position = vec4(a_pos, 0.0, 1.0);
+    }
+  `;
+
+  const fragSrc = `
+    precision highp float;
+    varying vec2 vUv;
+    uniform float u_time;
+    uniform vec2 u_res;
+
+    const float ax = 5.0, ay = 7.0, az = 9.0, aw = 13.0;
+    const float scale = 0.34;
+
+    const vec3 color1 = vec3(0.86, 0.91, 1.00);
+    const vec3 color2 = vec3(0.34, 0.40, 0.52);
+    const vec3 color3 = vec3(0.03, 0.04, 0.06);
+    const vec3 color4 = vec3(0.16, 0.22, 0.34);
+
+    float cheapNoise(vec3 stp) {
+      vec3 p = vec3(stp.st, stp.p);
+      vec4 a = vec4(ax, ay, az, aw);
+      return mix(
+        sin(p.z + p.x * a.x + cos(p.x * a.x - p.z)) *
+        cos(p.z + p.y * a.y + cos(p.y * a.x + p.z)),
+        sin(1.0 + p.x * a.z + p.z + cos(p.y * a.w - p.z)) *
+        cos(1.0 + p.y * a.w + p.z + cos(p.x * a.x + p.z)),
+        0.436
+      );
+    }
+
+    void main() {
+      vec2 aR = vec2(u_res.x / u_res.y, 1.0);
+      vec2 st = vUv * aR * scale;
+      float t = u_time * 0.32;
+      float S = sin(t * 0.005), C = cos(t * 0.005);
+
+      vec2 v1 = vec2(cheapNoise(vec3(st, 2.0)), cheapNoise(vec3(st, 1.0)));
+      vec2 v2 = vec2(
+        cheapNoise(vec3(st + v1 + vec2(C * 1.7, S * 9.2), 0.15 * t)),
+        cheapNoise(vec3(st + v1 + vec2(S * 8.3, C * 2.8), 0.126 * t))
+      );
+      float n = 0.5 + 0.5 * cheapNoise(vec3(st + v2, 0.0));
+
+      vec3 color = mix(color1, color2, clamp((n * n) * 8.0, 0.0, 1.0));
+      color = mix(color, color3, clamp(length(v1), 0.0, 1.0));
+      color = mix(color, color4, clamp(length(v2.x), 0.0, 1.0));
+
+      color /= n * n + n * 5.0;
+      color = pow(color, vec3(0.9));
+
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `;
+
+  function compile(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.warn('chrome shader compile error:', gl.getShaderInfoLog(s));
+    }
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, vertSrc));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fragSrc));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  const posBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1, 1,1,-1,-1,1,-1]), gl.STATIC_DRAW);
+  const aPos = gl.getAttribLocation(prog, 'a_pos');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+  const uvBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,0,1,1,0, 1,0,0,1,1,1]), gl.STATIC_DRAW);
+  const aUv = gl.getAttribLocation(prog, 'a_uv');
+  gl.enableVertexAttribArray(aUv);
+  gl.vertexAttribPointer(aUv, 2, gl.FLOAT, false, 0, 0);
+
+  const uRes = gl.getUniformLocation(prog, 'u_res');
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let visible = true;
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting;
+    }, { threshold: 0 });
+    io.observe(canvas);
+  }
+
+  const start = performance.now();
+  function frame() {
+    if (visible) {
+      const now = (performance.now() - start) / 1000;
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform1f(uTime, now);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+</script>
+
+</body>
+</html>
