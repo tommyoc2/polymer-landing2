@@ -3,6 +3,11 @@
 node_modules/
 dist/
 .astro/
+.playwright-mcp/
 *.log
 .env
 .env.local
+
+# debug screenshots / assets at repo root
+/*.png
+/*.jpg
