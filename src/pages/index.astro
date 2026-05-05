@@ -29,173 +29,80 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="cta">
     <a class="btn btn-primary" href="#">Read the whitepaper</a>
   </div>
+</section>
 
-  <hr class="section-divider"/>
-  <div class="marker" id="architecture">01 // HOW THE NODE WORKS</div>
+<!-- ============ THE PROBLEM ============ -->
+<section class="section" id="problem">
+  <div class="marker">01 // THE PROBLEM</div>
+  <h2 class="stitle">
+    Your app doesn't read the blockchain. <span class="dim">A server does.</span>
+  </h2>
+  <p class="ssub">
+    Every wallet, bridge, and exchange gets blockchain data through a server
+    someone else controls. Encrypting the connection doesn't verify the answer —
+    it just means no one intercepted it. If the server itself lies, the lie is
+    indistinguishable from the truth.
+  </p>
 
-  <!-- DIE-SHOT VISUAL -->
-  <div class="die">
-    <div class="die-frame">
-
-      <!-- Left side meta rows -->
-      <div class="die-side">
-        <div class="row">
-          <div class="lbl">Hardware</div>
-          <div class="val">Intel TDX <span class="a">·</span> sealed RAM</div>
-        </div>
-        <div class="row">
-          <div class="lbl">Software fingerprint</div>
-          <div class="val">sha256:<span class="a">7f3c8b…d92c</span></div>
-        </div>
-        <div class="row live">
-          <div class="lbl">Signing key</div>
-          <div class="val">unique per node <span class="a">·</span> never leaves hardware</div>
-        </div>
-        <div class="row">
-          <div class="lbl">Lifetime</div>
-          <div class="val">memory-only · gone on reboot</div>
-        </div>
+  <!-- Trust gap flow -->
+  <div class="trust-gap">
+    <div class="tg-node">
+      <div class="tg-box">
+        <div class="tg-tag">YOUR APP</div>
+        <div class="tg-name">wallet · bridge · exchange</div>
+        <div class="tg-detail">asks for on-chain data</div>
       </div>
+    </div>
 
-      <!-- Center: chip die -->
-      <div class="die-chip">
-        <div class="chip-grid"></div>
-        <div class="chip-rim"></div>
-        <span class="corner tl"></span>
-        <span class="corner tr"></span>
-        <span class="corner bl"></span>
-        <span class="corner br"></span>
-
-        <div class="die-chip-label">
-          <span class="tag">TAMPER-PROOF HARDWARE ENCLAVE · sealed by Intel TDX</span>
-          <span class="id">node:0x4a8f2c1b…e92c</span>
-        </div>
-
-        <div class="die-svg-wrap">
-          <svg viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#F1F4F9"/>
-                <stop offset="50%" stop-color="#B3B9C2"/>
-                <stop offset="100%" stop-color="#6F7682"/>
-              </linearGradient>
-              <linearGradient id="diegrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#1A1F2A"/>
-                <stop offset="100%" stop-color="#0A0D14"/>
-              </linearGradient>
-              <radialGradient id="core" cx="0.5" cy="0.5">
-                <stop offset="0%" stop-color="#4FA3FF" stop-opacity="0.45"/>
-                <stop offset="100%" stop-color="#4FA3FF" stop-opacity="0"/>
-              </radialGradient>
-              <marker id="chipArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#4FA3FF" opacity="0.7"/>
-              </marker>
-            </defs>
-
-            <!-- Outer chip body -->
-            <rect x="10" y="10" width="580" height="210" rx="6" fill="url(#silver)" opacity="0.15"/>
-            <rect x="12" y="12" width="576" height="206" rx="5" fill="url(#diegrad)" stroke="#4FA3FF" stroke-opacity="0.6"/>
-
-            <!-- Pin grid top -->
-            <g class="pin-row pin-top" fill="#4FA3FF">
-              <circle cx="60"  cy="6" r="2"/><circle cx="90"  cy="6" r="2"/><circle cx="120" cy="6" r="2"/>
-              <circle cx="160" cy="6" r="2"/><circle cx="200" cy="6" r="2"/><circle cx="240" cy="6" r="2"/>
-              <circle cx="300" cy="6" r="2"/>
-              <circle cx="360" cy="6" r="2"/><circle cx="400" cy="6" r="2"/><circle cx="440" cy="6" r="2"/>
-              <circle cx="480" cy="6" r="2"/><circle cx="510" cy="6" r="2"/><circle cx="540" cy="6" r="2"/>
-            </g>
-            <g class="pin-row pin-bot" fill="#4FA3FF">
-              <circle cx="60"  cy="224" r="2"/><circle cx="90"  cy="224" r="2"/><circle cx="120" cy="224" r="2"/>
-              <circle cx="160" cy="224" r="2"/><circle cx="200" cy="224" r="2"/><circle cx="240" cy="224" r="2"/>
-              <circle cx="300" cy="224" r="2"/>
-              <circle cx="360" cy="224" r="2"/><circle cx="400" cy="224" r="2"/><circle cx="440" cy="224" r="2"/>
-              <circle cx="480" cy="224" r="2"/><circle cx="510" cy="224" r="2"/><circle cx="540" cy="224" r="2"/>
-            </g>
-
-            <!-- Glow behind center -->
-            <ellipse cx="300" cy="115" rx="110" ry="85" fill="url(#core)"/>
-
-            <!-- PANEL 1: READ -->
-            <rect x="24" y="26" width="172" height="178" rx="4" fill="none" stroke="#2C3038" stroke-width="1"/>
-            <text x="110" y="46" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1.5" text-anchor="middle">01 · READ</text>
-            <line x1="40" y1="52" x2="180" y2="52" stroke="#4FA3FF" stroke-opacity="0.4"/>
-            <text x="110" y="88" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Blockchain</text>
-            <text x="110" y="110" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Node</text>
-            <text x="110" y="142" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">reads canonical</text>
-            <text x="110" y="155" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">chain state</text>
-            <text x="110" y="194" font-family="JetBrains Mono" font-size="7.5" fill="#54585F" text-anchor="middle">inside the enclave</text>
-
-            <!-- Arrow 1→2 -->
-            <line x1="196" y1="115" x2="214" y2="115" stroke="#4FA3FF" stroke-opacity="0.6" marker-end="url(#chipArrow)"/>
-
-            <!-- PANEL 2: SIGN (highlighted) -->
-            <rect x="216" y="16" width="168" height="198" rx="4" fill="rgba(79, 163, 255,0.07)" stroke="#4FA3FF" stroke-width="1.5"/>
-            <text x="300" y="36" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1.5" text-anchor="middle">02 · SIGN</text>
-            <line x1="248" y1="42" x2="352" y2="42" stroke="#4FA3FF" stroke-opacity="0.6"/>
-            <text x="300" y="80" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Signing</text>
-            <text x="300" y="102" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Key</text>
-            <text x="300" y="136" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">generated in hardware</text>
-            <text x="300" y="150" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">never leaves the enclave</text>
-            <text x="300" y="174" font-family="JetBrains Mono" font-size="8" fill="#4FA3FF" text-anchor="middle">SEALED · CONST-TIME</text>
-            <text x="300" y="202" font-family="JetBrains Mono" font-size="7.5" fill="#54585F" text-anchor="middle">signs every response</text>
-
-            <!-- Arrow 2→3 -->
-            <line x1="384" y1="115" x2="402" y2="115" stroke="#4FA3FF" stroke-width="1.5" stroke-opacity="0.8" marker-end="url(#chipArrow)"/>
-
-            <!-- PANEL 3: PROVE -->
-            <rect x="404" y="26" width="172" height="178" rx="4" fill="none" stroke="#2C3038" stroke-width="1"/>
-            <text x="490" y="46" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1.5" text-anchor="middle">03 · PROVE</text>
-            <line x1="420" y1="52" x2="560" y2="52" stroke="#4FA3FF" stroke-opacity="0.4"/>
-            <text x="490" y="88" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Hardware</text>
-            <text x="490" y="110" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Certificate</text>
-            <text x="490" y="142" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">proves correct software</text>
-            <text x="490" y="155" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">is running right now</text>
-            <text x="490" y="194" font-family="JetBrains Mono" font-size="7.5" fill="#54585F" text-anchor="middle">refreshed per response</text>
-
-            <!-- Bottom label -->
-            <text x="300" y="222" font-family="JetBrains Mono" font-size="7.5" fill="#54585F" text-anchor="middle" letter-spacing="2">POLYMER · TAMPER-PROOF · VERIFIABLE · v2.0</text>
-          </svg>
-        </div>
+    <div class="tg-conn">
+      <div class="tg-conn-track">
+        <div class="tg-conn-pulse"></div>
       </div>
+      <div class="tg-conn-cap">trusts whatever it receives</div>
+    </div>
 
-      <!-- Right side meta rows -->
-      <div class="die-side">
-        <div class="row">
-          <div class="lbl">Output</div>
-          <div class="val">signed response <span class="a">·</span> verified format</div>
-          <div class="sub">every answer carries a cryptographic signature from inside the enclave</div>
-        </div>
-        <div class="row">
-          <div class="lbl">Signature</div>
-          <div class="val">every response <span class="a">cryptographically signed</span> by the node</div>
-          <div class="sub">key generated &amp; sealed inside the enclave · never extractable</div>
-        </div>
-        <div class="row">
-          <div class="lbl">Verifies in</div>
-          <div class="val">any wallet <span class="a">·</span> on-chain <span class="a">·</span> in your app</div>
-          <div class="sub">no custom library · no shared key · no trust in the operator</div>
-        </div>
+    <div class="tg-node tg-node-warn">
+      <div class="tg-warn-ring"></div>
+      <div class="tg-box tg-box-warn">
+        <div class="tg-tag tg-tag-warn">UNVERIFIABLE SERVER</div>
+        <div class="tg-name">someone else's machine</div>
+        <div class="tg-detail">could return anything</div>
+        <div class="tg-warn-lbl">! no verification possible</div>
       </div>
+    </div>
 
+    <div class="tg-conn">
+      <div class="tg-conn-track">
+        <div class="tg-conn-pulse"></div>
+      </div>
+      <div class="tg-conn-cap">reads from</div>
+    </div>
+
+    <div class="tg-node">
+      <div class="tg-box">
+        <div class="tg-tag">THE BLOCKCHAIN</div>
+        <div class="tg-name">the actual truth</div>
+        <div class="tg-detail">immutable · public</div>
+      </div>
     </div>
   </div>
 
-</section>
+  <div class="problem-bullets">
+    <div class="pb-item">
+      <span class="pb-dash">—</span>
+      <span>Encrypting the connection doesn't verify the answer. You know it wasn't intercepted — not that it's correct.</span>
+    </div>
+    <div class="pb-item">
+      <span class="pb-dash">—</span>
+      <span>A server that lies returns data that looks identical to correct data. No flag. No alert.</span>
+    </div>
+    <div class="pb-item">
+      <span class="pb-dash">—</span>
+      <span>Every app on chain is exposed to this. It's not theoretical.</span>
+    </div>
+  </div>
 
-<!-- ============ INCIDENT ============ -->
-<section class="section" id="attack">
-  <div class="marker">02 // THE PROBLEM</div>
-  <h2 class="stitle">
-    You don't read the blockchain. <span class="dim">A server does.</span>
-  </h2>
-  <p class="ssub">
-    Every wallet, bridge, and exchange depends on a server it doesn't control
-    to fetch on-chain data. TLS secures the connection — it says nothing about
-    whether the answer is true. If the server lies, the lie is indistinguishable
-    from the truth.
-  </p>
-
-  <!-- Forensic exploit visualization -->
+  <!-- Incident -->
   <div class="exploit">
     <div class="exploit-head">
       <span class="sev">CRITICAL</span>
@@ -205,48 +112,45 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
 
     <div class="exploit-grid">
-
-      <!-- LEFT: forensic visualization -->
       <div class="exploit-vis">
         <div class="caption">// What happened · April 18, 2026</div>
 
         <div class="swap">
           <div class="swap-node honest">
-            <div class="hd"><span>NODE · PUBLIC</span><span class="dot"></span></div>
+            <div class="hd"><span>HONEST NODE</span><span class="dot"></span></div>
             <div class="label">canonical RPC node</div>
-            <div class="hash">sha256:<br/>9f2c…e4a8</div>
-            <div class="delta"><span class="k">behavior:</span> <span class="v">forwards</span></div>
+            <div class="hash">serving correct data</div>
+            <div class="delta"><span class="k">status:</span> <span class="v">DDoS'd offline</span></div>
           </div>
           <div class="swap-arrow">
             <span class="glyph">→</span>
-            <span class="lbl">FORWARDS</span>
+            <span class="lbl">REPLACED BY</span>
           </div>
           <div class="swap-node swapped">
-            <div class="hd"><span>NODE · UPSTREAM</span><span class="dot"></span></div>
-            <div class="label">tampered RPC node</div>
-            <div class="hash">sha256:<br/>71b3…d92c</div>
+            <div class="hd"><span>POISONED NODE</span><span class="dot"></span></div>
+            <div class="label">swapped by attacker</div>
+            <div class="hash">same address · different software</div>
             <div class="delta"><span class="k">behavior:</span> <span class="v">selective lie</span></div>
           </div>
         </div>
 
         <div class="selective">
           <div class="row honest">
-            <div class="who">// SAME SERVER → EVERYONE ELSE</div>
-            <div class="resp">returned correct data</div>
+            <div class="who">// TO EVERYONE ELSE</div>
+            <div class="resp">returned correct data — no alerts triggered</div>
           </div>
           <div class="row lied">
-            <div class="who">// SAME SERVER → LAYERZERO VERIFIER</div>
-            <div class="resp">returned forged data</div>
+            <div class="who">// TO LAYERZERO'S VERIFIER</div>
+            <div class="resp">returned forged data — bridge accepted it</div>
           </div>
         </div>
 
-        <div style="margin-top:16px; border:1px solid rgba(79,163,255,0.35); border-left:2px solid var(--accent); border-radius:4px; padding:12px 14px; background:rgba(79,163,255,0.04);">
-          <div style="font-family:var(--mono); font-size:9.5px; color:var(--accent); letter-spacing:0.12em; margin-bottom:5px;">// WITH POLYMER → THIS ATTACK FAILS</div>
-          <div style="font-family:var(--mono); font-size:10.5px; color:var(--fg-1); line-height:1.5;">Swapped binary gets a different hardware fingerprint. The Registry rejects it. The node can't produce a verifiable signature. The attack stops before it starts.</div>
+        <div class="resolution-box">
+          <div class="rb-label">// WITH POLYMER — THIS ATTACK FAILS</div>
+          <div class="rb-body">A swapped binary produces a different hardware fingerprint. The public registry rejects the node. It can't produce a valid signature. The attack has nowhere to go.</div>
         </div>
       </div>
 
-      <!-- RIGHT: loss + timeline -->
       <div class="exploit-loss">
         <div>
           <span class="single">Drained in a single exploit</span>
@@ -256,14 +160,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
 
         <div class="timeline">
-          <div class="tl-lbl">// Window</div>
+          <div class="tl-lbl">// Attack window</div>
           <div class="tl-rail">
             <div class="seg" style="left:18%; width:64%;"></div>
             <div class="tl-marks">
-              <div class="m" style="left:0%;"><span class="cap">T−5m · DDoS</span></div>
-              <div class="m hot" style="left:18%;"><span class="cap">T+0 · swap</span></div>
-              <div class="m hot" style="left:50%;"><span class="cap">T+19 · forge</span></div>
-              <div class="m hot" style="left:82%;"><span class="cap">T+47 · drain</span></div>
+              <div class="m" style="left:0%;"><span class="cap">T−5m · DDoS honest nodes</span></div>
+              <div class="m hot" style="left:18%;"><span class="cap">T+0 · swap binary</span></div>
+              <div class="m hot" style="left:50%;"><span class="cap">T+19 · forge answer</span></div>
+              <div class="m hot" style="left:82%;"><span class="cap">T+47 · drain bridge</span></div>
             </div>
           </div>
           <div class="tl-bottom">
@@ -272,222 +176,131 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- ============ ARCHITECTURE ============ -->
-<section class="section" id="request">
-  <div class="marker">03 // HOW IT WORKS</div>
+<!-- ============ THE SOLUTION ============ -->
+<section class="section" id="solution">
+  <div class="marker">02 // THE SOLUTION</div>
   <h2 class="stitle">
-    From <span class="blue">question</span> to <span class="dim">verified answer.</span>
+    Polymer seals the server inside <span class="blue">tamper-proof hardware.</span>
   </h2>
   <p class="ssub">
-    You ask for a balance, a transaction, or an event. The node answers from
-    inside a sealed hardware enclave, signs the response, and proves in real
-    time that it's running the correct software. Your app checks the signature
-    before acting on the data — and can reject anything that doesn't verify.
+    The problem isn't that a server reads the blockchain — it's that you can't verify what it's doing.
+    Polymer locks the node inside a hardware enclave: a sealed environment where the software is fixed,
+    the signing key never leaves, and every answer carries proof it came from the right place.
   </p>
 
-  <div class="arch">
-    <div class="arch-head">
-      <span class="pill">FIG · 04</span>
-      <span class="title">How a request becomes a verified answer</span>
-      <span class="right">
-        <span>━━ data</span>
-        <span style="color:var(--accent)">━━ signed</span>
-        <span style="color:var(--fg-2)">┄┄ attested</span>
-      </span>
+  <div class="compare">
+    <div class="compare-col compare-before">
+      <div class="cmp-header">
+        <span class="cmp-dot cmp-dot-bad"></span>
+        <span class="cmp-label">Without Polymer</span>
+      </div>
+      <div class="cmp-steps">
+        <div class="cmp-step">Your app requests data</div>
+        <div class="cmp-arrow">↓</div>
+        <div class="cmp-step cmp-bad">Server runs whatever software<br/><span class="cmp-note">operator controls it — can return anything</span></div>
+        <div class="cmp-arrow">↓</div>
+        <div class="cmp-step">Answer arrives</div>
+        <div class="cmp-arrow">↓</div>
+        <div class="cmp-step cmp-fail">No way to verify it's true</div>
+      </div>
     </div>
-    <div class="arch-body">
-      <!-- Mobile-only: vertical step diagram -->
-      <div class="arch-mobile">
-        <div class="am-step am-off">
-          <div class="am-lane">// OFF-CHAIN</div>
-          <div class="am-card">
-            <div class="am-tag">CONSUMER</div>
-            <div class="am-name">wallet · indexer · bridge · DVN</div>
-            <div class="am-meta">signature check</div>
-          </div>
+
+    <div class="compare-vs">
+      <div class="compare-vs-line"></div>
+      <div class="compare-vs-label">vs</div>
+      <div class="compare-vs-line"></div>
+    </div>
+
+    <div class="compare-col compare-after">
+      <div class="cmp-header">
+        <span class="cmp-dot cmp-dot-good"></span>
+        <span class="cmp-label cmp-label-good">With Polymer</span>
+      </div>
+      <div class="cmp-steps">
+        <div class="cmp-step">Your app requests data</div>
+        <div class="cmp-arrow cmp-arrow-blue">↓</div>
+        <div class="cmp-step cmp-sealed">
+          <div class="cmp-sealed-badge">HARDWARE ENCLAVE</div>
+          Node runs inside sealed hardware<br/><span class="cmp-note">software is locked — operator can't change it</span>
         </div>
-        <div class="am-edge">
-          <div class="am-edge-line"></div>
-          <div class="am-edge-lbl">your request <span class="am-dim">· pay per call</span></div>
-        </div>
-        <div class="am-step am-off">
-          <div class="am-card am-host">
-            <div class="am-tag am-tag-dim">HOST · OPERATOR-CONTROLLED</div>
-            <div class="am-enclave">
-              <div class="am-tag am-blue">HARDWARE ENCLAVE <span class="am-meta-r">software verified ✓</span></div>
-              <div class="am-row">
-                <div class="am-row-name">Blockchain Node · RPC</div>
-                <div class="am-row-meta">reads chain state → signs the answer</div>
-              </div>
-              <div class="am-row am-blue-row">
-                <div class="am-row-tag">SIGNING KEY</div>
-                <div class="am-row-name">unique per node</div>
-                <div class="am-row-meta">sealed in hardware · never leaves</div>
-              </div>
-              <div class="am-row">
-                <div class="am-row-tag am-blue">LIVE PROOF</div>
-                <div class="am-row-name">hardware certificate</div>
-                <div class="am-row-meta">proves correct software is running right now</div>
-              </div>
-            </div>
-            <div class="am-meta am-host-foot">the operator can drop or throttle · they cannot alter what the node says</div>
-          </div>
-        </div>
-        <div class="am-edge am-edge-signed">
-          <div class="am-edge-line"></div>
-          <div class="am-edge-lbl am-blue">signed response <span class="am-dim">· live hardware proof</span></div>
-        </div>
-        <div class="am-step am-on">
-          <div class="am-lane">// ON-CHAIN</div>
-          <div class="am-card">
-            <div class="am-tag am-blue">ON-CHAIN</div>
-            <div class="am-name">Registry</div>
-            <div class="am-meta">approved node keys · on-chain</div>
-            <div class="am-meta am-dim">approved software versions · governance</div>
-          </div>
+        <div class="cmp-arrow cmp-arrow-blue">↓</div>
+        <div class="cmp-step">Signed answer is returned<br/><span class="cmp-note">signed with a key that never left the hardware</span></div>
+        <div class="cmp-arrow cmp-arrow-blue">↓</div>
+        <div class="cmp-step cmp-ok">
+          <span class="cmp-check">✓</span> Signature verified — answer trusted
         </div>
       </div>
-      <svg class="arch-desktop" viewBox="0 0 1280 460" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#54585F"/>
-          </marker>
-          <marker id="ar3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#4FA3FF"/>
-          </marker>
-          <radialGradient id="enclaveCore" cx="0.5" cy="0.5">
-            <stop offset="0%" stop-color="#4FA3FF" stop-opacity="0.15"/>
-            <stop offset="100%" stop-color="#4FA3FF" stop-opacity="0"/>
-          </radialGradient>
-          <linearGradient id="silv2" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#F1F4F9"/>
-            <stop offset="100%" stop-color="#6F7682"/>
-          </linearGradient>
-          <linearGradient id="scanGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%"  stop-color="#4FA3FF" stop-opacity="0"/>
-            <stop offset="50%" stop-color="#7AA8FF" stop-opacity="0.55"/>
-            <stop offset="100%" stop-color="#4FA3FF" stop-opacity="0"/>
-          </linearGradient>
-          <clipPath id="enclaveClip">
-            <rect x="2" y="2" width="440" height="180" rx="5"/>
-          </clipPath>
-        </defs>
-
-        <!-- swimlane labels -->
-        <text x="0" y="20" font-family="JetBrains Mono" font-size="10" fill="#54585F" letter-spacing="1.5">// OFF-CHAIN</text>
-        <text x="0" y="408" font-family="JetBrains Mono" font-size="10" fill="#54585F" letter-spacing="1.5">// ON-CHAIN</text>
-        <line x1="0" y1="380" x2="1280" y2="380" stroke="#1E2128" stroke-dasharray="2 4"/>
-
-        <!-- consumer -->
-        <g transform="translate(40,160)">
-          <rect width="200" height="120" rx="6" fill="#0B0C10" stroke="#2C3038"/>
-          <text x="16" y="24" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="1.5">CONSUMER</text>
-          <line x1="16" y1="32" x2="76" y2="32" stroke="#4FA3FF" stroke-opacity="0.6"/>
-          <text x="16" y="58" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">wallet · indexer</text>
-          <text x="16" y="78" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">bridge · DVN</text>
-          <text x="16" y="104" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">signature check</text>
-        </g>
-
-        <!-- request -->
-        <line class="flow-line" x1="245" y1="220" x2="425" y2="220" stroke="#7A828F" stroke-width="1" marker-end="url(#ar3)"/>
-        <text x="335" y="212" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A" text-anchor="middle">eth_getBalance(...)</text>
-        <text x="335" y="238" font-family="JetBrains Mono" font-size="9" fill="#54585F" text-anchor="middle">x402 stablecoin</text>
-
-        <!-- HOST + ENCLAVE -->
-        <g transform="translate(430,90)">
-          <!-- host -->
-          <rect width="500" height="260" rx="6" fill="rgba(11,12,16,0.5)" stroke="#2C3038" stroke-dasharray="3 3"/>
-          <text x="16" y="22" font-family="JetBrains Mono" font-size="10" fill="#54585F" letter-spacing="1.5">HOST · OPERATOR-CONTROLLED</text>
-          <text x="16" y="246" font-family="JetBrains Mono" font-size="9" fill="#54585F">operator can drop or throttle · cannot alter what the node says</text>
-
-          <!-- enclave (silicon-style) -->
-          <g transform="translate(28,42)">
-            <rect class="enclave-plate" width="444" height="184" rx="6" fill="url(#silv2)"/>
-            <rect x="2" y="2" width="440" height="180" rx="5" fill="#0A0D14" stroke="#4FA3FF" stroke-width="1.5"/>
-            <ellipse class="enclave-core-glow" cx="222" cy="92" rx="180" ry="80" fill="url(#enclaveCore)"/>
-
-            <!-- scanning shimmer line -->
-            <g clip-path="url(#enclaveClip)">
-              <rect class="enclave-scan" x="-30" y="4" width="30" height="176" fill="url(#scanGrad)" opacity="0.85"/>
-            </g>
-
-            <!-- pin lights along bottom edge -->
-            <g>
-              <circle class="pin-light" cx="60"  cy="176" r="1.6" fill="#4FA3FF"/>
-              <circle class="pin-light" cx="130" cy="176" r="1.6" fill="#4FA3FF"/>
-              <circle class="pin-light" cx="200" cy="176" r="1.6" fill="#4FA3FF"/>
-              <circle class="pin-light" cx="270" cy="176" r="1.6" fill="#4FA3FF"/>
-              <circle class="pin-light" cx="340" cy="176" r="1.6" fill="#4FA3FF"/>
-              <circle class="pin-light" cx="400" cy="176" r="1.6" fill="#4FA3FF"/>
-            </g>
-
-            <text x="16" y="22" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="1.5">TDX ENCLAVE</text>
-            <text x="428" y="22" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" text-anchor="end" letter-spacing="0.5">D_image ✓</text>
-
-            <!-- workload -->
-            <rect x="22" y="42" width="400" height="46" rx="3" fill="rgba(79, 163, 255,0.04)" stroke="#2C3038"/>
-            <text x="34" y="62" font-family="Space Grotesk" font-size="13" fill="#FFFFFF" font-weight="600">Chain Full Node · RPC</text>
-            <text x="34" y="80" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A">EL.eth_getBalance() → resultHash · headBlock · finality</text>
-
-            <!-- I_priv_n  -->
-            <rect class="id-block" x="22" y="98" width="194" height="68" rx="3" fill="rgba(79, 163, 255,0.05)" stroke="#4FA3FF"/>
-            <text x="34" y="116" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="0.5">SIGNING IDENTITY</text>
-            <text x="34" y="138" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">I_priv_n</text>
-            <text x="34" y="156" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A">secp256k1 · const-time</text>
-
-            <!-- A_live -->
-            <rect x="228" y="98" width="194" height="68" rx="3" fill="rgba(11,12,16,0.6)" stroke="#2C3038"/>
-            <text x="240" y="116" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="0.5">RUNTIME ATTESTATION</text>
-            <text x="240" y="138" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">A_live</text>
-            <text x="240" y="156" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A">Cloud attestation · per-response</text>
-          </g>
-        </g>
-
-        <!-- response -->
-        <line class="flow-signed" x1="935" y1="220" x2="1100" y2="220" stroke="#4FA3FF" stroke-width="2" marker-end="url(#ar3b)"/>
-        <text x="1018" y="212" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" text-anchor="middle">signed response · live proof</text>
-        <text x="1018" y="238" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">cryptographically verifiable</text>
-
-        <!-- registry -->
-        <g transform="translate(1105,160)">
-          <rect width="160" height="120" rx="6" fill="#0B0C10" stroke="#2C3038"/>
-          <text x="14" y="24" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="1.5">ON-CHAIN</text>
-          <line x1="14" y1="32" x2="74" y2="32" stroke="#4FA3FF" stroke-opacity="0.6"/>
-          <text x="14" y="58" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">Registry</text>
-          <text x="14" y="76" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">getNodes(1)</text>
-          <text x="14" y="98" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">ChainVersionRecord</text>
-          <text x="14" y="114" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">D_image · governance</text>
-        </g>
-
-        <!-- governance below -->
-        <g transform="translate(1105,395)">
-          <rect width="160" height="46" rx="6" fill="#0B0C10" stroke="#2C3038"/>
-          <text x="14" y="20" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" letter-spacing="1.5">GOVERNANCE</text>
-          <text x="14" y="36" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">multisig · time-locked</text>
-        </g>
-        <line x1="1185" y1="395" x2="1185" y2="280" stroke="#4FA3FF" stroke-dasharray="2 3" stroke-width="1"/>
-
-        <!-- jwt registration up -->
-        <path d="M 680 90 L 680 50 L 1185 50 L 1185 160" fill="none" stroke="#4FA3FF" stroke-dasharray="3 3" stroke-opacity="0.6" marker-end="url(#ar3b)"/>
-        <text x="900" y="42" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" text-anchor="middle">register identity + proof of software — once at boot</text>
-
-        <!-- consumer reads registry -->
-        <path d="M 140 350 L 140 420 L 1105 420" fill="none" stroke="#54585F" stroke-dasharray="3 3" marker-end="url(#ar3)"/>
-        <text x="600" y="412" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A" text-anchor="middle">look up approved node keys</text>
-
-        <!-- verify badge -->
-        <g transform="translate(40,308)">
-          <rect width="200" height="42" rx="4" fill="rgba(79, 163, 255,0.07)" stroke="#4FA3FF" stroke-opacity="0.5"/>
-          <text x="14" y="18" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF">verify signature</text>
-          <text x="14" y="32" font-family="Space Grotesk" font-size="13" fill="#FFFFFF" font-weight="600">response ≡ approved node  ✓</text>
-        </g>
-      </svg>
     </div>
+  </div>
+
+  <div class="solution-note">
+    The operator can slow or stop the server. They cannot change what it says.
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section" id="howworks">
+  <div class="marker">03 // HOW IT WORKS</div>
+  <h2 class="stitle">
+    A request goes in. <span class="blue">A verified answer comes out.</span>
+  </h2>
+  <p class="ssub">
+    Here's what happens between your app sending a request and receiving a response it can trust.
+  </p>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">01</div>
+        <div class="step-vline"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-meta">CALLER</div>
+        <div class="step-title">Your app asks for data</div>
+        <div class="step-body">Your wallet, bridge, or exchange sends a normal request — a balance, a transaction, an on-chain event. Nothing changes on the caller's side.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">02</div>
+        <div class="step-vline"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-meta">HARDWARE ENCLAVE</div>
+        <div class="step-title">A sealed node reads the blockchain</div>
+        <div class="step-body">Polymer's node fetches the data from inside a hardware enclave — a sealed environment that Intel's chip controls. The operator chose which software to run inside it. Once it's running, they can't change it or see inside.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">03</div>
+        <div class="step-vline"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-meta">SEALED SIGNATURE</div>
+        <div class="step-title">The node signs the answer inside the hardware</div>
+        <div class="step-body">The enclave generated a private signing key when it booted — inside the hardware, never written to disk. The operator can't access it. The node uses it to sign every response. A forged answer would need that key. Nobody has it.</div>
+      </div>
+    </div>
+
+    <div class="step step-last">
+      <div class="step-left">
+        <div class="step-num step-num-final">04</div>
+      </div>
+      <div class="step-content">
+        <div class="step-meta">ON-CHAIN VERIFICATION</div>
+        <div class="step-title">Your app verifies before acting</div>
+        <div class="step-body">Your app checks the signature against a public key registered on-chain. If the signature is valid, the data came from a Polymer node running the correct software. If not, discard it. No trust in the operator required.</div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -498,100 +311,35 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     Three independent checks. <span class="blue">Hardware.</span> Signatures. <span class="dim">Open source.</span>
   </h2>
   <p class="ssub">
-    <strong>Hardware</strong> locks down what software is running.
-    <strong>Signatures</strong> prove every response came from that software.
-    <strong>Open source</strong> lets anyone verify that the software itself isn't
-    malicious. No single point you have to trust.
+    Each pillar works independently. Compromise one and the other two still hold.
+    No single point of trust.
   </p>
 
-  <!-- ===== CHAIN-OF-TRUST VISUALIZATION ===== -->
-  <div class="trustchain">
-    <div class="tc-rail">
-      <div class="tc-nodes">
-
-        <!-- LINK 1: HARDWARE — Intel TDX silicon enclave -->
-        <div class="tc-node">
-          <div class="tc-ix">PILLAR / 01 · HARDWARE</div>
-          <div class="tc-input">
-            <span class="label">Receives</span>
-            <span class="value in">the software running on the node</span>
-            <span class="arrow">↓</span>
-          </div>
-          <div class="tc-seal">
-            <div class="glyph"><span class="big">TDX</span>HARDWARE<br/>LOCKED</div>
-          </div>
-          <div class="tc-vendor">Intel TDX</div>
-          <div class="tc-role">Silicon root · sealed memory</div>
-          <div class="tc-output">
-            <div class="label">→ EMITS</div>
-            <div class="credential">a hardware fingerprint of exactly what software is running</div>
-            <div class="signedby"><span class="k">signed_by:</span> Intel root CA</div>
-          </div>
-          <div class="tc-body">Intel's chip seals the node and signs a fingerprint of what's running. Nothing outside the enclave can change it: not the host OS, not the hypervisor, not the cloud admin.</div>
-        </div>
-
-        <!-- LINK 2: CRYPTOGRAPHY — per-node key, attested binding, signed RPC -->
-        <div class="tc-node">
-          <div class="tc-ix">PILLAR / 02 · SIGNATURES</div>
-          <div class="tc-input">
-            <span class="label">Receives</span>
-            <span class="value">hardware fingerprint + unique signing key</span>
-            <span class="arrow">↓</span>
-          </div>
-          <div class="tc-seal">
-            <div class="glyph"><span class="big">SIG</span>EVERY<br/>RESPONSE</div>
-          </div>
-          <div class="tc-vendor">Per-node key</div>
-          <div class="tc-role">signing key sealed in hardware</div>
-          <div class="tc-output">
-            <div class="label">→ EMITS</div>
-            <div class="credential">every response signed by the node's key, with hardware confirming the software is correct</div>
-            <div class="signedby"><span class="k">signed_by:</span> enclave key + cloud key</div>
-          </div>
-          <div class="tc-body">The enclave generates a fresh signing key that never leaves the hardware. The cloud signs an attestation binding the key to the measured image. Every response is signed by the enclave's key.</div>
-        </div>
-
-        <!-- LINK 3: PUBLIC VERIFIABILITY — reproducible builds + public source -->
-        <div class="tc-node">
-          <div class="tc-ix">PILLAR / 03 · PUBLIC VERIFIABILITY</div>
-          <div class="tc-input">
-            <span class="label">Receives</span>
-            <span class="value">public source code → deterministic software build</span>
-            <span class="arrow">↓</span>
-          </div>
-          <div class="tc-seal">
-            <div class="glyph"><span class="big">SRC</span>OPEN<br/>SOURCE</div>
-          </div>
-          <div class="tc-vendor">Open source</div>
-          <div class="tc-role">Public code · anyone can audit</div>
-          <div class="tc-output">
-            <div class="label">→ PROVES</div>
-            <div class="credential">anyone can rebuild from source and confirm the running software matches the public code</div>
-            <div class="signedby"><span class="k">verified_by:</span> independent rebuilders</div>
-          </div>
-          <div class="tc-body">The node's code is open source and built deterministically. Anyone can rebuild from source and confirm the on-chain image is what the public code compiles to.</div>
-        </div>
-
-      </div>
-      <!-- chain link bridges sitting on the rail -->
-      <div class="tc-link l1">⧉</div>
-      <div class="tc-link l2">⧉</div>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-num">01</div>
+      <div class="pillar-tag">HARDWARE</div>
+      <div class="pillar-title">The hardware seals it shut</div>
+      <div class="pillar-analogy">Like tamper-evident packaging — you can tell if it's been opened.</div>
+      <div class="pillar-body">Intel's chip creates a sealed environment and signs a fingerprint of what software is running inside it. Not the host machine, not the cloud provider, not the operator can alter what's inside. The chip itself is the witness.</div>
     </div>
 
-    <!-- final verification badge -->
-    <div class="tc-verify">
-      <div>
-        <div class="vlbl">→ YOU VERIFY</div>
-        <div class="vh">Three independent checks, one guarantee.</div>
-      </div>
-      <div class="veq">
-        <code>σ → <span style="color:var(--accent)">I_pub_n</span> → <span style="color:var(--accent)">A_live</span>.D_image ∈ <span style="color:var(--accent)">Registry</span></code>
-      </div>
-      <div class="vbadge">VERIFIED</div>
+    <div class="pillar">
+      <div class="pillar-num">02</div>
+      <div class="pillar-tag">SIGNATURES</div>
+      <div class="pillar-title">Every answer is signed</div>
+      <div class="pillar-analogy">Like a notarized document — the signature proves it came from the right source.</div>
+      <div class="pillar-body">The node generates a signing key inside the enclave at boot. It never leaves the hardware. Every response is signed with it. You can verify the signature against a public key on-chain. The operator never had access to the private key — they can't forge it.</div>
     </div>
 
+    <div class="pillar">
+      <div class="pillar-num">03</div>
+      <div class="pillar-tag">OPEN SOURCE</div>
+      <div class="pillar-title">The code is public</div>
+      <div class="pillar-analogy">Like an open recipe — anyone can check that what's being served matches what's written.</div>
+      <div class="pillar-body">Polymer's node software is public and built deterministically. Anyone can take the source code, compile it themselves, and confirm the result matches what's running on the network. No hidden modifications are possible.</div>
+    </div>
   </div>
-
 </section>
 
 <!-- ============ INVESTORS ============ -->
@@ -633,3 +381,421 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </section>
 
 </BaseLayout>
+
+<style>
+/* ─── TRUST GAP ─── */
+.trust-gap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 48px 0 28px;
+  overflow-x: auto;
+}
+.tg-node { flex: 0 0 auto; position: relative; }
+.tg-box {
+  border: 1px solid #2C3038;
+  border-radius: 6px;
+  padding: 22px 26px;
+  min-width: 190px;
+  background: #0B0C10;
+  position: relative;
+  transition: border-color 0.3s;
+}
+.tg-box:hover { border-color: rgba(79,163,255,0.4); }
+.tg-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.tg-tag-warn { color: #FF6060; }
+.tg-name {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg-1);
+  margin-bottom: 4px;
+}
+.tg-detail {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--fg-3);
+}
+.tg-warn-lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #FF6060;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,80,80,0.2);
+}
+.tg-node-warn { position: relative; }
+.tg-warn-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,80,80,0.35);
+  animation: pulse-warn 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes pulse-warn {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.015); }
+}
+.tg-box-warn {
+  border-color: rgba(255,80,80,0.4);
+  background: rgba(255,30,30,0.04);
+}
+.tg-conn {
+  flex: 1 1 auto;
+  min-width: 80px;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.tg-conn-track {
+  width: 100%;
+  height: 2px;
+  background: #1A1F2A;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.tg-conn-pulse {
+  position: absolute;
+  top: 0; left: -40%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(79,163,255,0.7), transparent);
+  animation: slide-pulse 2s linear infinite;
+}
+@keyframes slide-pulse {
+  from { left: -40%; }
+  to   { left: 120%; }
+}
+.tg-conn-cap {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+
+/* ─── PROBLEM BULLETS ─── */
+.problem-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 24px 0 36px;
+  max-width: 680px;
+}
+.pb-item {
+  display: flex;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg-2);
+  line-height: 1.7;
+}
+.pb-dash { color: var(--accent); flex-shrink: 0; }
+
+/* ─── RESOLUTION BOX ─── */
+.resolution-box {
+  margin-top: 16px;
+  border: 1px solid rgba(79,163,255,0.35);
+  border-left: 2px solid var(--accent);
+  border-radius: 4px;
+  padding: 12px 16px;
+  background: rgba(79,163,255,0.04);
+}
+.rb-label {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+.rb-body {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-1);
+  line-height: 1.6;
+}
+
+/* ─── BEFORE / AFTER ─── */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  margin: 40px 0 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #2C3038;
+}
+.compare-col { padding: 28px 28px 32px; }
+.compare-before { background: rgba(255,30,30,0.02); }
+.compare-after  {
+  background: rgba(79,163,255,0.03);
+  box-shadow: inset 0 0 60px rgba(79,163,255,0.04);
+}
+.compare-vs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  border-left: 1px solid #2C3038;
+  border-right: 1px solid #2C3038;
+  background: #0B0C10;
+}
+.compare-vs-line {
+  flex: 1;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, #2C3038, transparent);
+}
+.compare-vs-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--fg-3);
+}
+.cmp-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.cmp-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cmp-dot-bad  { background: #FF4040; box-shadow: 0 0 6px #FF4040; }
+.cmp-dot-good { background: #4FA3FF; box-shadow: 0 0 6px #4FA3FF; animation: dot-pulse 2s ease-in-out infinite; }
+@keyframes dot-pulse {
+  0%, 100% { box-shadow: 0 0 4px #4FA3FF; }
+  50%       { box-shadow: 0 0 12px #4FA3FF; }
+}
+.cmp-label      { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: #FF6060; }
+.cmp-label-good { color: var(--accent); }
+.cmp-steps { display: flex; flex-direction: column; gap: 0; }
+.cmp-step {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg-2);
+  padding: 10px 14px;
+  border: 1px solid #2C3038;
+  border-radius: 4px;
+  line-height: 1.5;
+  background: #0B0C10;
+}
+.cmp-note { display: block; font-size: 10px; color: var(--fg-3); margin-top: 4px; }
+.cmp-arrow { text-align: center; font-family: var(--mono); font-size: 16px; color: var(--fg-3); padding: 4px 0; }
+.cmp-arrow-blue { color: var(--accent); }
+.cmp-bad  { border-color: rgba(255,80,80,0.3); background: rgba(255,30,30,0.04); }
+.cmp-fail { border-color: rgba(255,80,80,0.5); background: rgba(255,30,30,0.06); color: #FF6060; font-weight: 600; }
+.cmp-sealed {
+  border-color: rgba(79,163,255,0.4);
+  background: rgba(79,163,255,0.05);
+  position: relative;
+  overflow: hidden;
+}
+.cmp-sealed::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(79,163,255,0.08), transparent);
+  animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+  from { left: -60%; }
+  to   { left: 120%; }
+}
+.cmp-sealed-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  border: 1px solid rgba(79,163,255,0.4);
+  border-radius: 3px;
+  padding: 1px 6px;
+  margin-bottom: 6px;
+}
+.cmp-ok {
+  border-color: rgba(79,163,255,0.5);
+  background: rgba(79,163,255,0.08);
+  color: var(--accent);
+  font-weight: 600;
+}
+.cmp-check { margin-right: 4px; }
+.solution-note {
+  margin-top: 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  text-align: center;
+  padding: 12px;
+  border: 1px solid #1E2128;
+  border-radius: 4px;
+}
+
+/* ─── STEPS ─── */
+.steps {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.step {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.step-last .step-left { padding-bottom: 0; }
+.step-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 0;
+}
+.step-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  background: rgba(79,163,255,0.08);
+  border: 1px solid rgba(79,163,255,0.3);
+  border-radius: 4px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+.step-num-final {
+  box-shadow: 0 0 16px rgba(79,163,255,0.25);
+  border-color: rgba(79,163,255,0.6);
+}
+.step-vline {
+  width: 1px;
+  flex: 1;
+  min-height: 24px;
+  margin-top: 8px;
+  background: linear-gradient(to bottom, rgba(79,163,255,0.3), #1E2128);
+}
+.step-content {
+  padding: 0 0 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.step-last .step-content { padding-bottom: 0; }
+.step-meta {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+.step-title {
+  font-family: var(--sans);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--fg-1);
+  line-height: 1.3;
+}
+.step-body {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg-2);
+  line-height: 1.75;
+  max-width: 640px;
+}
+.step-callout {
+  border: 1px solid #2C3038;
+  border-left: 2px solid rgba(79,163,255,0.5);
+  border-radius: 0 4px 4px 0;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-2);
+  line-height: 1.6;
+  max-width: 560px;
+  background: rgba(79,163,255,0.02);
+}
+.sc-key { color: var(--accent); margin-right: 4px; }
+
+/* ─── TRUST PILLARS ─── */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid #2C3038;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 40px;
+}
+.pillar {
+  padding: 28px 24px 32px;
+  border-right: 1px solid #2C3038;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: background 0.3s;
+}
+.pillar:last-child { border-right: none; }
+.pillar:hover { background: rgba(79,163,255,0.02); }
+.pillar-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-3);
+}
+.pillar-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+.pillar-title {
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--fg-1);
+  line-height: 1.3;
+}
+.pillar-analogy {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-2);
+  line-height: 1.5;
+  padding: 10px 12px;
+  border: 1px solid #2C3038;
+  border-left: 2px solid var(--accent);
+  border-radius: 0 4px 4px 0;
+  background: rgba(79,163,255,0.03);
+}
+.pillar-body {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  line-height: 1.7;
+}
+@media (max-width: 768px) {
+  .pillars { grid-template-columns: 1fr; }
+  .pillar { border-right: none; border-bottom: 1px solid #2C3038; }
+  .pillar:last-child { border-bottom: none; }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .trust-gap { flex-direction: column; align-items: stretch; }
+  .tg-conn { flex-direction: row; min-width: unset; padding: 8px 0; }
+  .tg-conn-track { flex: 1; }
+  .compare { grid-template-columns: 1fr; }
+  .compare-vs { flex-direction: row; padding: 12px; border: none; border-top: 1px solid #2C3038; border-bottom: 1px solid #2C3038; }
+  .compare-vs-line { flex: 1; height: 1px; width: auto; background: linear-gradient(to right, transparent, #2C3038, transparent); }
+  .step { grid-template-columns: 48px 1fr; gap: 16px; }
+}
+</style>
