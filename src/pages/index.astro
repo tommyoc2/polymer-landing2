@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout
   title="Polymer — The Verifiable RPC Network"
-  description="Polymer is the Verifiable RPC Network. Every response is signed inside a tamper-proof hardware enclave so the operator can stall traffic, but can't fake the answer."
+  description="Every blockchain app trusts a server it can't audit. Polymer fixes that — every response is signed inside tamper-proof hardware and provably correct before your app acts on it."
   currentPage="protocol"
 >
 
@@ -20,9 +20,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </h1>
 
   <p class="lede">
-    Every wallet, bridge, and exchange reads the blockchain through someone
-    else's server, and trusts whatever it says. Polymer signs every response
-    inside <strong>tamper-proof hardware</strong>.
+    Every wallet, bridge, and exchange relies on a server it doesn't own to
+    read the blockchain. That server could return anything — and there's no
+    way to tell. Polymer makes every response <strong>provably correct</strong>
+    by signing it inside hardware the operator can't touch.
   </p>
 
   <div class="cta">
@@ -30,7 +31,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </div>
 
   <hr class="section-divider"/>
-  <div class="marker" id="architecture">01 // PROTOCOL ARCHITECTURE</div>
+  <div class="marker" id="architecture">01 // HOW THE NODE WORKS</div>
 
   <!-- DIE-SHOT VISUAL -->
   <div class="die">
@@ -43,16 +44,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="val">Intel TDX <span class="a">·</span> sealed RAM</div>
         </div>
         <div class="row">
-          <div class="lbl">Image digest</div>
+          <div class="lbl">Software fingerprint</div>
           <div class="val">sha256:<span class="a">7f3c8b…d92c</span></div>
         </div>
         <div class="row live">
-          <div class="lbl">Boot identity</div>
-          <div class="val">I_priv_n <span class="a">·</span> ephemeral</div>
+          <div class="lbl">Signing key</div>
+          <div class="val">unique per node <span class="a">·</span> never leaves hardware</div>
         </div>
         <div class="row">
           <div class="lbl">Lifetime</div>
-          <div class="val">RAM-only · vanishes on reboot</div>
+          <div class="val">memory-only · gone on reboot</div>
         </div>
       </div>
 
@@ -66,7 +67,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <span class="corner br"></span>
 
         <div class="die-chip-label">
-          <span class="tag">TDX ENCLAVE · CHAIN FULL NODE</span>
+          <span class="tag">TAMPER-PROOF HARDWARE ENCLAVE · sealed by Intel TDX</span>
           <span class="id">node:0x4a8f2c1b…e92c</span>
         </div>
 
@@ -83,83 +84,76 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <stop offset="100%" stop-color="#0A0D14"/>
               </linearGradient>
               <radialGradient id="core" cx="0.5" cy="0.5">
-                <stop offset="0%" stop-color="#4FA3FF" stop-opacity="0.5"/>
+                <stop offset="0%" stop-color="#4FA3FF" stop-opacity="0.45"/>
                 <stop offset="100%" stop-color="#4FA3FF" stop-opacity="0"/>
               </radialGradient>
+              <marker id="chipArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#4FA3FF" opacity="0.7"/>
+              </marker>
             </defs>
 
-            <!-- Outer chip body (silver bezel) -->
-            <rect x="40" y="20" width="520" height="190" rx="6" fill="url(#silver)" opacity="0.15"/>
-            <rect x="42" y="22" width="516" height="186" rx="5" fill="url(#diegrad)" stroke="#4FA3FF" stroke-opacity="0.6"/>
+            <!-- Outer chip body -->
+            <rect x="10" y="10" width="580" height="210" rx="6" fill="url(#silver)" opacity="0.15"/>
+            <rect x="12" y="12" width="576" height="206" rx="5" fill="url(#diegrad)" stroke="#4FA3FF" stroke-opacity="0.6"/>
 
             <!-- Pin grid top -->
             <g class="pin-row pin-top" fill="#4FA3FF">
-              <circle cx="80"  cy="14" r="2"/><circle cx="100" cy="14" r="2"/><circle cx="120" cy="14" r="2"/>
-              <circle cx="140" cy="14" r="2"/><circle cx="160" cy="14" r="2"/><circle cx="180" cy="14" r="2"/>
-              <circle cx="200" cy="14" r="2"/><circle cx="220" cy="14" r="2"/><circle cx="240" cy="14" r="2"/>
-              <circle cx="260" cy="14" r="2"/><circle cx="300" cy="14" r="2"/><circle cx="340" cy="14" r="2"/>
-              <circle cx="380" cy="14" r="2"/><circle cx="420" cy="14" r="2"/><circle cx="460" cy="14" r="2"/>
-              <circle cx="480" cy="14" r="2"/><circle cx="500" cy="14" r="2"/><circle cx="520" cy="14" r="2"/>
+              <circle cx="60"  cy="6" r="2"/><circle cx="90"  cy="6" r="2"/><circle cx="120" cy="6" r="2"/>
+              <circle cx="160" cy="6" r="2"/><circle cx="200" cy="6" r="2"/><circle cx="240" cy="6" r="2"/>
+              <circle cx="300" cy="6" r="2"/>
+              <circle cx="360" cy="6" r="2"/><circle cx="400" cy="6" r="2"/><circle cx="440" cy="6" r="2"/>
+              <circle cx="480" cy="6" r="2"/><circle cx="510" cy="6" r="2"/><circle cx="540" cy="6" r="2"/>
             </g>
             <g class="pin-row pin-bot" fill="#4FA3FF">
-              <circle cx="80"  cy="216" r="2"/><circle cx="100" cy="216" r="2"/><circle cx="120" cy="216" r="2"/>
-              <circle cx="140" cy="216" r="2"/><circle cx="160" cy="216" r="2"/><circle cx="180" cy="216" r="2"/>
-              <circle cx="200" cy="216" r="2"/><circle cx="220" cy="216" r="2"/><circle cx="240" cy="216" r="2"/>
-              <circle cx="260" cy="216" r="2"/><circle cx="300" cy="216" r="2"/><circle cx="340" cy="216" r="2"/>
-              <circle cx="380" cy="216" r="2"/><circle cx="420" cy="216" r="2"/><circle cx="460" cy="216" r="2"/>
-              <circle cx="480" cy="216" r="2"/><circle cx="500" cy="216" r="2"/><circle cx="520" cy="216" r="2"/>
+              <circle cx="60"  cy="224" r="2"/><circle cx="90"  cy="224" r="2"/><circle cx="120" cy="224" r="2"/>
+              <circle cx="160" cy="224" r="2"/><circle cx="200" cy="224" r="2"/><circle cx="240" cy="224" r="2"/>
+              <circle cx="300" cy="224" r="2"/>
+              <circle cx="360" cy="224" r="2"/><circle cx="400" cy="224" r="2"/><circle cx="440" cy="224" r="2"/>
+              <circle cx="480" cy="224" r="2"/><circle cx="510" cy="224" r="2"/><circle cx="540" cy="224" r="2"/>
             </g>
 
-            <!-- Glow halo around core -->
-            <ellipse cx="300" cy="115" rx="180" ry="80" fill="url(#core)"/>
+            <!-- Glow behind center -->
+            <ellipse cx="300" cy="115" rx="110" ry="85" fill="url(#core)"/>
 
-            <!-- Inner functional units -->
-            <!-- left block: workload -->
-            <g>
-              <rect x="62" y="46" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
-              <text x="70" y="62" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1">CHAIN FULL NODE</text>
-              <line x1="70" y1="68" x2="160" y2="68" stroke="#4FA3FF"/>
-              <text x="70" y="82" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">EL + CL · RPC server</text>
-              <text x="70" y="93" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">canonical answer</text>
+            <!-- PANEL 1: READ -->
+            <rect x="24" y="26" width="172" height="178" rx="4" fill="none" stroke="#2C3038" stroke-width="1"/>
+            <text x="110" y="46" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1.5" text-anchor="middle">01 · READ</text>
+            <line x1="40" y1="52" x2="180" y2="52" stroke="#4FA3FF" stroke-opacity="0.4"/>
+            <text x="110" y="88" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Blockchain</text>
+            <text x="110" y="110" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Node</text>
+            <text x="110" y="142" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">reads canonical</text>
+            <text x="110" y="155" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">chain state</text>
+            <text x="110" y="194" font-family="JetBrains Mono" font-size="7.5" fill="#54585F" text-anchor="middle">inside the enclave</text>
 
-              <rect x="62" y="110" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
-              <text x="70" y="126" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1">EIP-712</text>
-              <line x1="70" y1="132" x2="120" y2="132" stroke="#4FA3FF"/>
-              <text x="70" y="146" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">PolymerResponse</text>
-              <text x="70" y="157" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">typed-data digest</text>
-            </g>
+            <!-- Arrow 1→2 -->
+            <line x1="196" y1="115" x2="214" y2="115" stroke="#4FA3FF" stroke-opacity="0.6" marker-end="url(#chipArrow)"/>
 
-            <!-- centre: signing core -->
-            <g>
-              <rect x="240" y="62" width="120" height="106" fill="rgba(79, 163, 255,0.05)" stroke="#4FA3FF" stroke-width="1.5"/>
-              <text x="300" y="80" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1.5" text-anchor="middle">SIGNING CORE</text>
-              <line x1="270" y1="86" x2="330" y2="86" stroke="#4FA3FF" opacity="0.6"/>
-              <text x="300" y="106" font-family="Space Grotesk" font-size="14" fill="#FFFFFF" font-weight="600" text-anchor="middle">I_priv_n</text>
-              <text x="300" y="124" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">secp256k1</text>
-              <text x="300" y="138" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">libsecp256k1</text>
-              <text x="300" y="158" font-family="JetBrains Mono" font-size="8" fill="#4FA3FF" text-anchor="middle">CONST-TIME</text>
-              <!-- decorative trace lines -->
-              <path d="M222 80 H240 M222 104 H240 M222 128 H240 M222 152 H240" stroke="#4FA3FF" stroke-opacity="0.3"/>
-              <path d="M360 80 H378 M360 104 H378 M360 128 H378 M360 152 H378" stroke="#4FA3FF" stroke-opacity="0.5"/>
-            </g>
+            <!-- PANEL 2: SIGN (highlighted) -->
+            <rect x="216" y="16" width="168" height="198" rx="4" fill="rgba(79, 163, 255,0.07)" stroke="#4FA3FF" stroke-width="1.5"/>
+            <text x="300" y="36" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1.5" text-anchor="middle">02 · SIGN</text>
+            <line x1="248" y1="42" x2="352" y2="42" stroke="#4FA3FF" stroke-opacity="0.6"/>
+            <text x="300" y="80" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Signing</text>
+            <text x="300" y="102" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Key</text>
+            <text x="300" y="136" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">generated in hardware</text>
+            <text x="300" y="150" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">never leaves the enclave</text>
+            <text x="300" y="174" font-family="JetBrains Mono" font-size="8" fill="#4FA3FF" text-anchor="middle">SEALED · CONST-TIME</text>
+            <text x="300" y="202" font-family="JetBrains Mono" font-size="7.5" fill="#54585F" text-anchor="middle">signs every response</text>
 
-            <!-- right block: attestation -->
-            <g>
-              <rect x="378" y="46" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
-              <text x="386" y="62" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1">ATTESTATION</text>
-              <line x1="386" y1="68" x2="476" y2="68" stroke="#4FA3FF"/>
-              <text x="386" y="82" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">Cloud attestation</text>
-              <text x="386" y="93" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">RS256 · per-response</text>
+            <!-- Arrow 2→3 -->
+            <line x1="384" y1="115" x2="402" y2="115" stroke="#4FA3FF" stroke-width="1.5" stroke-opacity="0.8" marker-end="url(#chipArrow)"/>
 
-              <rect x="378" y="110" width="160" height="54" fill="none" stroke="#2C3038" stroke-width="1"/>
-              <text x="386" y="126" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1">KEY BINDING</text>
-              <line x1="386" y1="132" x2="476" y2="132" stroke="#4FA3FF"/>
-              <text x="386" y="146" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">hash(I_pub_n) bound</text>
-              <text x="386" y="157" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A">binds identity to image</text>
-            </g>
+            <!-- PANEL 3: PROVE -->
+            <rect x="404" y="26" width="172" height="178" rx="4" fill="none" stroke="#2C3038" stroke-width="1"/>
+            <text x="490" y="46" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF" letter-spacing="1.5" text-anchor="middle">03 · PROVE</text>
+            <line x1="420" y1="52" x2="560" y2="52" stroke="#4FA3FF" stroke-opacity="0.4"/>
+            <text x="490" y="88" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Hardware</text>
+            <text x="490" y="110" font-family="Space Grotesk" font-size="17" fill="#FFFFFF" font-weight="600" text-anchor="middle">Certificate</text>
+            <text x="490" y="142" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">proves correct software</text>
+            <text x="490" y="155" font-family="JetBrains Mono" font-size="8" fill="#8A8F9A" text-anchor="middle">is running right now</text>
+            <text x="490" y="194" font-family="JetBrains Mono" font-size="7.5" fill="#54585F" text-anchor="middle">refreshed per response</text>
 
-            <!-- bottom label -->
-            <text x="300" y="190" font-family="JetBrains Mono" font-size="8" fill="#54585F" text-anchor="middle" letter-spacing="2">D_image · sha256:7f3c8b2e4f1a · POLYMER · v2.0</text>
+            <!-- Bottom label -->
+            <text x="300" y="222" font-family="JetBrains Mono" font-size="7.5" fill="#54585F" text-anchor="middle" letter-spacing="2">POLYMER · TAMPER-PROOF · VERIFIABLE · v2.0</text>
           </svg>
         </div>
       </div>
@@ -168,18 +162,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="die-side">
         <div class="row">
           <div class="lbl">Output</div>
-          <div class="val">PolymerResponse <span class="a">·</span> EIP-712</div>
-          <div class="sub">TEE-secured RPC response · typed-data digest</div>
+          <div class="val">signed response <span class="a">·</span> verified format</div>
+          <div class="sub">every answer carries a cryptographic signature from inside the enclave</div>
         </div>
         <div class="row">
           <div class="lbl">Signature</div>
-          <div class="val">σ = <span class="a">ECDSA-secp256k1</span>(I_priv_n, digest)</div>
-          <div class="sub">key generated &amp; sealed inside the enclave · never exfiltrable</div>
+          <div class="val">every response <span class="a">cryptographically signed</span> by the node</div>
+          <div class="sub">key generated &amp; sealed inside the enclave · never extractable</div>
         </div>
         <div class="row">
           <div class="lbl">Verifies in</div>
-          <div class="val">any <span class="a">EIP-712</span> wallet <span class="a">·</span> Solidity ECDSA.recover <span class="a">·</span> verifier-v2</div>
-          <div class="sub">no bespoke library · no protocol-wide setup · no shared key</div>
+          <div class="val">any wallet <span class="a">·</span> on-chain <span class="a">·</span> in your app</div>
+          <div class="sub">no custom library · no shared key · no trust in the operator</div>
         </div>
       </div>
 
@@ -190,14 +184,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <!-- ============ INCIDENT ============ -->
 <section class="section" id="attack">
-  <div class="marker">02 // THE HIDDEN ATTACK SURFACE</div>
+  <div class="marker">02 // THE PROBLEM</div>
   <h2 class="stitle">
     You don't read the blockchain. <span class="dim">A server does.</span>
   </h2>
   <p class="ssub">
-    Wallets, bridges, exchanges. Every app on chain depends on someone
-    else's server to fetch on-chain data. If that server lies, the lie
-    looks identical to the truth.
+    Every wallet, bridge, and exchange depends on a server it doesn't control
+    to fetch on-chain data. TLS secures the connection — it says nothing about
+    whether the answer is true. If the server lies, the lie is indistinguishable
+    from the truth.
   </p>
 
   <!-- Forensic exploit visualization -->
@@ -213,7 +208,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <!-- LEFT: forensic visualization -->
       <div class="exploit-vis">
-        <div class="caption">// Forensic · binary diff at T+0</div>
+        <div class="caption">// What happened · April 18, 2026</div>
 
         <div class="swap">
           <div class="swap-node honest">
@@ -236,13 +231,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <div class="selective">
           <div class="row honest">
-            <div class="who">// SAME ENDPOINT → OTHER CLIENTS</div>
-            <div class="resp">eth_getProof → valid Merkle proof</div>
+            <div class="who">// SAME SERVER → EVERYONE ELSE</div>
+            <div class="resp">returned correct data</div>
           </div>
           <div class="row lied">
-            <div class="who">// SAME ENDPOINT → LZ VERIFIER</div>
-            <div class="resp">eth_getProof → forged Merkle proof</div>
+            <div class="who">// SAME SERVER → LAYERZERO VERIFIER</div>
+            <div class="resp">returned forged data</div>
           </div>
+        </div>
+
+        <div style="margin-top:16px; border:1px solid rgba(79,163,255,0.35); border-left:2px solid var(--accent); border-radius:4px; padding:12px 14px; background:rgba(79,163,255,0.04);">
+          <div style="font-family:var(--mono); font-size:9.5px; color:var(--accent); letter-spacing:0.12em; margin-bottom:5px;">// WITH POLYMER → THIS ATTACK FAILS</div>
+          <div style="font-family:var(--mono); font-size:10.5px; color:var(--fg-1); line-height:1.5;">Swapped binary gets a different hardware fingerprint. The Registry rejects it. The node can't produce a verifiable signature. The attack stops before it starts.</div>
         </div>
       </div>
 
@@ -279,20 +279,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <!-- ============ ARCHITECTURE ============ -->
 <section class="section" id="request">
-  <div class="marker">03 // REQUEST FLOW</div>
+  <div class="marker">03 // HOW IT WORKS</div>
   <h2 class="stitle">
-    From <span class="blue">RPC call</span> to <span class="dim">verified response.</span>
+    From <span class="blue">question</span> to <span class="dim">verified answer.</span>
   </h2>
   <p class="ssub">
-    A consumer sends an RPC call. The node answers from inside a hardware
-    enclave, signs the response, and attaches a fresh attestation. The
-    consumer verifies everything against keys pinned on chain.
+    You ask for a balance, a transaction, or an event. The node answers from
+    inside a sealed hardware enclave, signs the response, and proves in real
+    time that it's running the correct software. Your app checks the signature
+    before acting on the data — and can reject anything that doesn't verify.
   </p>
 
   <div class="arch">
     <div class="arch-head">
       <span class="pill">FIG · 04</span>
-      <span class="title">Per-request path · consumer to chain full node to registry</span>
+      <span class="title">How a request becomes a verified answer</span>
       <span class="right">
         <span>━━ data</span>
         <span style="color:var(--accent)">━━ signed</span>
@@ -307,47 +308,47 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="am-card">
             <div class="am-tag">CONSUMER</div>
             <div class="am-name">wallet · indexer · bridge · DVN</div>
-            <div class="am-meta">verifier-v2</div>
+            <div class="am-meta">signature check</div>
           </div>
         </div>
         <div class="am-edge">
           <div class="am-edge-line"></div>
-          <div class="am-edge-lbl">eth_getBalance(...) <span class="am-dim">· x402 stablecoin</span></div>
+          <div class="am-edge-lbl">your request <span class="am-dim">· pay per call</span></div>
         </div>
         <div class="am-step am-off">
           <div class="am-card am-host">
             <div class="am-tag am-tag-dim">HOST · OPERATOR-CONTROLLED</div>
             <div class="am-enclave">
-              <div class="am-tag am-blue">TDX ENCLAVE <span class="am-meta-r">D_image ✓</span></div>
+              <div class="am-tag am-blue">HARDWARE ENCLAVE <span class="am-meta-r">software verified ✓</span></div>
               <div class="am-row">
-                <div class="am-row-name">Chain Full Node · RPC</div>
-                <div class="am-row-meta">EL.eth_getBalance() → resultHash · headBlock · finality</div>
+                <div class="am-row-name">Blockchain Node · RPC</div>
+                <div class="am-row-meta">reads chain state → signs the answer</div>
               </div>
               <div class="am-row am-blue-row">
-                <div class="am-row-tag">SIGNING IDENTITY</div>
-                <div class="am-row-name">I_priv_n</div>
-                <div class="am-row-meta">secp256k1 · const-time</div>
+                <div class="am-row-tag">SIGNING KEY</div>
+                <div class="am-row-name">unique per node</div>
+                <div class="am-row-meta">sealed in hardware · never leaves</div>
               </div>
               <div class="am-row">
-                <div class="am-row-tag am-blue">RUNTIME ATTESTATION</div>
-                <div class="am-row-name">A_live</div>
-                <div class="am-row-meta">Cloud attestation · per-response</div>
+                <div class="am-row-tag am-blue">LIVE PROOF</div>
+                <div class="am-row-name">hardware certificate</div>
+                <div class="am-row-meta">proves correct software is running right now</div>
               </div>
             </div>
-            <div class="am-meta am-host-foot">root @ host = drop, throttle, isolate · cannot reach inside</div>
+            <div class="am-meta am-host-foot">the operator can drop or throttle · they cannot alter what the node says</div>
           </div>
         </div>
         <div class="am-edge am-edge-signed">
           <div class="am-edge-line"></div>
-          <div class="am-edge-lbl am-blue">σ · A_live <span class="am-dim">· EIP-712 PolymerResponse</span></div>
+          <div class="am-edge-lbl am-blue">signed response <span class="am-dim">· live hardware proof</span></div>
         </div>
         <div class="am-step am-on">
           <div class="am-lane">// ON-CHAIN</div>
           <div class="am-card">
             <div class="am-tag am-blue">ON-CHAIN</div>
             <div class="am-name">Registry</div>
-            <div class="am-meta">getNodes(1) · ChainVersionRecord</div>
-            <div class="am-meta am-dim">D_image · governance</div>
+            <div class="am-meta">approved node keys · on-chain</div>
+            <div class="am-meta am-dim">approved software versions · governance</div>
           </div>
         </div>
       </div>
@@ -389,7 +390,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <line x1="16" y1="32" x2="76" y2="32" stroke="#4FA3FF" stroke-opacity="0.6"/>
           <text x="16" y="58" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">wallet · indexer</text>
           <text x="16" y="78" font-family="Space Grotesk" font-size="15" fill="#FFFFFF" font-weight="600">bridge · DVN</text>
-          <text x="16" y="104" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">verifier-v2</text>
+          <text x="16" y="104" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A">signature check</text>
         </g>
 
         <!-- request -->
@@ -402,7 +403,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <!-- host -->
           <rect width="500" height="260" rx="6" fill="rgba(11,12,16,0.5)" stroke="#2C3038" stroke-dasharray="3 3"/>
           <text x="16" y="22" font-family="JetBrains Mono" font-size="10" fill="#54585F" letter-spacing="1.5">HOST · OPERATOR-CONTROLLED</text>
-          <text x="16" y="246" font-family="JetBrains Mono" font-size="9" fill="#54585F">root @ host = drop, throttle, isolate · cannot reach inside</text>
+          <text x="16" y="246" font-family="JetBrains Mono" font-size="9" fill="#54585F">operator can drop or throttle · cannot alter what the node says</text>
 
           <!-- enclave (silicon-style) -->
           <g transform="translate(28,42)">
@@ -449,8 +450,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <!-- response -->
         <line class="flow-signed" x1="935" y1="220" x2="1100" y2="220" stroke="#4FA3FF" stroke-width="2" marker-end="url(#ar3b)"/>
-        <text x="1018" y="212" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" text-anchor="middle">σ · A_live</text>
-        <text x="1018" y="238" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">EIP-712 PolymerResponse</text>
+        <text x="1018" y="212" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" text-anchor="middle">signed response · live proof</text>
+        <text x="1018" y="238" font-family="JetBrains Mono" font-size="9" fill="#8A8F9A" text-anchor="middle">cryptographically verifiable</text>
 
         <!-- registry -->
         <g transform="translate(1105,160)">
@@ -473,17 +474,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <!-- jwt registration up -->
         <path d="M 680 90 L 680 50 L 1185 50 L 1185 160" fill="none" stroke="#4FA3FF" stroke-dasharray="3 3" stroke-opacity="0.6" marker-end="url(#ar3b)"/>
-        <text x="900" y="42" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" text-anchor="middle">register(I_pub_n, attestation) — once at boot</text>
+        <text x="900" y="42" font-family="JetBrains Mono" font-size="10" fill="#4FA3FF" text-anchor="middle">register identity + proof of software — once at boot</text>
 
         <!-- consumer reads registry -->
         <path d="M 140 350 L 140 420 L 1105 420" fill="none" stroke="#54585F" stroke-dasharray="3 3" marker-end="url(#ar3)"/>
-        <text x="600" y="412" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A" text-anchor="middle">getNodes(networkId) → I_pub_n[]</text>
+        <text x="600" y="412" font-family="JetBrains Mono" font-size="10" fill="#8A8F9A" text-anchor="middle">look up approved node keys</text>
 
         <!-- verify badge -->
         <g transform="translate(40,308)">
           <rect width="200" height="42" rx="4" fill="rgba(79, 163, 255,0.07)" stroke="#4FA3FF" stroke-opacity="0.5"/>
-          <text x="14" y="18" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF">verify_response()</text>
-          <text x="14" y="32" font-family="Space Grotesk" font-size="13" fill="#FFFFFF" font-weight="600">ecrecover ≡ I_pub_n  ✓</text>
+          <text x="14" y="18" font-family="JetBrains Mono" font-size="9" fill="#4FA3FF">verify signature</text>
+          <text x="14" y="32" font-family="Space Grotesk" font-size="13" fill="#FFFFFF" font-weight="600">response ≡ approved node  ✓</text>
         </g>
       </svg>
     </div>
@@ -492,14 +493,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <!-- ============ TRUST PILLARS ============ -->
 <section class="section" id="pillars">
-  <div class="marker">04 // TRUST PILLARS</div>
+  <div class="marker">04 // WHY YOU CAN TRUST IT</div>
   <h2 class="stitle">
-    Three pillars. <span class="blue">Hardware.</span> Cryptography. <span class="dim">Public verifiability.</span>
+    Three independent checks. <span class="blue">Hardware.</span> Signatures. <span class="dim">Open source.</span>
   </h2>
   <p class="ssub">
-    <strong>Hardware</strong> locks the node down. <strong>Cryptography</strong>
-    signs every response. <strong>Open source</strong> lets anyone audit what's
-    actually running. Three independent checks behind every read.
+    <strong>Hardware</strong> locks down what software is running.
+    <strong>Signatures</strong> prove every response came from that software.
+    <strong>Open source</strong> lets anyone verify that the software itself isn't
+    malicious. No single point you have to trust.
   </p>
 
   <!-- ===== CHAIN-OF-TRUST VISUALIZATION ===== -->
@@ -512,17 +514,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="tc-ix">PILLAR / 01 · HARDWARE</div>
           <div class="tc-input">
             <span class="label">Receives</span>
-            <span class="value in">workload binary · enclave memory</span>
+            <span class="value in">the software running on the node</span>
             <span class="arrow">↓</span>
           </div>
           <div class="tc-seal">
-            <div class="glyph"><span class="big">TDX</span>SILICON<br/>ENCLAVE</div>
+            <div class="glyph"><span class="big">TDX</span>HARDWARE<br/>LOCKED</div>
           </div>
           <div class="tc-vendor">Intel TDX</div>
           <div class="tc-role">Silicon root · sealed memory</div>
           <div class="tc-output">
             <div class="label">→ EMITS</div>
-            <div class="credential"><code>image_digest</code> = sha256(measured pages)</div>
+            <div class="credential">a hardware fingerprint of exactly what software is running</div>
             <div class="signedby"><span class="k">signed_by:</span> Intel root CA</div>
           </div>
           <div class="tc-body">Intel's chip seals the node and signs a fingerprint of what's running. Nothing outside the enclave can change it: not the host OS, not the hypervisor, not the cloud admin.</div>
@@ -530,20 +532,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <!-- LINK 2: CRYPTOGRAPHY — per-node key, attested binding, signed RPC -->
         <div class="tc-node">
-          <div class="tc-ix">PILLAR / 02 · CRYPTOGRAPHY</div>
+          <div class="tc-ix">PILLAR / 02 · SIGNATURES</div>
           <div class="tc-input">
             <span class="label">Receives</span>
-            <span class="value"><code style="color:var(--accent)">image_digest</code> + per-node <code style="color:var(--accent)">I_pub_n</code></span>
+            <span class="value">hardware fingerprint + unique signing key</span>
             <span class="arrow">↓</span>
           </div>
           <div class="tc-seal">
-            <div class="glyph"><span class="big">SIG</span>KEY-BINDING<br/>+ ECDSA</div>
+            <div class="glyph"><span class="big">SIG</span>EVERY<br/>RESPONSE</div>
           </div>
-          <div class="tc-vendor">Per-node identity</div>
-          <div class="tc-role">Key in silicon · ECDSA secp256k1</div>
+          <div class="tc-vendor">Per-node key</div>
+          <div class="tc-role">signing key sealed in hardware</div>
           <div class="tc-output">
             <div class="label">→ EMITS</div>
-            <div class="credential">RPC signed by <code>I_priv_n</code> + cloud attestation &#123; <code>image_digest</code>, hash(<code>I_pub_n</code>) &#125;</div>
+            <div class="credential">every response signed by the node's key, with hardware confirming the software is correct</div>
             <div class="signedby"><span class="k">signed_by:</span> enclave key + cloud key</div>
           </div>
           <div class="tc-body">The enclave generates a fresh signing key that never leaves the hardware. The cloud signs an attestation binding the key to the measured image. Every response is signed by the enclave's key.</div>
@@ -554,17 +556,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="tc-ix">PILLAR / 03 · PUBLIC VERIFIABILITY</div>
           <div class="tc-input">
             <span class="label">Receives</span>
-            <span class="value">public source → deterministic <code style="color:var(--accent)">D_image</code></span>
+            <span class="value">public source code → deterministic software build</span>
             <span class="arrow">↓</span>
           </div>
           <div class="tc-seal">
-            <div class="glyph"><span class="big">SRC</span>REPRODUCIBLE<br/>BUILD</div>
+            <div class="glyph"><span class="big">SRC</span>OPEN<br/>SOURCE</div>
           </div>
-          <div class="tc-vendor">Reproducible builds</div>
-          <div class="tc-role">Public source · anyone can audit</div>
+          <div class="tc-vendor">Open source</div>
+          <div class="tc-role">Public code · anyone can audit</div>
           <div class="tc-output">
             <div class="label">→ PROVES</div>
-            <div class="credential">sha256(rebuild) ≡ <code>ChainVersionRecord.D_image</code></div>
+            <div class="credential">anyone can rebuild from source and confirm the running software matches the public code</div>
             <div class="signedby"><span class="k">verified_by:</span> independent rebuilders</div>
           </div>
           <div class="tc-body">The node's code is open source and built deterministically. Anyone can rebuild from source and confirm the on-chain image is what the public code compiles to.</div>
@@ -579,8 +581,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <!-- final verification badge -->
     <div class="tc-verify">
       <div>
-        <div class="vlbl">→ CONSUMER VERIFIES</div>
-        <div class="vh">Three roots, one check.</div>
+        <div class="vlbl">→ YOU VERIFY</div>
+        <div class="vh">Three independent checks, one guarantee.</div>
       </div>
       <div class="veq">
         <code>σ → <span style="color:var(--accent)">I_pub_n</span> → <span style="color:var(--accent)">A_live</span>.D_image ∈ <span style="color:var(--accent)">Registry</span></code>
